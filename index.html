@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#123c56"><title>MiniStages EREA — Gestion des mini-stages</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="config.js"></script>
+</head>
+<body>
+  <div id="toast" class="toast" role="status"></div>
+  <main id="loginView" class="login-shell">
+    <section class="login-card">
+      <div class="brand-mark">MS</div>
+      <p class="eyebrow">EREA DE MURET</p><h1>MiniStages</h1>
+      <p class="muted">Le portail de gestion des mini-stages</p>
+      <div id="loginNotice" class="notice hidden"></div>
+      <form id="loginForm" class="stack">
+        <label>Adresse e-mail<input id="loginEmail" type="email" autocomplete="username" required placeholder="prenom.nom@ac-toulouse.fr"></label>
+        <label>Mot de passe<input id="loginPassword" type="password" autocomplete="current-password" required placeholder="Votre mot de passe"></label>
+        <button class="btn primary full" type="submit">Se connecter <span>→</span></button>
+      </form>
+      <div class="login-divider"><span>ou</span></div>
+      <button id="showSignupButton" class="btn outline full" type="button">Créer un compte établissement</button>
+      <section id="signupPanel" class="hidden" style="margin-top:18px;text-align:left">
+        <h2 style="font-size:18px;margin-bottom:6px">Créer un compte collège</h2>
+        <p class="tiny muted" style="margin-bottom:14px">Utilisez l’adresse e-mail officielle de votre établissement. Le compte sera créé avec le rôle « Collège ».</p>
+        <form id="signupForm" class="stack">
+          <label>Nom de l’établissement<input id="signupOrganization" name="organization" required autocomplete="organization" placeholder="Collège ..."></label>
+          <label>E-mail de l’établissement<input id="signupEmail" name="email" type="email" required autocomplete="username" placeholder="ce.031....@ac-toulouse.fr"></label>
+          <label>Créer un mot de passe<input id="signupPassword" name="password" type="password" required minlength="10" autocomplete="new-password" placeholder="10 caractères minimum"></label>
+          <p class="tiny muted">Au moins 10 caractères, une majuscule, une minuscule, un chiffre et un caractère spécial.</p>
+          <label>Confirmer le mot de passe<input id="signupPasswordConfirm" name="passwordConfirm" type="password" required minlength="10" autocomplete="new-password"></label>
+          <button class="btn primary full" type="submit">Créer mon compte</button>
+          <button id="hideSignupButton" class="btn secondary full" type="button">Retour à la connexion</button>
+        </form>
+      </section>
+      <button id="demoButton" class="btn secondary full" type="button" style="margin-top:10px">Découvrir la démonstration</button>
+      <p class="tiny muted">La démonstration utilise des données fictives enregistrées uniquement dans ce navigateur.</p>
+    </section>
+    <p class="login-foot">Accès réservé aux utilisateurs autorisés · EREA de Muret</p>
+  </main>
+
+  <div id="appView" class="app-layout hidden">
+    <aside class="sidebar" id="sidebar">
+      <div class="side-brand"><div class="brand-mark small">MS</div><div><strong>MiniStages</strong><small>EREA de Muret</small></div></div>
+      <div class="side-label">ESPACE DE TRAVAIL</div>
+      <nav id="mainNav">
+        <button class="nav-item active" data-page="dashboard"><span>◫</span> Tableau de bord</button>
+        <button class="nav-item" data-page="applications"><span>▤</span> Inscriptions <b id="pendingBadge" class="nav-badge">0</b></button>
+        <button class="nav-item" data-page="sessions"><span>▦</span> Créneaux & calendrier</button>
+        <button class="nav-item" data-page="formations"><span>◇</span> Formations</button>
+        <button class="nav-item" data-page="users" data-admin="true"><span>♙</span> Utilisateurs</button>
+        <button class="nav-item" data-page="settings" data-admin="true"><span>⚙</span> Paramètres</button>
+      </nav>
+      <div class="sidebar-bottom"><div class="help-box"><strong>Besoin d'aide ?</strong><p>Contactez l'administrateur du portail.</p></div><button id="logoutButton" class="nav-item logout"><span>↪</span> Déconnexion</button></div>
+    </aside>
+    <section class="workspace">
+      <header class="topbar"><button id="menuButton" class="icon-btn mobile-only" aria-label="Ouvrir le menu">☰</button><div><div class="breadcrumb">Portail / <span id="breadcrumbCurrent">Tableau de bord</span></div><div class="topbar-title" id="pageHeading">Tableau de bord</div></div><div class="topbar-right"><span id="modePill" class="mode-pill">MODE DÉMO</span><div class="user-chip"><div class="avatar" id="userAvatar">AD</div><div><strong id="userName">Administrateur</strong><small id="userRole">Administrateur</small></div></div></div></header>
+      <div class="content" id="pageContent"></div>
+      <footer>MiniStages EREA · Outil de gestion des inscriptions · <span id="footerYear"></span></footer>
+    </section>
+  </div>
+  <div id="modalRoot"></div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="app.js"></script>
+</body>
+</html>
