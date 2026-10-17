@@ -44,3 +44,13 @@
 .icon-btn.mail-failed{color:#b4232d;background:#fff0f0;border-color:#f0b8bd}
 .stage-save-stamp{margin:16px 0 0;padding:10px 12px;border-radius:9px;background:#f1f6f8;color:#536b77;font-size:11px}
 .stage-report-form{display:grid;gap:15px}
+
+/* Signature manuscrite tactile */
+.signature-pad{margin:14px 0;border:1px solid #9cb3c1;border-radius:10px;background:#fff;overflow:hidden}.signature-pad canvas{display:block;width:100%;height:170px;touch-action:none;cursor:crosshair}
+
+/* Identité de l'établissement — administration */
+.branding-field{display:grid;gap:10px;padding:15px 0;border-top:1px solid #dce5ea}.branding-field input[type=file]{max-width:100%;font:inherit}.branding-preview{min-height:65px;display:flex;align-items:center;justify-content:center;border:1px dashed #b5c6cf;border-radius:8px;padding:8px;color:#657985;font-size:13px}.branding-preview img{max-width:190px;max-height:85px;object-fit:contain}
+
+/* Suivi des signatures : titres visibles et lisibles */
+.suivi-group{text-align:center!important;background:#e9f1f7!important;white-space:nowrap}
+.suivi-subheaders th{text-align:center;min-width:145px;white-space:normal;line-height:1.35;background:#f3f7fb;font-size:12px;padding:10px 8px}

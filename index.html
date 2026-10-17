@@ -23,11 +23,14 @@
       <div class="login-divider"><span>ou</span></div>
       <button id="showSignupButton" class="btn outline full" type="button">Créer un compte établissement</button>
       <section id="signupPanel" class="hidden" style="margin-top:18px;text-align:left">
-        <h2 style="font-size:18px;margin-bottom:6px">Créer un compte collège</h2>
-        <p class="tiny muted" style="margin-bottom:14px">Utilisez l’adresse e-mail officielle de votre établissement. Le compte sera créé avec le rôle « Collège ».</p>
+        <h2 style="font-size:18px;margin-bottom:6px">Créer un compte établissement</h2>
+        <p class="tiny muted" style="margin-bottom:14px">Sélectionnez votre établissement dans l’annuaire officiel de l’Éducation nationale. Le compte sera créé avec le rôle « Collège / Lycée ».</p>
         <form id="signupForm" class="stack">
-          <label>Nom de l’établissement<input id="signupOrganization" name="organization" required autocomplete="organization" placeholder="Collège ..."></label>
-          <label>E-mail de l’établissement<input id="signupEmail" name="email" type="email" required autocomplete="username" placeholder="ce.031....@ac-toulouse.fr"></label>
+          <label>Rechercher un établissement (nom, commune ou code UAI)<input id="signupSchoolSearch" type="search" autocomplete="off" placeholder="Ex. : Muret, Jean-Jaurès, 0311240E" aria-describedby="signupSchoolHelp"></label>
+          <label>Établissement — académie de Toulouse<select id="signupSchoolLookup" required disabled><option value="">Chargement de l’annuaire officiel…</option></select></label>
+          <small id="signupSchoolHelp" class="tiny muted">L’annuaire officiel comprend les collèges, lycées généraux et technologiques, lycées professionnels et EREA ouverts de l’académie de Toulouse.</small>
+          <label>Nom officiel de l’établissement<input id="signupOrganization" name="organization" required autocomplete="organization" placeholder="Sélectionnez votre établissement" readonly></label>
+          <label>E-mail de l’établissement<input id="signupEmail" name="email" type="email" required autocomplete="username" placeholder="Adresse professionnelle de l’établissement"><small class="tiny muted">Prérempli uniquement si l’adresse figure dans l’annuaire. Vérifiez-la et corrigez-la si nécessaire. Aucune adresse n’est inventée.</small></label>
           <label>Créer un mot de passe<input id="signupPassword" name="password" type="password" required minlength="10" autocomplete="new-password" placeholder="10 caractères minimum"></label>
           <p class="tiny muted">Au moins 10 caractères, une majuscule, une minuscule, un chiffre et un caractère spécial.</p>
           <label>Confirmer le mot de passe<input id="signupPasswordConfirm" name="passwordConfirm" type="password" required minlength="10" autocomplete="new-password"></label>
@@ -63,6 +66,7 @@
   </div>
   <div id="modalRoot"></div>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="signature-invite.js"></script>
   <script src="app.js"></script>
 </body>
 </html>
