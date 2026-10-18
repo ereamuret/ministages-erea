@@ -18,8 +18,10 @@
       <form id="loginForm" class="stack">
         <label>Adresse e-mail<input id="loginEmail" type="email" autocomplete="username" required placeholder="prenom.nom@ac-toulouse.fr"></label>
         <label>Mot de passe<input id="loginPassword" type="password" autocomplete="current-password" required placeholder="Votre mot de passe"></label>
+        <button class="forgot-link" id="forgotPasswordButton" type="button">Mot de passe oublié ?</button>
         <button class="btn primary full" type="submit">Se connecter <span>→</span></button>
       </form>
+      <section id="forgotPasswordPanel" class="hidden"><h2>Mot de passe oublié</h2><p class="muted">Recevez un lien sécurisé pour définir un nouveau mot de passe.</p><form id="forgotPasswordForm" class="stack"><label>Adresse e-mail<input id="forgotEmail" type="email" autocomplete="email" required placeholder="prenom.nom@ac-toulouse.fr"></label><button class="btn primary full" id="sendForgotButton" type="submit">Envoyer le lien</button><button class="btn outline full" id="backFromForgot" type="button">← Retour à la connexion</button></form></section>
       <div class="login-divider"><span>ou</span></div>
       <button id="showSignupButton" class="btn outline full" type="button">Créer un compte établissement</button>
       <section id="signupPanel" class="hidden" style="margin-top:18px;text-align:left">
@@ -53,6 +55,7 @@
         <button class="nav-item" data-page="applications"><span>▤</span> Inscriptions <b id="pendingBadge" class="nav-badge">0</b></button>
         <button class="nav-item" data-page="sessions"><span>▦</span> Créneaux & calendrier</button>
         <button class="nav-item" data-page="formations"><span>◇</span> Formations</button>
+        <button class="nav-item" data-page="organisation" data-admin="true"><span>▦</span> Organisation</button>
         <button class="nav-item" data-page="users" data-admin="true"><span>♙</span> Utilisateurs</button>
         <button class="nav-item" data-page="settings" data-admin="true"><span>⚙</span> Paramètres</button>
       </nav>
