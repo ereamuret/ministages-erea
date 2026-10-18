@@ -74,10 +74,12 @@
 .org-table th{background:#eaf2ff;color:#284166;font-size:11px;font-weight:800;text-align:center;padding:13px 7px;border:1px solid #dce8f6;white-space:normal}
 .org-table td{padding:13px 8px;border:1px solid #e2eaf2;text-align:center;vertical-align:middle}
 .org-table td:nth-child(5),.org-table td:nth-child(6),.org-table td:nth-child(14){text-align:left}
-.org-table .org-tone-0{background:#ffedf0}
-.org-table .org-tone-1{background:#eafaf0}
-.org-table .org-tone-2{background:#fff8e4}
-.org-table .org-formation{font-weight:800;color:#2d5467}
+.org-table .org-row{background:#fff}
+.org-table .org-row:nth-child(even){background:#f8fbff}
+.org-table .org-formation{display:inline-flex;align-items:center;justify-content:center;padding:5px 9px;border-radius:9px;font-weight:800;white-space:nowrap;background:#edf2f7;color:#526476}
+.org-table .org-formation.org-psr{background:#fbe0e2;color:#a52636}
+.org-table .org-formation.org-jp{background:#ddf4e5;color:#207345}
+.org-table .org-formation.org-mah{background:#fff1c9;color:#906100}
 .org-chip{display:inline-flex;padding:4px 9px;border-radius:9px;background:#f0f3f9;color:#61708a;font-weight:700;white-space:nowrap}
 .org-chip.yes{background:#d3f4df;color:#207849}
 .org-chip.no{background:#ffe0e4;color:#bf4055}
