@@ -126,3 +126,4 @@
 .bulk-date{display:flex;align-items:center;gap:9px;padding:8px 10px;background:#fff;border:1px solid #e2eaf0;border-radius:8px;font-size:13px}
 .bulk-date small{color:#a45a40;margin-left:auto}
 .bulk-date input{accent-color:#648cb4}
+.origin-formation-card{display:flex;flex-direction:column;gap:12px;background:#f7fbff;border:1px solid #dce8f4;border-radius:16px}.origin-formation-card .btn{margin-top:auto;align-self:flex-start}
