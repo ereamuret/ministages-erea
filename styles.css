@@ -138,3 +138,7 @@
 .origin-jp .origin-formation-code{background:#ddf4e5;color:#207345}
 .origin-mah .origin-formation-code{background:#fff1c9;color:#906100}
 .origin-other .origin-formation-code{background:#e6eefb;color:#345d92}
+
+/* Suppression définitive, réservée aux administrateurs */
+.delete-reservation-btn{color:#bd4053!important;background:#fff0f2!important;border:1px solid #f1c8d0!important;font-weight:700!important}
+.delete-reservation-btn:hover{background:#ffe0e5!important}
