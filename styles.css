@@ -127,3 +127,14 @@
 .bulk-date small{color:#a45a40;margin-left:auto}
 .bulk-date input{accent-color:#648cb4}
 .origin-formation-card{display:flex;flex-direction:column;gap:12px;background:#f7fbff;border:1px solid #dce8f4;border-radius:16px}.origin-formation-card .btn{margin-top:auto;align-self:flex-start}
+
+/* Cartes pastel dans l'espace Collège / Lycée */
+.origin-formation-card.origin-psr{background:#fff3f4;border-color:#f4d6da}
+.origin-formation-card.origin-jp{background:#f0fbf4;border-color:#d2ecdb}
+.origin-formation-card.origin-mah{background:#fff9e8;border-color:#f2e4b8}
+.origin-formation-card.origin-other{background:#f7fbff;border-color:#dce8f4}
+.origin-formation-code{display:inline-block;padding:6px 11px;border-radius:9px;font-size:13px}
+.origin-psr .origin-formation-code{background:#fbe0e2;color:#a52636}
+.origin-jp .origin-formation-code{background:#ddf4e5;color:#207345}
+.origin-mah .origin-formation-code{background:#fff1c9;color:#906100}
+.origin-other .origin-formation-code{background:#e6eefb;color:#345d92}
