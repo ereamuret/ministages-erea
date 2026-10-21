@@ -151,3 +151,9 @@
 .help-button{display:block;width:100%;text-align:left;cursor:pointer;font:inherit;color:inherit}
 .help-button:hover,.help-button:focus-visible{outline:2px solid #e8a8af;outline-offset:2px}
 .help-button.hidden{display:none}
+
+/* Compte rendu : identité et code de formation */
+.stage-report-heading{position:relative;padding-right:110px}
+.stage-formation-code{position:absolute;right:0;top:0;font-size:16px;font-weight:700;border:1px solid #b9cddd;background:#f0f7fb;border-radius:8px;padding:8px 12px}
+.stage-identity .stage-student-name{grid-column:1/-1;display:flex;flex-direction:column;gap:4px;padding:9px 12px;background:#f4f9fc;border:1px solid #d5e4ed;border-radius:8px}
+.stage-student-name span{font-size:11px;color:#5b7080}.stage-student-name strong{font-size:18px;color:#193b52}
