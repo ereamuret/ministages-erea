@@ -353,6 +353,28 @@
   function selectableSessions(formationId, applicationId=''){
     return state.data.sessions.filter(s=>s.formation_id===formationId && sessionBookable(s,applicationId)).sort((a,b)=>String(a.date||'').localeCompare(String(b.date||'')) || String(a.start_time||'').localeCompare(String(b.start_time||''))||String(a.start_time).localeCompare(String(b.start_time)));
   }
+  // Préremplissage depuis le référentiel officiel déjà utilisé à la création du compte.
+  // Les champs restent éditables ; aucune modification n'est enregistrée dans le profil.
+  async function prefillOriginSchoolFromDirectory(expectedName,expectedCity,expectedUai){
+    const form=$('#entityForm');
+    if(!form||!expectedName)return;
+    const initialFields=['college_name','college_city','college_address','college_phone'];
+    const original=Object.fromEntries(initialFields.map(name=>[name,form.elements.namedItem(name)?.value||'']));
+    try{
+      const schools=await loadToulouseAcademySchools();
+      if(!form.isConnected)return;
+      const norm=normalizeSearch;
+      const uai=String(expectedUai||'').trim().toUpperCase();
+      const candidates=uai?schools.filter(s=>String(s.uai||'').toUpperCase()===uai):[];
+      const nameMatches=candidates.length?candidates:schools.filter(s=>norm(s.name)===norm(expectedName));
+      const match=nameMatches.length===1?nameMatches[0]:nameMatches.find(s=>norm(s.city)===norm(expectedCity));
+      if(!match)return; // Ne pas attribuer les coordonnées d'un homonyme.
+      for(const [field,value] of Object.entries({college_city:match.city,college_address:match.address,college_phone:match.phone})){
+        const input=form.elements.namedItem(field);
+        if(input&&value&&!input.value.trim()&&input.value===original[field])input.value=value;
+      }
+    }catch(error){console.warn('Annuaire établissement indisponible : saisie manuelle conservée.',error)}
+  }
   function openApplicationForm(id,preselectedSessionId){
     if(!canManage()&&!['college','family'].includes(state.profile?.role))return;if(id&&!canManage())return;
     const a=id?state.data.applications.find(x=>x.id===id):{student_first_name:'',student_last_name:'',student_birth_date:'',student_class:'3ème générale',college_name:state.profile?.organization||'',college_city:'',college_address:'',college_phone:'',college_email:'',insurance:'',contact_last_name:'',contact_first_name:'',contact_name:'',contact_email:'',contact_phone:'',formation_id:state.data.formations[0]?.id||'',session_id:'',status:'pending',meal:'',meal_payer:'',notes:''};
@@ -373,6 +395,7 @@
       <h3 class="form-section-title span-2">5. Informations utiles à l’accueil</h3>${optionalSelectField('Problème médical à signaler ?','medical_issue',yesNo,a.medical_issue)}${optionalSelectField('PAI en cours ?','pai',yesNo,a.pai)}${optionalSelectField('Accompagnement AESH ?','aesh',yesNo,a.aesh)}${optionalSelectField('Repas à l’EREA (4,60 €) ?','meal',yesNo,a.meal)}<label id="mealPayerWrap" class="${a.meal==='oui'?'':'hidden'}">Prise en charge du repas<select name="meal_payer"><option value="">— Choisir —</option><option value="famille" ${a.meal_payer==='famille'?'selected':''}>Famille</option><option value="college" ${a.meal_payer==='college'?'selected':''}>Collège d’origine</option><option value="autre" ${a.meal_payer==='autre'?'selected':''}>Autre</option></select></label>
       <h3 class="form-section-title span-2">6. Mini-stage</h3>${fixedCollegeStage&&fixedStage?`<div class="span-2" style="padding:14px;border:1px solid #dce6ef;border-radius:12px;background:#f5f9fc"><div><strong>Formation :</strong> ${esc(formation(fixedStage.formation_id).name)}</div><div><strong>Date :</strong> ${shortDate(fixedStage.date)}</div><div><strong>Horaires :</strong> ${shortTime(fixedStage.start_time)} – ${shortTime(fixedStage.end_time)}</div><p class="tiny muted">Créneau sélectionné depuis la page Formations.</p></div><input type="hidden" name="formation_id" value="${esc(fixedStage.formation_id)}"><input type="hidden" name="session_id" value="${esc(fixedStage.id)}">`:`${selectField('Formation souhaitée *','formation_id',formOpts,a.formation_id)}<label class="span-2">Date / créneau souhaité *<select name="session_id" id="applicationSession" required>${sessionOptions.map(o=>`<option value="${esc(o.value)}" ${o.value===selectedSession?'selected':''}>${esc(o.label)}</option>`).join('')}</select><small id="sessionHelp" class="tiny muted">Seuls les créneaux de la formation sélectionnée sont proposés.</small></label>`}${canAdmin()?selectField('Statut','status',[{value:'pending',label:'À traiter'},{value:'confirmed',label:'Confirmée'},{value:'refused',label:'Refusée'},{value:'cancelled',label:'Annulée'},{value:'completed',label:'Réalisée'}],a.status):'<input type="hidden" name="status" value="pending">'}
       <label class="span-2">Observations utiles à l’accueil<textarea name="notes">${esc(a.notes||'')}</textarea></label></div><p class="tiny muted" style="margin-top:12px">Les informations médicales ne doivent être renseignées que si elles sont nécessaires à la sécurité et à l’accueil de l’élève. Pour les données réelles de mineurs, utilisez uniquement l’espace en ligne sécurisé validé par l’établissement.</p></form>`,`<button type="button" class="btn outline" data-action="close-modal">Annuler</button><button class="btn primary" data-action="save-application" data-id="${id||''}">Enregistrer le dossier</button>`);
+    if(!id&&state.profile?.role==='college'){const metadata=state.user?.user_metadata||{};void prefillOriginSchoolFromDirectory(a.college_name,a.college_city,metadata.organization_uai||state.profile?.uai||'');}
     if(state.profile?.role!=='college'){populateSchoolDropdown(a.college_name);const lookup=$('#collegeLookup');if(lookup)lookup.addEventListener('change',async()=>{try{const schools=await loadHauteGaronneSchools();const school=schools[Number(lookup.value)];if(school)fillCollegeFromDirectory(school);}catch{}});}
     const form=$('#entityForm');
     const formationSelect=form?.querySelector('[name="formation_id"]');
@@ -652,7 +675,7 @@ EREA de Muret`;const to=d.contact_email||d.college_email||'';closeModal();render
     if(password!==confirm){setNotice('Les deux mots de passe ne correspondent pas.');$('#loginNotice').classList.remove('hidden');return}
     if(!db){setNotice('La création de compte nécessite la configuration de Supabase. La démonstration ne crée pas de compte réel.');$('#loginNotice').classList.remove('hidden');return}
     const button=$('#signupForm button[type="submit"]');button.disabled=true;button.textContent='Création en cours…';
-    try{const {data,error}=await db.auth.signUp({email,password,options:{data:{organization,full_name:organization,signup_source:'college_portal',organization_city:window.selectedSignupSchool?.name===organization?window.selectedSignupSchool.city:'',organization_address:window.selectedSignupSchool?.name===organization?window.selectedSignupSchool.address:'',organization_phone:window.selectedSignupSchool?.name===organization?window.selectedSignupSchool.phone:''},emailRedirectTo:window.location.origin+window.location.pathname}});if(error)throw error;
+    try{const {data,error}=await db.auth.signUp({email,password,options:{data:{organization,full_name:organization,signup_source:'college_portal',organization_city:window.selectedSignupSchool?.name===organization?window.selectedSignupSchool.city:'',organization_address:window.selectedSignupSchool?.name===organization?window.selectedSignupSchool.address:'',organization_phone:window.selectedSignupSchool?.name===organization?window.selectedSignupSchool.phone:'',organization_uai:window.selectedSignupSchool?.name===organization?window.selectedSignupSchool.uai:''},emailRedirectTo:window.location.origin+window.location.pathname}});if(error)throw error;
       $('#signupForm').reset();$('#signupPanel').classList.add('hidden');$('#loginForm').classList.remove('hidden');$('#showSignupButton').classList.remove('hidden');setNotice(data.session?'Compte établissement créé. Vous pouvez vous connecter.':'Demande de compte établissement enregistrée. Consultez la boîte e-mail saisie pour confirmer l’adresse avant de vous connecter.');$('#loginNotice').classList.remove('hidden');
     }catch(err){setNotice('Création impossible : '+(err.message||'erreur inconnue'));$('#loginNotice').classList.remove('hidden')}finally{button.disabled=false;button.textContent='Créer mon compte'}
   });
