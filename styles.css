@@ -139,6 +139,10 @@
 .origin-mah .origin-formation-code{background:#fff1c9;color:#906100}
 .origin-other .origin-formation-code{background:#e6eefb;color:#345d92}
 
-/* Suppression définitive, réservée aux administrateurs */
-.delete-reservation-btn{color:#bd4053!important;background:#fff0f2!important;border:1px solid #f1c8d0!important;font-weight:700!important}
-.delete-reservation-btn:hover{background:#ffe0e5!important}
+/* Menu College/Lycee : RAL 3005 (rouge vin). Le menu administrateur conserve son bleu. */
+.sidebar.sidebar-college{background:#59191f;color:#f5e8e9}
+.sidebar.sidebar-college .side-brand small,.sidebar.sidebar-college .side-label,.sidebar.sidebar-college .help-box p{color:#e0bfc3}
+.sidebar.sidebar-college .nav-item{color:#f2dfe2}
+.sidebar.sidebar-college .nav-item:hover{background:#ffffff18;color:#fff}
+.sidebar.sidebar-college .nav-item.active{background:#ffffff20;color:#fff;box-shadow:inset 3px 0 #e8a8af}
+.sidebar.sidebar-college .help-box{background:#ffffff12;border-color:#ffffff24}
