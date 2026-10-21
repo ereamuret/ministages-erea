@@ -79,7 +79,7 @@
     button.disabled=true;button.textContent='Envoi en cours…';
     try{
       const {data,error}=await db.functions.invoke('send-help-request',{body:payload});
-      if(error)throw error;
+      if(error)throw new Error('Service d’aide indisponible. Vérifiez le déploiement de la fonction Supabase send-help-request et ses secrets d’envoi. Détail : '+(error.message||String(error)));
       if(!data?.ok)throw new Error(data?.error||'Échec de l’envoi.');
       closeModal();toast('Votre demande a bien été envoyée.');
     }finally{button.disabled=false;button.textContent='Envoyer la demande'}
@@ -383,24 +383,28 @@
   // Préremplissage depuis le référentiel officiel déjà utilisé à la création du compte.
   // Les champs restent éditables ; aucune modification n'est enregistrée dans le profil.
   async function prefillOriginSchoolFromDirectory(expectedName,expectedCity,expectedUai){
-    const form=$('#entityForm');
-    if(!form||!expectedName)return;
-    const initialFields=['college_name','college_city','college_address','college_phone'];
-    const original=Object.fromEntries(initialFields.map(name=>[name,form.elements.namedItem(name)?.value||'']));
+    const form=$('#entityForm');if(!form||!expectedName)return;
+    const fieldNames=['college_city','college_address','college_phone'];
+    const original=Object.fromEntries(fieldNames.map(name=>[name,form.elements.namedItem(name)?.value||'']));
+    const norm=normalizeSearch;
+    const cleanName=value=>norm(value).replace(/\b(college|lycee|erea|etablissement|public|prive|general|technologique|professionnel)\b/g,' ').replace(/[^a-z0-9]+/g,' ').trim();
     try{
       const schools=await loadToulouseAcademySchools();
       if(!form.isConnected)return;
-      const norm=normalizeSearch;
       const uai=String(expectedUai||'').trim().toUpperCase();
-      const candidates=uai?schools.filter(s=>String(s.uai||'').toUpperCase()===uai):[];
-      const nameMatches=candidates.length?candidates:schools.filter(s=>norm(s.name)===norm(expectedName));
-      const match=nameMatches.length===1?nameMatches[0]:nameMatches.find(s=>norm(s.city)===norm(expectedCity));
-      if(!match)return; // Ne pas attribuer les coordonnées d'un homonyme.
-      for(const [field,value] of Object.entries({college_city:match.city,college_address:match.address,college_phone:match.phone})){
-        const input=form.elements.namedItem(field);
-        if(input&&value&&!input.value.trim()&&input.value===original[field])input.value=value;
+      let candidates=uai?schools.filter(s=>String(s.uai||'').toUpperCase()===uai):[];
+      if(!candidates.length)candidates=schools.filter(s=>norm(s.name)===norm(expectedName));
+      if(!candidates.length)candidates=schools.filter(s=>cleanName(s.name)===cleanName(expectedName));
+      if(!candidates.length){const key=cleanName(expectedName);if(key.length>=5)candidates=schools.filter(s=>cleanName(s.name).includes(key)||key.includes(cleanName(s.name)));}
+      const city=norm(expectedCity||state.profile?.city||state.profile?.organization_city||'');
+      const match=candidates.length===1?candidates[0]:candidates.find(s=>city&&norm(s.city)===city);
+      if(!match){console.info('Établissement non identifié sans ambiguïté dans l’annuaire :',expectedName);return;}
+      for(const [name,value] of Object.entries({college_city:match.city,college_address:match.address,college_phone:match.phone})){
+        const input=form.elements.namedItem(name);
+        if(input&&value&&input.value===original[name])input.value=value;
       }
-    }catch(error){console.warn('Annuaire établissement indisponible : saisie manuelle conservée.',error)}
+      const info=$('#originDirectoryInfo');if(info)info.textContent='Coordonnées proposées depuis l’annuaire officiel de l’Éducation nationale. Vous pouvez les modifier.';
+    }catch(error){console.warn('Annuaire établissement indisponible : saisie manuelle conservée.',error);const info=$('#originDirectoryInfo');if(info)info.textContent='Annuaire momentanément indisponible : vous pouvez renseigner les coordonnées manuellement.';}
   }
   function openApplicationForm(id,preselectedSessionId){
     if(!canManage()&&!['college','family'].includes(state.profile?.role))return;if(id&&!canManage())return;
@@ -415,7 +419,7 @@
     const sessionOptions=selectableSessions(a.formation_id,id||'').map(s=>({value:s.id,label:`${dateLabel(s.date)} — ${s.start_time||''}${s.end_time?' à '+s.end_time:''}`}));
     const selectedSession=sessionOptions.some(x=>x.value===a.session_id)?a.session_id:(sessionOptions[0]?.value||'');
     openModal(id?'Consulter / modifier une inscription':'Nouvelle inscription — dossier de convention',`<form id="entityForm">
-      <h3 class="form-section-title">1. Établissement d’origine</h3><div class="form-grid">${state.profile?.role==='college'?`<p class="span-2 tiny muted">Coordonnées préremplies à partir de votre compte établissement. Vous pouvez les modifier pour cette demande.</p>`:`<label class="span-2">Rechercher dans l’annuaire officiel des collèges et lycées de Haute-Garonne<select id="collegeLookup" disabled><option value="">Chargement de l’annuaire officiel…</option></select><small id="schoolLookupHelp" class="tiny muted">Choisissez votre établissement pour préremplir automatiquement ses coordonnées. Vous pouvez les corriger ensuite.</small></label>`}${field('Nom du collège / lycée *','college_name',a.college_name,'text','required')}${field('Ville','college_city',a.college_city)}<label class="span-2">Adresse de l’établissement<input class="college-address-field" name="college_address" type="text" value="${esc(a.college_address||'')}"></label><label>Téléphone de l’établissement<input class="college-phone-field" name="college_phone" type="tel" value="${esc(a.college_phone||'')}"></label>${field('E-mail de l’établissement','college_email',a.college_email,'email')}${field('Assurance de l’établissement d’origine','insurance',a.insurance)}
+      <h3 class="form-section-title">1. Établissement d’origine</h3><div class="form-grid">${state.profile?.role==='college'?`<p id="originDirectoryInfo" class="span-2 tiny muted">Recherche des coordonnées de votre établissement dans l’annuaire officiel… Les champs restent modifiables.</p>`:`<label class="span-2">Rechercher dans l’annuaire officiel des collèges et lycées de Haute-Garonne<select id="collegeLookup" disabled><option value="">Chargement de l’annuaire officiel…</option></select><small id="schoolLookupHelp" class="tiny muted">Choisissez votre établissement pour préremplir automatiquement ses coordonnées. Vous pouvez les corriger ensuite.</small></label>`}${field('Nom du collège / lycée *','college_name',a.college_name,'text','required')}${field('Ville','college_city',a.college_city)}<label class="span-2">Adresse de l’établissement<input class="college-address-field" name="college_address" type="text" value="${esc(a.college_address||'')}"></label><label>Téléphone de l’établissement<input class="college-phone-field" name="college_phone" type="tel" value="${esc(a.college_phone||'')}"></label>${field('E-mail de l’établissement','college_email',a.college_email,'email')}${field('Assurance de l’établissement d’origine','insurance',a.insurance)}
       <h3 class="form-section-title span-2">2. Élève stagiaire</h3>${field('Prénom *','student_first_name',a.student_first_name,'text','required')}${field('Nom *','student_last_name',a.student_last_name,'text','required')}${field('Date de naissance','student_birth_date',a.student_birth_date,'date')}${selectField('Classe *','student_class',classOptions,classOptions.some(o=>o.value===a.student_class)?a.student_class:'3ème générale')}
       <h3 class="form-section-title span-2">3. Tailles des vêtements (obligatoire pour préparer l’accueil)</h3>${optionalSelectField('Pointure de chaussures','shoe_size',sizesShoes,a.shoe_size)}${optionalSelectField('Taille de pantalon','pants_size',clothing,a.pants_size)}${optionalSelectField('Taille du haut','top_size',clothing,a.top_size)}
       <h3 class="form-section-title span-2">4. Responsable légal</h3>${field('Nom *','contact_last_name',a.contact_last_name||a.contact_name,'text','required')}${field('Prénom *','contact_first_name',a.contact_first_name,'text','required')}${field('Téléphone *','contact_phone',a.contact_phone,'tel','required')}${field('E-mail *','contact_email',a.contact_email,'email','required')}
