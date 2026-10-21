@@ -157,3 +157,19 @@
 .stage-formation-code{position:absolute;right:0;top:0;font-size:16px;font-weight:700;border:1px solid #b9cddd;background:#f0f7fb;border-radius:8px;padding:8px 12px}
 .stage-identity .stage-student-name{grid-column:1/-1;display:flex;flex-direction:column;gap:4px;padding:9px 12px;background:#f4f9fc;border:1px solid #d5e4ed;border-radius:8px}
 .stage-student-name span{font-size:11px;color:#5b7080}.stage-student-name strong{font-size:18px;color:#193b52}
+
+/* Espace Lingerie — jaune RAL 1004 approché */
+.sidebar.sidebar-lingerie{background:#e2b007;color:#29251a}
+.sidebar.sidebar-lingerie .nav-item,.sidebar.sidebar-lingerie .side-brand,.sidebar.sidebar-lingerie .side-label{color:#29251a}
+.sidebar.sidebar-lingerie .nav-item.active{background:#fff6cf;color:#29251a;box-shadow:inset 3px 0 #5c4a06}
+.sidebar.sidebar-lingerie .help-box{display:none}
+.lingerie-table{min-width:930px}.lingerie-table th,.lingerie-table td{text-align:center;vertical-align:middle}
+.lingerie-table td:nth-child(4){text-align:left}
+.lingerie-line.org-psr{background:#fbe9eb}.lingerie-line.org-jp{background:#e7f7eb}.lingerie-line.org-mah{background:#fff5d8}.lingerie-line.org-other{background:#e8eefb}
+.lingerie-size{display:inline-flex;align-items:center;justify-content:center;min-width:39px;height:39px;padding:4px;font-weight:800}
+.lingerie-size.shoes{border-radius:8px;background:#d6e9ff;color:#154c95}
+.lingerie-size.pants{border-radius:50%;background:#f8d5e8;color:#8b2358}
+.lingerie-size.top{border-radius:50%;background:#fff0a8;color:#755400}
+.lingerie-status{display:inline-block;border-radius:8px;padding:6px 9px;font-weight:700;white-space:nowrap}
+.lingerie-status.upcoming{background:#ffeb96;color:#715400}.lingerie-status.done{background:#c8eed2;color:#18643a}
+.lingerie-returned{color:#19673c;font-weight:700}
