@@ -146,3 +146,8 @@
 .sidebar.sidebar-college .nav-item:hover{background:#ffffff18;color:#fff}
 .sidebar.sidebar-college .nav-item.active{background:#ffffff20;color:#fff;box-shadow:inset 3px 0 #e8a8af}
 .sidebar.sidebar-college .help-box{background:#ffffff12;border-color:#ffffff24}
+
+/* Bouton d’aide réservé aux établissements */
+.help-button{display:block;width:100%;text-align:left;cursor:pointer;font:inherit;color:inherit}
+.help-button:hover,.help-button:focus-visible{outline:2px solid #e8a8af;outline-offset:2px}
+.help-button.hidden{display:none}
