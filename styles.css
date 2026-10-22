@@ -223,3 +223,10 @@
 
 .signature-file-field{display:flex;flex-direction:column;gap:8px;margin:12px 0;font-weight:600}.signature-file-field input{font-weight:400;max-width:100%}
 .sidebar.sidebar-lingerie .nav-item:hover{background:#3b3b3b;color:#fff}
+
+/* Sélection et export des étiquettes de lingerie */
+.lingerie-label-toolbar{display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:12px 16px;margin:10px 0 14px;border:1px solid #dce2e9;border-radius:12px;background:#f7f8fa}
+.lingerie-label-toolbar label{display:inline-flex;align-items:center;gap:7px;font-weight:600}
+.lingerie-label-toolbar small{color:#64748b}
+.lingerie-select,#lingerieSelectAll{width:17px;height:17px;cursor:pointer;accent-color:#282828}
+.lingerie-table td:nth-child(5){text-align:left}
