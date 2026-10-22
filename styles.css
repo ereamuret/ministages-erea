@@ -173,3 +173,8 @@
 .lingerie-status{display:inline-block;border-radius:8px;padding:6px 9px;font-weight:700;white-space:nowrap}
 .lingerie-status.upcoming{background:#ffeb96;color:#715400}.lingerie-status.done{background:#c8eed2;color:#18643a}
 .lingerie-returned{color:#19673c;font-weight:700}
+
+/* Répertoire des professeurs — Paramètres administrateur */
+.teacher-directory-list{display:flex;flex-direction:column;gap:8px;margin:14px 0}
+.teacher-directory-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:9px 0;border-bottom:1px solid #e3e9ed;flex-wrap:wrap}
+.teacher-directory-row>span:last-child{display:flex;gap:6px;flex-wrap:wrap}
