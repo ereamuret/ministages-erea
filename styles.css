@@ -158,10 +158,10 @@
 .stage-identity .stage-student-name{grid-column:1/-1;display:flex;flex-direction:column;gap:4px;padding:9px 12px;background:#f4f9fc;border:1px solid #d5e4ed;border-radius:8px}
 .stage-student-name span{font-size:11px;color:#5b7080}.stage-student-name strong{font-size:18px;color:#193b52}
 
-/* Espace Lingerie — jaune RAL 1004 approché */
-.sidebar.sidebar-lingerie{background:#e2b007;color:#29251a}
-.sidebar.sidebar-lingerie .nav-item,.sidebar.sidebar-lingerie .side-brand,.sidebar.sidebar-lingerie .side-label{color:#29251a}
-.sidebar.sidebar-lingerie .nav-item.active{background:#fff6cf;color:#29251a;box-shadow:inset 3px 0 #5c4a06}
+/* Espace Lingerie — noir RAL 9004 (noir de sécurité, approximation écran #282828) */
+.sidebar.sidebar-lingerie{background:#282828;color:#ffffff}
+.sidebar.sidebar-lingerie .nav-item,.sidebar.sidebar-lingerie .side-brand,.sidebar.sidebar-lingerie .side-label{color:#ffffff}
+.sidebar.sidebar-lingerie .nav-item.active{background:#444444;color:#ffffff;box-shadow:inset 3px 0 #e8e8e8}
 .sidebar.sidebar-lingerie .help-box{display:none}
 .lingerie-table{min-width:930px}.lingerie-table th,.lingerie-table td{text-align:center;vertical-align:middle}
 .lingerie-table td:nth-child(4){text-align:left}
@@ -220,3 +220,6 @@
 .schedule-table tbody.schedule-entry.origin-jp .schedule-first td:nth-child(2) strong{color:#207345}
 .schedule-table tbody.schedule-entry.origin-mah .schedule-first td:nth-child(2) strong{color:#906100}
 .schedule-table tbody.schedule-entry.origin-other .schedule-first td:nth-child(2) strong{color:#345d92}
+
+.signature-file-field{display:flex;flex-direction:column;gap:8px;margin:12px 0;font-weight:600}.signature-file-field input{font-weight:400;max-width:100%}
+.sidebar.sidebar-lingerie .nav-item:hover{background:#3b3b3b;color:#fff}
