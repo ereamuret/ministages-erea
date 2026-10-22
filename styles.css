@@ -205,3 +205,18 @@
 .schedule-table tbody:hover{background:#eef8f7}
 .schedule-table .compact-status{margin-left:7px}
 @media(max-width:760px){.schedule-table{min-width:760px}.schedule-table td{padding:3px 8px}.schedule-table th{padding:8px}}
+
+/* Couleurs pastel par formation dans Créneaux & calendrier (tableau compact). */
+.schedule-table tbody.schedule-entry.origin-psr{background:#fff0f1}
+.schedule-table tbody.schedule-entry.origin-jp{background:#ecf9f0}
+.schedule-table tbody.schedule-entry.origin-mah{background:#fff8e5}
+.schedule-table tbody.schedule-entry.origin-other{background:#eef5ff}
+.schedule-table tbody.schedule-entry.origin-psr:hover{background:#fbe1e5}
+.schedule-table tbody.schedule-entry.origin-jp:hover{background:#daf1e2}
+.schedule-table tbody.schedule-entry.origin-mah:hover{background:#fff0c8}
+.schedule-table tbody.schedule-entry.origin-other:hover{background:#e0edff}
+.schedule-table tbody.schedule-entry .schedule-first td:nth-child(2) strong{font-weight:800}
+.schedule-table tbody.schedule-entry.origin-psr .schedule-first td:nth-child(2) strong{color:#a52636}
+.schedule-table tbody.schedule-entry.origin-jp .schedule-first td:nth-child(2) strong{color:#207345}
+.schedule-table tbody.schedule-entry.origin-mah .schedule-first td:nth-child(2) strong{color:#906100}
+.schedule-table tbody.schedule-entry.origin-other .schedule-first td:nth-child(2) strong{color:#345d92}

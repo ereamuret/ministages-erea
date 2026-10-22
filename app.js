@@ -165,7 +165,7 @@
       const enrolled=confirmedPlaces(s.id);
       const confirmed=state.data.applications.filter(a=>a.session_id===s.id&&a.status==='confirmed');
       const students=confirmed.length?confirmed.map(a=>esc(`${a.student_first_name||''} ${a.student_last_name||''}`.trim())).join(', '):'Aucun pour le moment';
-      return `<tbody class="schedule-entry" data-session-name="${esc(f.name.toLowerCase())}">
+      return `<tbody class="schedule-entry ${originFormationColor(f)}" data-session-name="${esc(f.name.toLowerCase())}">
         <tr class="schedule-first"><td rowspan="3" class="schedule-date"><strong>${shortDate(s.date)}</strong></td><td><strong>${esc(f.name)}</strong></td><td>${esc(s.start_time||'09:00')} – ${esc(s.end_time||'16:00')}</td><td>${esc(s.teacher_name||'À attribuer')}</td><td rowspan="3" class="schedule-action">${canManage()?`<button class="btn outline small" data-action="edit-session" data-id="${s.id}">Modifier</button>`:''}</td><td rowspan="3" class="schedule-action">${canManage()?`<button class="btn ${s.active?'danger':'secondary'} small" data-action="toggle-session" data-id="${s.id}">${s.active?'Fermer':'Ouvrir'}</button>`:''}</td></tr>
         <tr><td>${enrolled} / ${s.capacity} place(s) occupée(s) <span class="compact-status ${s.active?'':'is-closed'}">${s.active?'Ouvert':'Fermé'}</span></td><td>${esc(s.start_time||'09:00')}</td><td>${esc(s.teacher_name||'À attribuer')}</td></tr>
         <tr class="schedule-last"><td colspan="3"><strong>Élève(s) confirmé(s) :</strong> ${students}</td></tr>
