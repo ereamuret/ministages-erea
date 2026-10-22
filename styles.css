@@ -178,3 +178,16 @@
 .teacher-directory-list{display:flex;flex-direction:column;gap:8px;margin:14px 0}
 .teacher-directory-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:9px 0;border-bottom:1px solid #e3e9ed;flex-wrap:wrap}
 .teacher-directory-row>span:last-child{display:flex;gap:6px;flex-wrap:wrap}
+
+/* Créneaux administrateur : affichage compact, inspiré du tableau fourni */
+.compact-session-list{display:flex;flex-direction:column;gap:5px}
+.compact-session.session-card{display:grid;grid-template-columns:112px minmax(0,1fr) 154px;gap:12px;align-items:stretch;padding:0;min-height:0;overflow:hidden}
+.compact-date{display:flex;align-items:center;justify-content:center;padding:10px 8px;border-right:1px solid #e1e8ed;font-size:13px;text-align:center}
+.compact-detail{min-width:0;padding:8px 0;display:flex;flex-direction:column;gap:3px}
+.compact-top{display:grid;grid-template-columns:minmax(150px,1fr) 120px minmax(120px,.7fr);gap:10px;align-items:center;font-size:13px}
+.compact-training{overflow-wrap:anywhere}.compact-time{white-space:nowrap}.compact-teacher{overflow-wrap:anywhere}
+.compact-occupancy,.compact-students{font-size:12px;line-height:1.35;overflow-wrap:anywhere}
+.compact-occupancy{color:#546474}.compact-status{font-weight:600;color:#14734c;margin-left:9px}.compact-status.is-closed{color:#aa3941}
+.compact-actions{display:flex;align-items:center;justify-content:center;gap:6px;padding:8px;border-left:1px solid #e1e8ed;flex-wrap:wrap}
+.compact-actions .btn{padding:6px 9px;font-size:12px}
+@media(max-width:850px){.compact-session.session-card{grid-template-columns:86px minmax(0,1fr)}.compact-actions{grid-column:1/-1;border-left:0;border-top:1px solid #e1e8ed;padding:5px}.compact-top{grid-template-columns:1fr 110px}.compact-teacher{grid-column:1/-1}.compact-date{font-size:12px}}
