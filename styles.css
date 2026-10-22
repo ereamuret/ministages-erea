@@ -191,3 +191,17 @@
 .compact-actions{display:flex;align-items:center;justify-content:center;gap:6px;padding:8px;border-left:1px solid #e1e8ed;flex-wrap:wrap}
 .compact-actions .btn{padding:6px 9px;font-size:12px}
 @media(max-width:850px){.compact-session.session-card{grid-template-columns:86px minmax(0,1fr)}.compact-actions{grid-column:1/-1;border-left:0;border-top:1px solid #e1e8ed;padding:5px}.compact-top{grid-template-columns:1fr 110px}.compact-teacher{grid-column:1/-1}.compact-date{font-size:12px}}
+
+/* Tableau compact de créneaux : 3 lignes par créneau, comme dans le classeur Excel. */
+.schedule-table{width:100%;border-collapse:collapse;white-space:normal}
+.schedule-table th{padding:9px 11px;white-space:nowrap}
+.schedule-table td{padding:3px 11px;font-size:12px;line-height:1.25;border-bottom:0;vertical-align:middle}
+.schedule-table .schedule-first td{padding-top:8px}
+.schedule-table .schedule-last td{padding-bottom:8px;border-bottom:2px solid #dce5eb}
+.schedule-table .schedule-date{min-width:105px;white-space:nowrap;vertical-align:middle;border-bottom:2px solid #dce5eb}
+.schedule-table .schedule-action{width:105px;vertical-align:middle;text-align:center;border-bottom:2px solid #dce5eb}
+.schedule-table .schedule-action .btn{padding:6px 9px;white-space:nowrap}
+.schedule-table tbody:nth-of-type(even){background:#f8fafb}
+.schedule-table tbody:hover{background:#eef8f7}
+.schedule-table .compact-status{margin-left:7px}
+@media(max-width:760px){.schedule-table{min-width:760px}.schedule-table td{padding:3px 8px}.schedule-table th{padding:8px}}
