@@ -55,3 +55,27 @@
 :root[data-theme="dark"] table,:root[data-theme="dark"] td,:root[data-theme="dark"] th{color:#ecf2f8;border-color:#40556a}
 :root[data-theme="dark"] th{background:#263a4e!important}
 :root[data-theme="dark"] .btn.outline,:root[data-theme="dark"] .btn.secondary{background:#2b4156!important;color:#ecf2f8!important;border-color:#52677a!important}
+
+/* Ajustements visuels du 24 octobre : pastels des formations et tableaux lisibles. */
+:root{--formation-psr:#fff0dd;--formation-jp:#e3f4e7;--formation-mah:#e6edff;--formation-other:#f3e9f7}
+/* Les teintes de formation restent identiques en thème clair et sombre. */
+.origin-formation-card.origin-psr,.schedule-entry.origin-psr td{background:var(--formation-psr)!important;color:#483526!important}
+.origin-formation-card.origin-jp,.schedule-entry.origin-jp td{background:var(--formation-jp)!important;color:#234632!important}
+.origin-formation-card.origin-mah,.schedule-entry.origin-mah td{background:var(--formation-mah)!important;color:#273e65!important}
+.origin-formation-card.origin-other,.schedule-entry.origin-other td{background:var(--formation-other)!important;color:#4c355a!important}
+:root[data-theme="dark"] .origin-formation-card .muted,:root[data-theme="dark"] .schedule-entry .muted{color:#536475!important}
+/* Chaque créneau (date) forme un bloc visuellement distinct dans les deux thèmes. */
+.schedule-table{border-collapse:separate!important;border-spacing:0 9px!important}
+.schedule-table tbody.schedule-entry{outline:2px solid #8da4b3;outline-offset:0;border-radius:8px}
+.schedule-table tbody.schedule-entry tr:first-child td{border-top:2px solid #8da4b3!important}
+.schedule-table tbody.schedule-entry tr:last-child td{border-bottom:2px solid #8da4b3!important}
+.schedule-table tbody.schedule-entry td:first-child{border-left:2px solid #8da4b3!important}
+.schedule-table tbody.schedule-entry td:last-child{border-right:2px solid #8da4b3!important}
+:root[data-theme="dark"] .schedule-table tbody.schedule-entry{outline-color:#b2c3d1}
+/* Inscriptions et utilisateurs : lignes blanches, texte sombre, dans les deux thèmes. */
+:root[data-theme="dark"] .table-wrap table:not(.schedule-table) tbody tr,
+:root[data-theme="dark"] .table-wrap table:not(.schedule-table) tbody td,
+:root[data-theme="dark"] .teacher-directory-row{background:#fff!important;color:#223747!important}
+:root[data-theme="dark"] .table-wrap table:not(.schedule-table) tbody td,
+:root[data-theme="dark"] .table-wrap table:not(.schedule-table) tbody td *:not(.btn):not(.badge):not(.status-badge){color:#223747}
+:root[data-theme="dark"] .teacher-directory-row *:not(.btn){color:#223747}
