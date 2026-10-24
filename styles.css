@@ -95,3 +95,18 @@
 .compact-schedule-table .compact-actions .btn.small{padding:6px 9px;font-size:10px;margin:1px}
 :root[data-theme="dark"] .compact-schedule-table tbody tr.compact-session td{border-bottom-color:#111c29!important}
 @media(max-width:760px){.compact-schedule-table{min-width:790px}.compact-schedule-table tbody tr.compact-session td{padding:8px!important}}
+
+/* 24/10 — tableau créneaux inspiré du modèle Excel : fond pastel UNI par créneau.
+   Les anciens traits bleus, bordures de cellules et cadres sont désactivés. */
+.schedule-table.compact-schedule-table{border-collapse:separate!important;border-spacing:0 5px!important;background:transparent!important;border:0!important}
+.compact-schedule-table tbody tr.compact-session{outline:0!important;box-shadow:none!important;border:0!important;background:transparent!important}
+.compact-schedule-table tbody tr.compact-session td{padding:9px 12px!important;border:0!important;outline:0!important;box-shadow:none!important;vertical-align:middle!important;background-image:none!important}
+.compact-schedule-table tbody tr.compact-session.origin-psr td{background:#fff0dd!important;color:#483526!important}
+.compact-schedule-table tbody tr.compact-session.origin-jp td{background:#e3f4e7!important;color:#234632!important}
+.compact-schedule-table tbody tr.compact-session.origin-mah td{background:#e6edff!important;color:#273e65!important}
+.compact-schedule-table tbody tr.compact-session.origin-other td{background:#f3e9f7!important;color:#4c355a!important}
+.compact-schedule-table tbody tr.compact-session td:first-child{border-radius:7px 0 0 7px!important}
+.compact-schedule-table tbody tr.compact-session td:last-child{border-radius:0 7px 7px 0!important}
+.compact-schedule-table tbody tr.compact-session td:before,.compact-schedule-table tbody tr.compact-session td:after{border:0!important;box-shadow:none!important}
+.compact-schedule-table tbody tr.compact-session .compact-formation small{opacity:.9!important;color:inherit!important}
+:root[data-theme="dark"] .compact-schedule-table tbody tr.compact-session td{border:0!important}
