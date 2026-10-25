@@ -118,3 +118,7 @@
 .role-vertical-label{align-self:center;margin:24px 0 18px;writing-mode:vertical-rl;text-orientation:mixed;font-family:Manrope,sans-serif;font-size:20px;font-weight:800;letter-spacing:.16em;color:#d9e7ee;line-height:1.2;pointer-events:none;flex-shrink:0;}
 .sidebar:has(.role-vertical-label:not(.hidden)) .sidebar-bottom{margin-top:auto;}
 @media(max-width:760px){.role-vertical-label{margin:18px 0 12px;font-size:20px;}}
+
+/* 25/10 — Etiquettes de role : Arial Black 24px, vertical, teinte fondue */
+.role-vertical-label{font-family:"Arial Black",Arial,sans-serif!important;font-size:24px!important;font-weight:900!important;writing-mode:vertical-rl!important;text-orientation:mixed!important;letter-spacing:.12em!important;color:rgba(217,231,238,.34)!important;text-shadow:none!important;opacity:1!important;user-select:none!important;}
+@media(max-width:760px){.role-vertical-label{font-size:24px!important;margin:14px 0 10px!important;}}
