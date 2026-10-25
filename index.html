@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="theme-color" content="#123c56"><title>MiniStages EREA — Gestion des mini-stages</title>
-  <link rel="stylesheet" href="styles.css?v=20261025-design-dark-v1">
+  <link rel="stylesheet" href="styles.css?v=20261025-maquette-v2">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="config.js"></script>
 </head>
@@ -44,7 +44,7 @@
   <div id="appView" class="app-layout hidden">
     <aside class="sidebar" id="sidebar">
       <div class="side-brand"><div class="brand-mark small">MS</div><div><strong>MiniStages</strong><small>EREA de Muret</small></div></div>
-      <div class="side-label">ESPACE DE TRAVAIL</div>
+      <div class="side-label">MENU PRINCIPAL</div>
       <nav id="mainNav">
         <button class="nav-item active" data-page="dashboard"><span>◫</span> Tableau de bord</button>
         <button class="nav-item" data-page="applications"><span>▤</span> Inscriptions <b id="pendingBadge" class="nav-badge">0</b></button>
@@ -58,7 +58,7 @@
       <div class="sidebar-bottom"><button type="button" id="helpButton" class="help-box help-button hidden"><strong>Besoin d'aide ?</strong><p>Ouvrir le formulaire de contact.</p></button><button id="logoutButton" class="nav-item logout"><span>↪</span> Déconnexion</button></div>
     </aside>
     <section class="workspace">
-      <header class="topbar"><button id="menuButton" class="icon-btn mobile-only" aria-label="Ouvrir le menu">☰</button><div><div class="breadcrumb">Portail / <span id="breadcrumbCurrent">Tableau de bord</span></div><div class="topbar-title" id="pageHeading">Tableau de bord</div></div><div class="topbar-right"><span id="modePill" class="mode-pill">MODE DÉMO</span><div class="user-chip"><div class="avatar" id="userAvatar">AD</div><div><strong id="userName">Administrateur</strong><small id="userRole">Administrateur</small></div></div></div></header>
+      <header class="topbar"><button id="menuButton" class="icon-btn mobile-only" aria-label="Ouvrir le menu">☰</button><div><div class="breadcrumb">MiniStages / <span id="breadcrumbCurrent">Tableau de bord</span></div><div class="topbar-title" id="pageHeading">Tableau de bord</div></div><div class="topbar-right"><span class="topbar-spark" aria-hidden="true">✦</span><span id="modePill" class="mode-pill">MODE DÉMO</span><div class="user-chip"><div class="avatar" id="userAvatar">AD</div><div><strong id="userName">Administrateur</strong><small id="userRole">Administrateur</small></div></div></div></header>
       <div class="content" id="pageContent"></div>
       <footer>MiniStages EREA · Outil de gestion des inscriptions · <span id="footerYear"></span></footer>
     </section>
@@ -68,6 +68,6 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
   <script>if(window.pdfjsLib)window.pdfjsLib.GlobalWorkerOptions.workerSrc="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";</script>
   <script src="signature-invite.js"></script>
-  <script src="app.js?v=20261025-design-dark-v1"></script>
+  <script src="app.js?v=20261025-maquette-v2"></script>
 </body>
 </html>
