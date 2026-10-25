@@ -54,7 +54,14 @@
     return age>=0&&age<=120?`${age} ans`:'—';
   }
   function shortTime(v){const m=String(v||'').match(/^(\d{1,2}):(\d{2})/);return m?m[1].padStart(2,'0')+':'+m[2]:'—'}
-  function originFormationColor(f){const code=String(f.code||'').trim().toUpperCase().replace(/^CAPA\s+/, 'CAP ');return code==='CAP PSR'?'origin-psr':code==='CAP JP'?'origin-jp':code==='CAP MAH'?'origin-mah':'origin-other'}
+  function originFormationColor(f){
+    const code=String(f?.code||'').toUpperCase().replace(/[^A-Z0-9]/g,'');
+    const name=String(f?.name||'').toLowerCase();
+    if(code.includes('PSR')||/production.*service|restaur/.test(name))return 'origin-psr';
+    if(code.endsWith('JP')||code.includes('JARDINIER')||/jardinier|paysag/.test(name))return 'origin-jp';
+    if(code.includes('MAH')||/horticul|mara[iî]ch|agricol/.test(name))return 'origin-mah';
+    return 'origin-other';
+  }
   function session(id){return state.data.sessions.find(x=>x.id===id)||{date:'',start_time:'',end_time:'',location:'Créneau supprimé'}}
   function roleLabel(r){return ({admin:'Administrateur',college:'Collège / Lycée',family:'Famille',lingerie:'Lingerie',teacher:'Équipe pédagogique'})[r]||r||'Utilisateur'}
   function statusLabel(s){return ({pending:'À traiter',confirmed:'Confirmée',refused:'Refusée',cancelled:'Annulée',completed:'Réalisée'})[s]||s}
@@ -207,7 +214,7 @@
     const name=String(f?.name||'').toLowerCase();
     let type='';
     if(code.includes('PSR')||/production.*service.*restauration|restauration/.test(name))type='plate';
-    else if(code==='JP'||/jardin|paysager/.test(name))type='chainsaw';
+    else if(code.endsWith('JP')||code.includes('JARDINIER')||/jardin|paysager/.test(name))type='chainsaw';
     else if(code==='MAH'||/horticul|mara[iî]ch|agricol/.test(name))type='plant';
     if(!type)return uiIcon('layers');
     const shapes={
