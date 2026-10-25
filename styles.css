@@ -432,3 +432,18 @@ td{padding:12px 14px}
 @media(max-width:1200px){.ref-dashboard-layout{grid-template-columns:1fr}.ref-upcoming{min-height:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 16px}.ref-upcoming header{grid-column:1/-1}.ref-upcoming-item{margin:12px 0}.ref-charts{grid-template-columns:1fr 1fr}}
 @media(max-width:950px){.ref-kpis{grid-template-columns:repeat(3,1fr)}.ref-charts{grid-template-columns:1fr}.ref-donut-wrap{justify-content:center}.ref-bottom-panels{grid-template-columns:1fr}.ref-global-search{width:min(420px,42vw)}}
 @media(max-width:760px){.app-layout{grid-template-columns:1fr}.ref-topbar{padding:10px 14px}.ref-global-search{width:100%;max-width:370px}.ref-topbar .mode-pill,.ref-topbar .user-chip>div:last-child{display:none}.ref-top-icon{display:none}:root[data-theme="dark"] .content{padding:16px}.ref-kpis{grid-template-columns:repeat(2,1fr)}.ref-kpi{min-height:110px}.ref-page-heading{align-items:flex-start;flex-direction:column}.ref-page-heading h2{font-size:25px}.ref-upcoming{grid-template-columns:1fr}.ref-donut-wrap{flex-direction:column}.ref-donut-legend{width:100%}}
+
+/* v4 — lisibilité des statuts et signatures dans les inscriptions */
+:root[data-theme="dark"] .data-panel .status,
+:root[data-theme="dark"] .data-panel .status *,
+:root[data-theme="dark"] .data-panel .signature-status,
+:root[data-theme="dark"] .data-panel .signature-status *,
+:root[data-theme="dark"] .data-panel .workflow-status,
+:root[data-theme="dark"] .data-panel .workflow-status *,
+:root[data-theme="dark"] .kanban-view .status,
+:root[data-theme="dark"] .kanban-view .status *{color:#fff!important;font-weight:700}
+:root[data-theme="dark"] .data-panel [class*="signature"] .status,
+:root[data-theme="dark"] .data-panel [class*="signature"] .status *{color:#fff!important}
+.ref-bar-item>span .formation-svg{display:block;width:19px;height:19px;margin:0 auto 4px;color:#a8dbff}
+.ref-bar-item>span em{font-style:normal;display:block}
+.ref-upcoming-icon .formation-svg{width:27px;height:27px}
