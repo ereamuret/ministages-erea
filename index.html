@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="theme-color" content="#123c56"><title>MiniStages EREA — Gestion des mini-stages</title>
-  <link rel="stylesheet" href="styles.css?v=20261024-stats1">
+  <link rel="stylesheet" href="styles.css?v=20261025-menu1">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="config.js"></script>
 </head>
@@ -52,7 +52,9 @@
         <button class="nav-item" data-page="formations"><span>◇</span> Formations</button>
         <button class="nav-item" data-page="users" data-admin="true"><span>♙</span> Utilisateurs</button>
         <button class="nav-item" data-page="settings" data-admin="true"><span>⚙</span> Paramètres</button>
+        <button id="appearanceNav" class="nav-item hidden" data-page="appearance"><span>⚙</span> Paramètres</button>
       </nav>
+      <div id="roleVerticalLabel" class="role-vertical-label hidden" aria-label="Espace utilisateur"></div>
       <div class="sidebar-bottom"><button type="button" id="helpButton" class="help-box help-button hidden"><strong>Besoin d'aide ?</strong><p>Ouvrir le formulaire de contact.</p></button><button id="logoutButton" class="nav-item logout"><span>↪</span> Déconnexion</button></div>
     </aside>
     <section class="workspace">
@@ -66,6 +68,6 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
   <script>if(window.pdfjsLib)window.pdfjsLib.GlobalWorkerOptions.workerSrc="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";</script>
   <script src="signature-invite.js"></script>
-  <script src="app.js?v=20261024-stats1"></script>
+  <script src="app.js?v=20261025-menu1"></script>
 </body>
 </html>
