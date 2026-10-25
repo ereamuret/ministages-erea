@@ -447,3 +447,14 @@ td{padding:12px 14px}
 .ref-bar-item>span .formation-svg{display:block;width:19px;height:19px;margin:0 auto 4px;color:#a8dbff}
 .ref-bar-item>span em{font-style:normal;display:block}
 .ref-upcoming-icon .formation-svg{width:27px;height:27px}
+
+
+/* v5 : prochains mini-stages — teintes de formation identiques aux créneaux */
+.ref-upcoming-icon.origin-psr{background:var(--formation-psr)!important;color:#483526!important}
+.ref-upcoming-icon.origin-jp{background:var(--formation-jp)!important;color:#234632!important}
+.ref-upcoming-icon.origin-mah{background:var(--formation-mah)!important;color:#273e65!important}
+.ref-upcoming-icon.origin-other{background:var(--formation-other)!important;color:#4c355a!important}
+.ref-upcoming-icon.origin-psr .ui-svg,
+.ref-upcoming-icon.origin-jp .ui-svg,
+.ref-upcoming-icon.origin-mah .ui-svg,
+.ref-upcoming-icon.origin-other .ui-svg{color:inherit!important}
