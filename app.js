@@ -10,7 +10,7 @@
   const demoStoreKey='ministages-erea-demo-v2';
   const themeStoreKey='ministages-erea-theme';
   function applyTheme(theme){const selected=theme==='dark'?'dark':'light';document.documentElement.dataset.theme=selected;try{localStorage.setItem(themeStoreKey,selected)}catch{}}
-  try{applyTheme(localStorage.getItem(themeStoreKey)||'light')}catch{applyTheme('light')}
+  try{applyTheme(localStorage.getItem(themeStoreKey)||'dark')}catch{applyTheme('dark')}
   const branding={logo:null,hostSignature:null};
   const mailDemo={enabled:false,email:''};
   const today = new Date(); today.setHours(0,0,0,0);
