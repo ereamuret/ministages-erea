@@ -293,7 +293,7 @@
     if(!rows.length){toast('Aucune inscription confirmée à exporter.');return}
     const doc=new JsPDF({orientation:'landscape',unit:'mm',format:'a4'});
     const width=297, margin=13, columns=[37,58,61,81,34], x=[13,50,108,169,250], headY=31, lineH=9;
-    const safe=(v)=>String(v??'—').replace(/[\\r\\n]+/g,' ').trim()||'—';
+    const safe=(v)=>String(v??'—').replace(/[\r\n]+/g,' ').trim()||'—';
     const cell=(txt,xx,yy,w)=>doc.text(doc.splitTextToSize(safe(txt),w-4).slice(0,2),xx+2,yy+5.5);
     let y=0,page=0;
     const drawHeader=()=>{

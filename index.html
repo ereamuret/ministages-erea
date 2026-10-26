@@ -3,28 +3,22 @@
 <head>
   <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="theme-color" content="#123c56"><title>MiniStages EREA — Gestion des mini-stages</title>
-  <link rel="stylesheet" href="styles.css?v=20261025-glassy-login-v7">
+  <link rel="stylesheet" href="styles.css?v=20261025-formation-colors-v6">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="config.js"></script>
 </head>
 <body>
   <div id="toast" class="toast" role="status"></div>
-  <main id="loginView" class="login-shell glass-login">
-    <div class="glassy-background" aria-hidden="true">
-      <div class="glassy-beam beam-one"></div><div class="glassy-beam beam-two"></div><div class="glassy-beam beam-three"></div>
-      <div class="glassy-glow glow-one"></div><div class="glassy-glow glow-two"></div>
-      <div class="glassy-grain"></div>
-    </div>
-    <div class="glassy-login-intro"><span class="glassy-brand-icon">✦</span><span>MiniStages <em>EREA de Muret</em></span></div>
-    <section class="login-card glassy-card"><span class="glass-corner corner-tl" aria-hidden="true"></span><span class="glass-corner corner-br" aria-hidden="true"></span>
+  <main id="loginView" class="login-shell">
+    <section class="login-card">
       <div class="brand-mark">MS</div>
-      <p class="eyebrow">ESPACE SÉCURISÉ · EREA DE MURET</p><h1>Bienvenue <span class="glassy-highlight">sur MiniStages</span></h1>
-      <p class="muted">Connectez-vous pour accéder à votre espace de gestion.</p>
+      <p class="eyebrow">EREA DE MURET</p><h1>MiniStages</h1>
+      <p class="muted">Le portail de gestion des mini-stages</p>
       <div id="loginNotice" class="notice hidden"></div>
       <form id="loginForm" class="stack">
         <label>Adresse e-mail<input id="loginEmail" type="email" autocomplete="username" required placeholder="prenom.nom@ac-toulouse.fr"></label>
         <label>Mot de passe<input id="loginPassword" type="password" autocomplete="current-password" required placeholder="Votre mot de passe"></label>
-        <button class="btn primary full glassy-submit" type="submit">Se connecter <span>→</span></button>
+        <button class="btn primary full" type="submit">Se connecter <span>→</span></button>
       </form>
       <div class="login-divider"><span>ou</span></div>
       <button id="showSignupButton" class="btn outline full" type="button">Créer un compte établissement</button>
@@ -79,6 +73,6 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
   <script>if(window.pdfjsLib)window.pdfjsLib.GlobalWorkerOptions.workerSrc="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";</script>
   <script src="signature-invite.js"></script>
-  <script src="app.js?v=20261025-formation-colors-v6"></script>
+  <script src="app.js?v=20261026-pdf-corrige-v6-1"></script>
 </body>
 </html>
