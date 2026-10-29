@@ -458,3 +458,118 @@ td{padding:12px 14px}
 .ref-upcoming-icon.origin-jp .ui-svg,
 .ref-upcoming-icon.origin-mah .ui-svg,
 .ref-upcoming-icon.origin-other .ui-svg{color:inherit!important}
+
+
+/* ==========================================================
+   MiniStages — édition Notion V9
+   Interface sobre, surfaces plates, animation subtile.
+   Aucun changement des flux métier ni des couleurs formation.
+   ========================================================== */
+:root{
+  --notion-radius:12px;--notion-ink:#172535;--notion-muted:#65758b;
+  --notion-stroke:#e7ebf0;--notion-surface:#fff;--notion-canvas:#f7f8fa;
+  --notion-accent:#3688dd
+}
+:root[data-theme="dark"]{
+  --notion-ink:#eaf0f8;--notion-muted:#9eafc3;
+  --notion-stroke:#283648;--notion-surface:#162333;--notion-canvas:#0e1825;
+  --notion-accent:#81b9ff
+}
+body{font-family:Inter,"DM Sans",Arial,sans-serif;letter-spacing:-.012em}
+.app-layout{grid-template-columns:235px minmax(0,1fr)}
+.sidebar{background:#111c2b!important;border-right:1px solid #263547!important;padding:22px 12px 18px}
+.side-brand{padding:4px 12px 24px}
+.side-brand strong{font-weight:750;font-size:19px}
+.side-brand small{color:#9db4cc}
+.sidebar nav{gap:2px}
+.nav-item{min-height:40px;border-radius:8px!important;padding:8px 11px;font-size:12px;font-weight:500;transition:background .2s ease,color .2s ease,transform .2s ease}
+.nav-item:hover{background:#233348!important;transform:translateX(2px)}
+.nav-item.active{background:#233f5e!important;box-shadow:inset 3px 0 #79b5f3!important}
+.nav-item>span{width:25px}
+.nav-item .ui-svg{width:18px;height:18px;stroke-width:1.7}
+:root[data-theme="dark"] .workspace,:root[data-theme="dark"] .content{background:var(--notion-canvas)!important}
+:root[data-theme="dark"] .topbar{background:#111e2e!important;border-bottom:1px solid #25364a!important}
+.topbar{min-height:69px!important;height:69px!important;padding:12px 27px!important}
+.ref-global-search{height:38px;border-radius:9px;background:#1b2c40;border-color:#344960}
+.ref-global-search input{font-size:12px}
+.ref-top-icon{font-size:23px}
+.content{max-width:none;padding:25px 29px!important}
+.ref-page-heading{margin-bottom:23px}
+.ref-page-heading h2{font-size:27px;font-weight:760;letter-spacing:-.045em}
+.ref-page-heading p{font-size:12px;color:#a7b8ca}
+.ref-period{border-radius:8px;background:#1b2a3e;font-size:11px}
+.ref-dashboard-layout{grid-template-columns:minmax(0,1fr) 245px;gap:16px}
+.ref-kpis{gap:12px;margin-bottom:15px}
+.ref-kpi{position:relative;min-height:128px;gap:12px;padding:19px 13px;border-radius:12px!important;
+  background:var(--notion-surface)!important;border:1px solid var(--notion-stroke)!important;
+  box-shadow:0 2px 8px rgba(0,0,0,.07)!important;overflow:hidden;
+  transition:transform .28s cubic-bezier(.2,.8,.2,1),border-color .25s ease,box-shadow .28s ease;
+  animation:notion-card-in .6s cubic-bezier(.2,.8,.2,1) both}
+.ref-kpi:nth-child(2){animation-delay:.06s}
+.ref-kpi:nth-child(3){animation-delay:.12s}
+.ref-kpi:nth-child(4){animation-delay:.18s}
+.ref-kpi:nth-child(5){animation-delay:.24s}
+.ref-kpi::before{content:"";position:absolute;top:0;left:0;right:0;height:2px;opacity:0;
+ background:linear-gradient(90deg,transparent,#76b6ff,transparent);transition:opacity .25s}
+.ref-kpi:hover{transform:translateY(-4px);border-color:#486483!important;box-shadow:0 12px 24px rgba(0,0,0,.16)!important}
+.ref-kpi:hover::before{opacity:1}
+.ref-kpi-icon{width:34px;height:34px;border-radius:9px;background:#23364b}
+.ref-kpi-icon .ui-svg{width:24px;height:24px}
+.ref-kpi-name{font-size:11px;color:#bdcce0;font-weight:650}
+.ref-kpi-body strong{font-size:30px;font-weight:750;letter-spacing:-.04em}
+.ref-kpi-body small{font-size:10px;color:#9fb1c6}
+.ref-charts{gap:15px}
+.ref-chart-card,.ref-upcoming{border-radius:12px!important;background:var(--notion-surface)!important;
+ border:1px solid var(--notion-stroke)!important;box-shadow:0 2px 9px rgba(0,0,0,.045);padding:20px}
+.ref-chart-card header h3,.ref-upcoming header h3{font-size:14px;font-weight:720}
+.ref-chart-card header span{font-size:10px}
+.ref-bar-fill{border-radius:5px 5px 0 0;transform-origin:bottom;animation:notion-bar-grow .8s cubic-bezier(.18,.76,.25,1) both}
+.ref-bar-item:nth-child(2) .ref-bar-fill{animation-delay:.08s}
+.ref-bar-item:nth-child(3) .ref-bar-fill{animation-delay:.16s}
+.ref-bar-item:nth-child(4) .ref-bar-fill{animation-delay:.24s}
+.ref-bar-item:nth-child(5) .ref-bar-fill{animation-delay:.32s}
+.ref-bar-item:nth-child(6) .ref-bar-fill{animation-delay:.4s}
+.ref-bar-item:nth-child(7) .ref-bar-fill{animation-delay:.48s}
+.ref-donut{animation:notion-donut-reveal .85s ease both}
+.ref-donut-hole{background:var(--notion-surface)}
+.ref-upcoming-item{padding:9px 5px;margin:12px 0 16px;border-radius:9px;transition:background .2s,transform .2s}
+.ref-upcoming-item:hover{background:#20334a;transform:translateX(3px)}
+.ref-upcoming-icon{border-radius:10px}
+.ref-bottom-panels{gap:15px}
+.ref-quick button{border-radius:9px;background:#203148;transition:background .2s,transform .2s}
+.ref-quick button:hover{transform:translateY(-2px)}
+.panel,.stat-card,.settings-card,.modal{border-radius:12px!important;box-shadow:0 2px 12px rgba(0,0,0,.055)!important}
+:root[data-theme="dark"] .panel,
+:root[data-theme="dark"] .stat-card,
+:root[data-theme="dark"] .settings-card,
+:root[data-theme="dark"] .modal{background:var(--notion-surface)!important;border:1px solid var(--notion-stroke)!important}
+.btn,.icon-btn{border-radius:8px!important;transition:filter .18s ease,transform .18s ease,background .18s ease}
+.btn:hover{transform:translateY(-1px)}
+.btn.primary{background:#277ab9!important;color:#fff}
+input,select,textarea{border-radius:8px!important}
+:root[data-theme="dark"] input:focus,:root[data-theme="dark"] select:focus,:root[data-theme="dark"] textarea:focus{outline:2px solid #4d91c966;outline-offset:1px}
+.table-wrap{border-radius:9px}
+th{font-size:10px;letter-spacing:.025em;text-transform:none}
+td{font-size:12px}
+.kanban-column{border-radius:10px}
+.kanban-card{border-radius:10px;transition:transform .22s,box-shadow .22s}
+.kanban-card:hover{transform:translateY(-2px);box-shadow:0 9px 18px #0002}
+:root[data-theme="dark"] .kanban-card{background:#1b2d41}
+:root[data-theme="dark"] .data-panel .status,
+:root[data-theme="dark"] .data-panel .status *,
+:root[data-theme="dark"] .kanban-view .status,
+:root[data-theme="dark"] .kanban-view .status *{color:#fff!important;font-weight:700}
+.status{border-radius:6px}
+.login-card{border-radius:14px!important}
+@keyframes notion-card-in{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+@keyframes notion-bar-grow{from{transform:scaleY(.08);opacity:.3}to{transform:scaleY(1);opacity:1}}
+@keyframes notion-donut-reveal{from{opacity:.4;transform:scale(.94) rotate(-15deg)}to{opacity:1;transform:scale(1) rotate(0)}}
+@media(max-width:1400px){.ref-dashboard-layout{grid-template-columns:minmax(0,1fr) 215px}.ref-kpi{padding:14px 10px;gap:7px}.ref-kpi-body strong{font-size:26px}}
+@media(max-width:1200px){.ref-dashboard-layout{grid-template-columns:1fr}}
+@media(max-width:900px){.app-layout{grid-template-columns:210px minmax(0,1fr)}.content{padding:20px!important}}
+@media(max-width:760px){.app-layout{grid-template-columns:1fr}.content{padding:16px!important}.ref-kpis{gap:10px}.ref-kpi{min-height:110px}.ref-dashboard-layout{grid-template-columns:1fr}}
+@media(prefers-reduced-motion:reduce){
+ .ref-kpi,.ref-bar-fill,.ref-donut{animation:none!important}
+ .ref-kpi,.ref-upcoming-item,.kanban-card,.ref-quick button,.btn{transition:none!important}
+ .ref-kpi:hover,.ref-upcoming-item:hover,.kanban-card:hover,.ref-quick button:hover,.btn:hover{transform:none!important}
+}
