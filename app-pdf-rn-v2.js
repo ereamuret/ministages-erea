@@ -511,8 +511,8 @@ const themeToggle=$('#topThemeToggle');if(themeToggle&&!themeToggle.dataset.boun
   let modalInitialState = '';
   function modalFormState(){const modal=$('#modalRoot .modal');if(!modal)return '';return JSON.stringify($$('input,select,textarea',modal).map(el=>({name:el.name||el.id||'',type:el.type||el.tagName,value:el.value,checked:!!el.checked})));}
   function hasUnsavedModalChanges(){return !!$('#modalRoot .modal') && modalInitialState!==modalFormState();}
-  function openModal(title,body,foot=''){ $('#modalRoot').innerHTML=`<div class="modal-backdrop"><section class="modal" role="dialog" aria-modal="true" aria-label="${esc(title)}"><header class="modal-head"><h3>${esc(title)}</h3><button type="button" class="icon-btn" data-action="close-modal" aria-label="Fermer" title="Fermer la fenêtre">×</button></header><div class="modal-body">${body}</div>${foot?`<footer class="modal-foot">${foot}</footer>`:''}</section></div>`;const backdrop=$('#modalRoot .modal-backdrop');const modal=$('#modalRoot .modal');backdrop.addEventListener('click',e=>{if(e.target===backdrop)requestCloseModal()});$('#modalRoot form')?.addEventListener('submit',e=>e.preventDefault());modalInitialState=modalFormState();}
-  function closeModal(){ $('#modalRoot').innerHTML='';modalInitialState='';}
+  function openModal(title,body,foot=''){ clearConventionPreview(); $('#modalRoot').innerHTML=`<div class="modal-backdrop"><section class="modal" role="dialog" aria-modal="true" aria-label="${esc(title)}"><header class="modal-head"><h3>${esc(title)}</h3><button type="button" class="icon-btn" data-action="close-modal" aria-label="Fermer" title="Fermer la fenêtre">×</button></header><div class="modal-body">${body}</div>${foot?`<footer class="modal-foot">${foot}</footer>`:''}</section></div>`;const backdrop=$('#modalRoot .modal-backdrop');const modal=$('#modalRoot .modal');backdrop.addEventListener('click',e=>{if(e.target===backdrop)requestCloseModal()});$('#modalRoot form')?.addEventListener('submit',e=>e.preventDefault());modalInitialState=modalFormState();}
+  function closeModal(){ $('#modalRoot').innerHTML='';modalInitialState='';clearConventionPreview();}
   function requestCloseModal(){if(hasUnsavedModalChanges()&&!window.confirm('Des modifications ne sont pas enregistrées. Voulez-vous les abandonner et fermer cette fenêtre ?'))return;closeModal();}
   document.addEventListener('keydown',e=>{if(e.key==='Escape'&&$('#modalRoot .modal')){e.preventDefault();requestCloseModal()}});
   function field(label,name,value='',type='text',extra=''){return `<label>${label}<input name="${name}" type="${type}" value="${esc(value)}" ${extra}></label>`}
@@ -788,6 +788,18 @@ const themeToggle=$('#topThemeToggle');if(themeToggle&&!themeToggle.dataset.boun
     ctx.drawImage(image,(canvas.width-w*ratio)/2,(canvas.height-h*ratio)/2,w*ratio,h*ratio);
   }
   async function saveOriginSignature(id){const a=state.data.applications.find(x=>x.id===id);if(!a||!originEligible(a)||!signatureFor(a,'guardian'))throw new Error('Signature non autorisée.');if(!window.originSignatureDirty)throw new Error('Dessinez ou importez votre signature.');const png=$('#originSignatureCanvas').toDataURL('image/png');const {error}=await db.rpc('sign_origin_convention',{p_application_id:id,p_version:a.convention_version||1,p_signature_png:png});if(error)throw error;await loadLiveData();closeModal();renderPage();toast('Signature de l’établissement d’origine enregistrée. Convention en attente de validation administrateur.');}
+  // Aperçu unique intégré à MiniStages : ne quitte pas la page et n'ouvre pas d'onglet.
+  let conventionPreviewBlobUrl=null;
+  function clearConventionPreview(){
+    if(conventionPreviewBlobUrl){URL.revokeObjectURL(conventionPreviewBlobUrl);conventionPreviewBlobUrl=null;}
+  }
+  function showConventionPreview(url,title='Convention de mini-stage',isBlob=false){
+    clearConventionPreview();
+    if(isBlob)conventionPreviewBlobUrl=url;
+    const safeUrl=esc(url);
+    openModal(title,`<div class="convention-preview-tools"><span>Document PDF · 2 pages A4</span><a class="btn outline small" href="${safeUrl}" target="_blank" rel="noopener noreferrer">Ouvrir dans un nouvel onglet</a><a class="btn primary small" href="${safeUrl}" download="convention-mini-stage.pdf">Télécharger le PDF</a></div><iframe class="convention-preview-frame" src="${safeUrl}#toolbar=1&navpanes=0" title="Aperçu de la convention PDF"></iframe>`,`<button class="btn outline" data-action="close-modal">Fermer l'aperçu</button>`);
+    $('#modalRoot .modal')?.classList.add('convention-preview-modal');
+  }
   function printConvention(id, mode="download"){
     const a=state.data.applications.find(x=>x.id===id);
     if(!a)return;
@@ -870,17 +882,8 @@ const themeToggle=$('#topThemeToggle');if(themeToggle&&!themeToggle.dataset.boun
     for(const [title,body] of articles){doc.setFont('helvetica','bold');doc.setFontSize(9);doc.setTextColor(22,49,68);doc.text(title,margin,yy);yy+=4.5;doc.setFont('helvetica','normal');doc.setFontSize(legalFont);const lines=doc.splitTextToSize(body.replaceAll('•','-'),183);doc.text(lines,margin+1,yy);yy+=lines.length*legalLine+3.2}
     if(yy>279){toast('Articles hors de la zone imprimable : document non généré.',true);return}
     if(mode==='blob')return doc.output('blob');
-    // Ouvrir le PDF dans un onglet pour prévisualiser puis imprimer depuis le lecteur PDF.
     const pdfUrl=URL.createObjectURL(doc.output('blob'));
-    const tab=window.open(pdfUrl,'_blank');
-    if(!tab){
-      URL.revokeObjectURL(pdfUrl);
-      doc.save(`convention-mini-stage-${String(a.student_last_name||'eleve').replace(/[^a-z0-9-]/gi,'-')}.pdf`);
-      toast('Nouvel onglet bloqué : le PDF a été téléchargé. Autorisez les pop-ups pour l’ouvrir.',true);
-    }else{
-      toast('Convention PDF ouverte dans un nouvel onglet : utilisez le bouton Imprimer du lecteur PDF.');
-      setTimeout(()=>URL.revokeObjectURL(pdfUrl),120000);
-    }
+    showConventionPreview(pdfUrl,`Convention — ${a.student_first_name||''} ${a.student_last_name||''}`,true);
   }
 
   // Critères repris du modèle officiel de compte rendu de mini-stage de l'EREA de Muret.
@@ -978,8 +981,7 @@ const themeToggle=$('#topThemeToggle');if(themeToggle&&!themeToggle.dataset.boun
     if(!db)throw new Error('Connexion Supabase requise.');
     const {data,error}=await db.storage.from('signed-conventions').createSignedUrl(a.final_pdf_path,90);
     if(error||!data?.signedUrl)throw new Error(error?.message||'PDF inaccessible');
-    const tab=window.open(data.signedUrl,'_blank','noopener,noreferrer');
-    if(!tab)window.location.href=data.signedUrl;
+    showConventionPreview(data.signedUrl,`Convention signée — ${a.student_first_name||''} ${a.student_last_name||''}`);
   }
   async function downloadFinalConvention(id){
     const a=state.data.applications.find(x=>x.id===id);
@@ -1008,7 +1010,7 @@ const themeToggle=$('#topThemeToggle');if(themeToggle&&!themeToggle.dataset.boun
     if(!path)throw new Error('PDF non encore archivé pour cette version.');
     const {data,error}=await db.storage.from('signed-conventions').createSignedUrl(path,90);
     if(error||!data?.signedUrl)throw new Error(error?.message||'Accès au PDF refusé');
-    const tab=window.open(data.signedUrl,'_blank','noopener,noreferrer');if(!tab)window.location.href=data.signedUrl;
+    showConventionPreview(data.signedUrl,`Convention archivée — ${a.student_first_name||''} ${a.student_last_name||''}`);
   }
   async function sendGuardianSignatureRequest(id){
     if(!canAdmin()||state.demo||!db)throw new Error('Envoi réservé à l’administrateur connecté.');
