@@ -388,7 +388,7 @@
     if(!school||!input||!status)return;
     const request=++schoolSiretRequest;
     form.dataset.schoolUai=school.uai||'';
-    if(!/^[0-9]{14}$/.test(input.value))input.value='';select?.classList.add('hidden');
+    if(/^[0-9]{14}$/.test(input.value)){status.textContent='SIRET renseigné automatiquement.';return;}input.value='';select?.classList.add('hidden');
     status.textContent='Recherche automatique du SIRET pour '+school.name+'…';
     const current=()=>request===schoolSiretRequest&&form.isConnected&&form.dataset.schoolUai===(school.uai||'');
     try{
@@ -396,6 +396,10 @@
         const {data,error}=await db.from('school_siret_directory').select('siret').eq('uai',school.uai).maybeSingle();
         if(!current())return;
         if(!error&&/^[0-9]{14}$/.test(data?.siret||'')){if(!/^[0-9]{14}$/.test(input.value))input.value=data.siret;status.textContent='SIRET renseigné automatiquement depuis l’annuaire UAI–SIRET.';return;}
+      }
+      if(state.profile?.role==='college'){
+        status.textContent='SIRET non connu : l’administrateur doit le renseigner une seule fois dans le profil établissement (Supabase → profiles → college_siret).';
+        return;
       }
       // L'API Recherche Entreprises recherche des entreprises, pas les UAI :
       // la recherche nom + ville renvoie souvent zéro résultat. Essayer des requêtes graduées.
@@ -744,6 +748,34 @@ const themeToggle=$('#topThemeToggle');if(themeToggle&&!themeToggle.dataset.boun
       if(help)help.textContent='Impossible de joindre l’annuaire officiel pour le moment. Réessayez plus tard ; la saisie manuelle du nom est exceptionnellement autorisée. L’adresse e-mail reste à saisir et ne sera pas inventée.';
     }
   }
+  // V22 : résolution du SIRET pendant la création du compte, avant l'inscription.
+  let signupSiretRequest=0;
+  async function resolveSignupSiret(school){
+    const request=++signupSiretRequest;
+    const input=$('#signupSiret'),help=$('#signupSiretHelp');
+    if(!input||!help)return;
+    input.value='';input.readOnly=true;
+    if(!school?.uai){help.textContent='Sélectionnez un établissement dans l’annuaire.';return;}
+    help.textContent='Recherche de la correspondance UAI–SIRET vérifiée…';
+    try{
+      if(!db)throw new Error('Connexion Supabase indisponible');
+      const {data,error}=await db.from('school_siret_directory').select('siret').eq('uai',school.uai).maybeSingle();
+      if(request!==signupSiretRequest||window.selectedSignupSchool?.uai!==school.uai)return;
+      if(error)throw error;
+      const value=String(data?.siret||'').replace(/\D/g,'');
+      if(/^\d{14}$/.test(value)){
+        input.value=value;input.readOnly=true;
+        help.textContent='SIRET automatiquement identifié et enregistré avec votre compte.';
+      }else{
+        input.readOnly=false;
+        help.textContent='Aucune correspondance UAI–SIRET vérifiée dans la base. Saisissez le SIRET officiel de votre établissement après vérification ; il sera mémorisé.';
+      }
+    }catch(err){
+      if(request!==signupSiretRequest)return;
+      input.readOnly=false;
+      help.textContent='Annuaire SIRET indisponible : renseignez le SIRET officiel après vérification. '+(err.message||'');
+    }
+  }
   function selectSignupSchool(uai){
     const school=(academySchoolsCache||[]).find(s=>s.uai===uai);if(!school)return;
     $('#signupOrganization').value=school.name;
@@ -751,6 +783,7 @@ const themeToggle=$('#topThemeToggle');if(themeToggle&&!themeToggle.dataset.boun
     // Ne jamais inventer une adresse : si le référentiel ne fournit pas de mail, laisser le champ vide.
     $('#signupEmail').value=school.email||'';
     $('#signupEmail').dataset.directoryEmail=school.email||'';
+    void resolveSignupSiret(window.selectedSignupSchool);
     const help=$('#signupSchoolHelp');if(help)help.textContent=`Établissement sélectionné : ${school.name} · ${school.city} · UAI ${school.uai}. ${school.email?'Adresse e-mail issue de l’annuaire ; vous pouvez la vérifier ou la corriger.':'Aucune adresse e-mail disponible dans l’annuaire : saisissez-la manuellement.'}`;
   }
   let schoolsCache=null;
@@ -849,6 +882,8 @@ const themeToggle=$('#topThemeToggle');if(themeToggle&&!themeToggle.dataset.boun
       const siretField=$('#entityForm')?.elements?.college_siret;
       if(prior&&siretField&&!siretField.value){siretField.value=prior.college_siret;const message=$('#siretLookupStatus');if(message)message.textContent='SIRET repris automatiquement de vos précédentes inscriptions.';}
       if(ownSchool.name&&!siretField?.value)void autofillSiretForSchool(ownSchool);
+      // Le SIRET vérifié est lié au profil établissement, pas à une recherche à chaque inscription.
+      if(siretField&&!siretField.value){const note=$('#siretLookupStatus');if(note)note.textContent='SIRET non enregistré pour cet établissement : demandez à l’administrateur de renseigner le SIRET dans le profil Supabase (une seule fois).';}
       void prefillOriginSchoolFromDirectory(a.college_name,a.college_city,ownUai);}
     if(state.profile?.role!=='college'){populateSchoolDropdown(a.college_name);const lookup=$('#collegeLookup');if(lookup)lookup.addEventListener('change',async()=>{try{const schools=await loadHauteGaronneSchools();const school=schools[Number(lookup.value)];if(school)fillCollegeFromDirectory(school);}catch{}});}
     const form=$('#entityForm');
@@ -1220,8 +1255,11 @@ EREA de Muret`;const to=d.contact_email||d.college_email||'';closeModal();render
     if(!strong.test(password)){setNotice('Mot de passe insuffisant : 10 caractères minimum, avec une majuscule, une minuscule, un chiffre et un caractère spécial.');$('#loginNotice').classList.remove('hidden');return}
     if(password!==confirm){setNotice('Les deux mots de passe ne correspondent pas.');$('#loginNotice').classList.remove('hidden');return}
     if(!db){setNotice('La création de compte nécessite la configuration de Supabase. La démonstration ne crée pas de compte réel.');$('#loginNotice').classList.remove('hidden');return}
+    const selectedSchool=window.selectedSignupSchool?.name===organization?window.selectedSignupSchool:null;
+    const signupSiret=String($('#signupSiret')?.value||'').trim();
+    if(signupSiret&&!/^\d{14}$/.test(signupSiret)){setNotice('SIRET : renseignez exactement 14 chiffres.');$('#loginNotice').classList.remove('hidden');return;}
     const button=$('#signupForm button[type="submit"]');button.disabled=true;button.textContent='Création en cours…';
-    try{const {data,error}=await db.auth.signUp({email,password,options:{data:{organization,full_name:organization,signup_source:'college_portal',organization_city:window.selectedSignupSchool?.name===organization?window.selectedSignupSchool.city:'',organization_address:window.selectedSignupSchool?.name===organization?window.selectedSignupSchool.address:'',organization_phone:window.selectedSignupSchool?.name===organization?window.selectedSignupSchool.phone:'',organization_uai:window.selectedSignupSchool?.name===organization?window.selectedSignupSchool.uai:''},emailRedirectTo:window.location.origin+window.location.pathname}});if(error)throw error;
+    try{const {data,error}=await db.auth.signUp({email,password,options:{data:{organization,full_name:organization,signup_source:'college_portal',organization_city:window.selectedSignupSchool?.name===organization?window.selectedSignupSchool.city:'',organization_address:window.selectedSignupSchool?.name===organization?window.selectedSignupSchool.address:'',organization_phone:window.selectedSignupSchool?.name===organization?window.selectedSignupSchool.phone:'',organization_uai:selectedSchool?.uai||'',organization_siret:signupSiret},emailRedirectTo:window.location.origin+window.location.pathname}});if(error)throw error;
       $('#signupForm').reset();$('#signupPanel').classList.add('hidden');$('#loginForm').classList.remove('hidden');$('#showSignupButton').classList.remove('hidden');setNotice(data.session?'Compte établissement créé. Vous pouvez vous connecter.':'Demande de compte établissement enregistrée. Consultez la boîte e-mail saisie pour confirmer l’adresse avant de vous connecter.');$('#loginNotice').classList.remove('hidden');
     }catch(err){setNotice('Création impossible : '+(err.message||'erreur inconnue'));$('#loginNotice').classList.remove('hidden')}finally{button.disabled=false;button.textContent='Créer mon compte'}
   });

@@ -29,6 +29,7 @@
 <form class="stack" id="signupForm">
 <label>Rechercher un établissement (nom, commune ou code UAI)<input aria-describedby="signupSchoolHelp" autocomplete="off" id="signupSchoolSearch" placeholder="Ex. : Muret, Jean-Jaurès, 0311240E" type="search"/></label>
 <label>Établissement — académie de Toulouse<select disabled="" id="signupSchoolLookup" required=""><option value="">Chargement de l’annuaire officiel…</option></select></label>
+<label>SIRET de l’établissement<input id="signupSiret" name="signup_siret" inputmode="numeric" pattern="[0-9]{14}" maxlength="14" placeholder="Rempli automatiquement si référencé" readonly=""/><small class="tiny muted" id="signupSiretHelp">Sélectionnez un établissement pour récupérer son SIRET.</small></label>
 <small class="tiny muted" id="signupSchoolHelp">L’annuaire officiel comprend les collèges, lycées généraux et technologiques, lycées professionnels et EREA ouverts de l’académie de Toulouse.</small>
 <label>Nom officiel de l’établissement<input autocomplete="organization" id="signupOrganization" name="organization" placeholder="Sélectionnez votre établissement" readonly="" required=""/></label>
 <label>E-mail de l’établissement<input autocomplete="username" id="signupEmail" name="email" placeholder="Adresse professionnelle de l’établissement" required="" type="email"/><small class="tiny muted">Prérempli uniquement si l’adresse figure dans l’annuaire. Vérifiez-la et corrigez-la si nécessaire. Aucune adresse n’est inventée.</small></label>
