@@ -1004,8 +1004,47 @@ const themeToggle=$('#topThemeToggle');if(themeToggle&&!themeToggle.dataset.boun
     clearConventionPreview();
     if(isBlob)conventionPreviewBlobUrl=url;
     const safeUrl=esc(url);
-    openModal(title,`<div class="convention-preview-tools"><span>Document PDF · 2 pages A4</span><a class="btn outline small" href="${safeUrl}" target="_blank" rel="noopener noreferrer">Ouvrir dans un nouvel onglet</a><a class="btn primary small" href="${safeUrl}" download="convention-mini-stage.pdf">Télécharger le PDF</a></div><iframe class="convention-preview-frame" src="${safeUrl}#toolbar=1&navpanes=0" title="Aperçu de la convention PDF"></iframe>`,`<button class="btn outline" data-action="close-modal">Fermer l'aperçu</button>`);
+    openModal(title,`<div class="convention-preview-tools"><span>Document PDF · 2 pages A4</span><a class="btn outline small" href="${safeUrl}" target="_blank" rel="noopener noreferrer">Ouvrir dans un nouvel onglet</a><a class="btn primary small" href="${safeUrl}" download="convention-mini-stage.pdf">Télécharger le PDF</a></div><div class="convention-preview-pages" id="conventionPdfPages" role="region" aria-label="Aperçu de la convention"><p class="convention-preview-loading">Chargement des pages PDF…</p></div>`,`<button class="btn outline" data-action="close-modal">Fermer l'aperçu</button>`);
     $('#modalRoot .modal')?.classList.add('convention-preview-modal');
+
+    // Rendu PDF.js : évite le lecteur iframe PDF cassé.
+    (async()=>{
+      const target=document.getElementById('conventionPdfPages');
+      if(!target)return;
+      let pdf=null;
+      try{
+        if(!window.pdfjsLib)throw new Error('Lecteur PDF indisponible.');
+        const response=await fetch(url);
+        if(!response.ok)throw new Error('Impossible de récupérer le PDF (HTTP '+response.status+').');
+        const bytes=new Uint8Array(await response.arrayBuffer());
+        pdf=await window.pdfjsLib.getDocument({data:bytes}).promise;
+        if(!target.isConnected)return;
+        target.replaceChildren();
+        for(let n=1;n<=pdf.numPages;n++){
+          if(!target.isConnected)break;
+          const page=await pdf.getPage(n);
+          const base=page.getViewport({scale:1});
+          const width=Math.min(900,Math.max(320,target.clientWidth-24));
+          const viewport=page.getViewport({scale:Math.min(2,width/base.width)});
+          const canvas=document.createElement('canvas');
+          canvas.width=Math.ceil(viewport.width);
+          canvas.height=Math.ceil(viewport.height);
+          canvas.className='convention-preview-page-canvas';
+          canvas.setAttribute('aria-label','Page '+n+' sur '+pdf.numPages);
+          target.appendChild(canvas);
+          await page.render({canvasContext:canvas.getContext('2d'),viewport}).promise;
+        }
+      }catch(err){
+        if(target.isConnected){
+          target.replaceChildren();
+          const p=document.createElement('p');
+          p.className='convention-preview-error';
+          p.textContent='Aperçu indisponible : '+(err?.message||'Erreur inconnue')+'. Utilisez « Ouvrir dans un nouvel onglet » ou « Télécharger le PDF ».';
+          target.appendChild(p);
+        }
+      }finally{if(pdf)try{await pdf.destroy()}catch(_){}}
+    })();
+
   }
   function printConvention(id, mode="download"){
     const a=state.data.applications.find(x=>x.id===id);
