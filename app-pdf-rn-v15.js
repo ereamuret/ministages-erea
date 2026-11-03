@@ -1000,7 +1000,7 @@ const themeToggle=$('#topThemeToggle');if(themeToggle&&!themeToggle.dataset.boun
   function clearConventionPreview(){
     if(conventionPreviewBlobUrl){URL.revokeObjectURL(conventionPreviewBlobUrl);conventionPreviewBlobUrl=null;}
   }
-  function showConventionPreview(url,title='Convention de mini-stage',isBlob=false){
+  function showConventionPreview(url,title='Convention de mini-stage',isBlob=false,pdfBytes=null){
     // openModal() ferme l'ancien aperçu et révoque son URL temporaire.
     // Ne conserver la nouvelle URL qu'APRÈS openModal(), sinon elle est
     // immédiatement révoquée et fetch(blob:...) échoue (« Failed to fetch »).
@@ -1016,9 +1016,11 @@ const themeToggle=$('#topThemeToggle');if(themeToggle&&!themeToggle.dataset.boun
       let pdf=null;
       try{
         if(!window.pdfjsLib)throw new Error('Lecteur PDF indisponible.');
-        const response=await fetch(url);
-        if(!response.ok)throw new Error('Impossible de récupérer le PDF (HTTP '+response.status+').');
-        const bytes=new Uint8Array(await response.arrayBuffer());
+        const bytes=pdfBytes ? new Uint8Array(pdfBytes) : await (async()=>{
+          const response=await fetch(url);
+          if(!response.ok)throw new Error('Impossible de récupérer le PDF (HTTP '+response.status+').');
+          return new Uint8Array(await response.arrayBuffer());
+        })();
         pdf=await window.pdfjsLib.getDocument({data:bytes}).promise;
         if(!target.isConnected)return;
         target.replaceChildren();
@@ -1130,8 +1132,9 @@ const themeToggle=$('#topThemeToggle');if(themeToggle&&!themeToggle.dataset.boun
     for(const [title,body] of articles){doc.setFont('helvetica','bold');doc.setFontSize(9);doc.setTextColor(22,49,68);doc.text(title,margin,yy);yy+=4.5;doc.setFont('helvetica','normal');doc.setFontSize(legalFont);const lines=doc.splitTextToSize(body.replaceAll('•','-'),183);doc.text(lines,margin+1,yy);yy+=lines.length*legalLine+3.2}
     if(yy>279){toast('Articles hors de la zone imprimable : document non généré.',true);return}
     if(mode==='blob')return doc.output('blob');
-    const pdfUrl=URL.createObjectURL(doc.output('blob'));
-    showConventionPreview(pdfUrl,`Convention — ${a.student_first_name||''} ${a.student_last_name||''}`,true);
+    const pdfBytes=doc.output('arraybuffer');
+    const pdfUrl=URL.createObjectURL(new Blob([pdfBytes],{type:'application/pdf'}));
+    showConventionPreview(pdfUrl,`Convention — ${a.student_first_name||''} ${a.student_last_name||''}`,true,pdfBytes);
   }
 
   // Critères repris du modèle officiel de compte rendu de mini-stage de l'EREA de Muret.
