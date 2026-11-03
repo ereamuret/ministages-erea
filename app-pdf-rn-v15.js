@@ -397,32 +397,44 @@
         if(!current())return;
         if(!error&&/^[0-9]{14}$/.test(data?.siret||'')){input.value=data.siret;status.textContent='SIRET renseigné depuis la correspondance UAI vérifiée.';return;}
       }
-      const query=[school.name,school.city].filter(Boolean).join(' ');
-      const response=await fetch('https://recherche-entreprises.api.gouv.fr/search?q='+encodeURIComponent(query)+'&per_page=25');
-      if(!response.ok)throw new Error('service SIRENE indisponible');
-      const payload=await response.json();if(!current())return;
+      // L'API Recherche Entreprises recherche des entreprises, pas les UAI :
+      // la recherche nom + ville renvoie souvent zéro résultat. Essayer des requêtes graduées.
+      const cleanName=String(school.name||'').replace(/\b(collège|college|lycée|lycee|public|privé|prive|général|general)\b/gi,' ').replace(/\s+/g,' ').trim();
+      const queries=[school.name,cleanName,cleanName+' '+school.city].map(v=>v.trim()).filter((v,i,a)=>v.length>=3&&a.indexOf(v)===i);
       const choices=[];
       const city=siretNormal(school.city),postcode=siretPostcode(school.address);
-      for(const company of payload.results||[]){
-        for(const item of [company.siege,...(company.matching_etablissements||[])].filter(Boolean)){
-          const number=String(item.siret||'').replace(/\D/g,'');if(number.length!==14||choices.some(x=>x.siret===number))continue;
-          const address=[item.adresse,item.commune].filter(Boolean).join(' ');
-          const itemCity=siretNormal(item.commune||'');
-          const sameCity=!!city&&(itemCity===city||siretNormal(address).includes(city));
-          const samePostcode=!!postcode&&siretPostcode(address)===postcode;
-          const schoolName=siretNormal(school.name).replace(/\b(college|lycee|public|prive|general|professionnel|etablissement)\b/g,'').trim();
-          const businessName=siretNormal(company.nom_complet||company.nom_raison_sociale||'');
-          const tokens=schoolName.split(' ').filter(t=>t.length>=4);
-          const nameScore=tokens.length?tokens.filter(t=>businessName.includes(t)).length/tokens.length:0;
-          choices.push({siret:number,label:[company.nom_complet||company.nom_raison_sociale||'',address].filter(Boolean).join(' · '),verified:sameCity&&samePostcode&&nameScore>=0.65});
+      let apiFailure='';
+      for(const query of queries){
+        let payload;
+        try{
+          const response=await fetch('https://recherche-entreprises.api.gouv.fr/search?q='+encodeURIComponent(query)+'&per_page=25');
+          if(!response.ok)throw new Error('HTTP '+response.status);
+          payload=await response.json();
+        }catch(error){apiFailure=error.message||String(error);continue;}
+        if(!current())return;
+        for(const company of payload.results||[]){
+          for(const item of [company.siege,...(company.matching_etablissements||[])].filter(Boolean)){
+            const number=String(item.siret||'').replace(/\D/g,'');if(number.length!==14||choices.some(x=>x.siret===number))continue;
+            const address=[item.adresse,item.commune,item.code_postal].filter(Boolean).join(' ');
+            const itemCity=siretNormal(item.commune||'');
+            const sameCity=!!city&&(itemCity===city||siretNormal(address).includes(city));
+            const samePostcode=!!postcode&&siretPostcode(address)===postcode;
+            const schoolName=siretNormal(school.name).replace(/\b(college|lycee|public|prive|general|professionnel|etablissement)\b/g,'').trim();
+            const businessName=siretNormal([company.nom_complet,company.nom_raison_sociale,company.sigle].filter(Boolean).join(' '));
+            const tokens=schoolName.split(' ').filter(t=>t.length>=4);
+            const nameScore=tokens.length?tokens.filter(t=>businessName.includes(t)).length/tokens.length:0;
+            choices.push({siret:number,label:[company.nom_complet||company.nom_raison_sociale||'',address].filter(Boolean).join(' · '),verified:sameCity&&(samePostcode||!postcode)&&nameScore>=0.65});
+          }
         }
+        if(choices.some(x=>x.verified))break;
       }
+      if(!choices.length&&apiFailure)throw new Error(apiFailure);
       const verified=choices.filter(x=>x.verified);
-      if(verified.length===1){input.value=verified[0].siret;status.textContent='SIRET proposé automatiquement (nom, commune et code postal concordants). À vérifier.';await rememberSchoolSiret(school,input.value);return;}
+      if(verified.length===1){input.value=verified[0].siret;status.textContent='SIRET proposé automatiquement : vérifiez la correspondance avant d’enregistrer.';return;}
       select.innerHTML='<option value="">— Vérifier et choisir le bon SIRET —</option>'+choices.map(x=>'<option value="'+esc(x.siret)+'">'+esc(x.label)+' — '+esc(x.siret)+'</option>').join('');
       select.classList.toggle('hidden',!choices.length);
       status.textContent=verified.length>1?'Plusieurs correspondances possibles : sélectionnez le bon établissement.':choices.length?'Aucune correspondance suffisamment certaine : vérifiez les résultats avant de choisir.':'Aucun SIRET trouvé : saisie manuelle possible.';
-    }catch(err){if(current())status.textContent='Recherche automatique indisponible : saisie manuelle ou bouton Rechercher le SIRET.';}
+    }catch(err){if(current())status.textContent='Recherche automatique impossible ('+(err?.message||'service inaccessible')+'). Utilisez « Rechercher le SIRET » ou saisissez-le manuellement.';}
   }
   function exportGestionPdf(){
     if(!canAdmin())throw new Error('Accès administrateur requis.');
