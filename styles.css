@@ -929,3 +929,8 @@ html,body,#appView,.workspace{max-width:100%!important;overflow-x:clip!important
 :root[data-theme="dark"] #modalRoot .mini-stage-fixed-summary .muted,
 :root[data-theme="dark"] #modalRoot .mini-stage-fixed-summary .tiny {color:#172b3a!important;}
 :root[data-theme="dark"] #modalRoot .mini-stage-fixed-summary {background:#f5f9fc!important;}
+
+/* V29 — contraste du récapitulatif fixe, indépendant du mode et du conteneur de modale. */
+#modalRoot .modal .mini-stage-fixed-summary {background:#f5f9fc!important;color:#172b3a!important;-webkit-text-fill-color:#172b3a!important;color-scheme:light!important;}
+#modalRoot .modal .mini-stage-fixed-summary :is(div,strong,span) {color:#172b3a!important;-webkit-text-fill-color:#172b3a!important;opacity:1!important;}
+#modalRoot .modal .mini-stage-fixed-summary p, #modalRoot .modal .mini-stage-fixed-summary .muted {color:#314a5d!important;-webkit-text-fill-color:#314a5d!important;opacity:1!important;}
