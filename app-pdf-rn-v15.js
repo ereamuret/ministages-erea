@@ -1230,9 +1230,11 @@ const themeToggle=$('#topThemeToggle');if(themeToggle&&!themeToggle.dataset.boun
     const a=state.data.applications.find(x=>x.id===id);
     if(!a||!conventionIsFinal(a))throw new Error('Convention PDF non encore générée.');
     if(!db)throw new Error('Connexion Supabase requise.');
-    const {data,error}=await db.storage.from('signed-conventions').createSignedUrl(a.final_pdf_path,90);
-    if(error||!data?.signedUrl)throw new Error(error?.message||'PDF inaccessible');
-    showConventionPreview(data.signedUrl,`Convention signée — ${a.student_first_name||''} ${a.student_last_name||''}`);
+    const {data,error}=await db.storage.from('signed-conventions').download(a.final_pdf_path);
+    if(error||!data)throw new Error(error?.message||'PDF inaccessible');
+    const pdfBytes=await data.arrayBuffer();
+    const pdfUrl=URL.createObjectURL(new Blob([pdfBytes],{type:'application/pdf'}));
+    showConventionPreview(pdfUrl,`Convention signée — ${a.student_first_name||''} ${a.student_last_name||''}`,true,pdfBytes);
   }
   async function downloadFinalConvention(id){
     const a=state.data.applications.find(x=>x.id===id);
@@ -1259,9 +1261,11 @@ const themeToggle=$('#topThemeToggle');if(themeToggle&&!themeToggle.dataset.boun
     const final=conventionIsFinal(a),draft=a.draft_pdf_path&&a.draft_pdf_version===(a.convention_version||1);
     const path=final?a.final_pdf_path:draft?a.draft_pdf_path:null;
     if(!path)throw new Error('PDF non encore archivé pour cette version.');
-    const {data,error}=await db.storage.from('signed-conventions').createSignedUrl(path,90);
-    if(error||!data?.signedUrl)throw new Error(error?.message||'Accès au PDF refusé');
-    showConventionPreview(data.signedUrl,`Convention archivée — ${a.student_first_name||''} ${a.student_last_name||''}`);
+    const {data,error}=await db.storage.from('signed-conventions').download(path);
+    if(error||!data)throw new Error(error?.message||'Accès au PDF refusé');
+    const pdfBytes=await data.arrayBuffer();
+    const pdfUrl=URL.createObjectURL(new Blob([pdfBytes],{type:'application/pdf'}));
+    showConventionPreview(pdfUrl,`Convention archivée — ${a.student_first_name||''} ${a.student_last_name||''}`,true,pdfBytes);
   }
   async function sendGuardianSignatureRequest(id){
     if(!canAdmin()||state.demo||!db)throw new Error('Envoi réservé à l’administrateur connecté.');
