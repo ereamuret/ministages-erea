@@ -934,3 +934,29 @@ html,body,#appView,.workspace{max-width:100%!important;overflow-x:clip!important
 #modalRoot .modal .mini-stage-fixed-summary {background:#f5f9fc!important;color:#172b3a!important;-webkit-text-fill-color:#172b3a!important;color-scheme:light!important;}
 #modalRoot .modal .mini-stage-fixed-summary :is(div,strong,span) {color:#172b3a!important;-webkit-text-fill-color:#172b3a!important;opacity:1!important;}
 #modalRoot .modal .mini-stage-fixed-summary p, #modalRoot .modal .mini-stage-fixed-summary .muted {color:#314a5d!important;-webkit-text-fill-color:#314a5d!important;opacity:1!important;}
+
+/* V30 — Signature responsable légal / établissement d'origine : contraste fiable en mode sombre.
+   Modales rendues dans #modalRoot, hors de #appView. Sélecteurs limités aux deux canevas. */
+:root[data-theme="dark"] #modalRoot .modal:has(#guardianSignatureCanvas) .modal-body,
+:root[data-theme="dark"] #modalRoot .modal:has(#originSignatureCanvas) .modal-body {
+  background:#f5f9fc!important; color:#172b3a!important; color-scheme:light!important;
+}
+#modalRoot .modal:has(#guardianSignatureCanvas) .modal-body :is(p,strong,span,small,label),
+#modalRoot .modal:has(#originSignatureCanvas) .modal-body :is(p,strong,span,small,label) {
+  color:#172b3a!important; -webkit-text-fill-color:#172b3a!important; opacity:1!important;
+}
+#modalRoot .modal:has(#guardianSignatureCanvas) .modal-body :is(.muted,.tiny),
+#modalRoot .modal:has(#originSignatureCanvas) .modal-body :is(.muted,.tiny) {
+  color:#314a5d!important; -webkit-text-fill-color:#314a5d!important;
+}
+#modalRoot .modal:has(#guardianSignatureCanvas) .signature-pad,
+#modalRoot .modal:has(#originSignatureCanvas) .signature-pad {
+  background:#fff!important; border-color:#b8cbd6!important;
+}
+#modalRoot .modal:has(#guardianSignatureCanvas) .signature-pad canvas,
+#modalRoot .modal:has(#originSignatureCanvas) .signature-pad canvas {
+  background:#fff!important; touch-action:none;
+}
+#modalRoot .modal:has(#originSignatureCanvas) .signature-file-field input {
+  background:#fff!important; color:#172b3a!important; -webkit-text-fill-color:#172b3a!important;
+}
