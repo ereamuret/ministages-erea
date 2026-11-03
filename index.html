@@ -7,6 +7,52 @@
 <link href="styles.css?v=30-signatures-contrast" rel="stylesheet"/>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="config.js"></script>
+
+<style id="guest-signature-contrast-v31">
+/* Page publique ouverte depuis le lien de signature reçu par e-mail.
+   Isolation des couleurs du mode sombre de MiniStages. */
+html:has(.guest-shell), body:has(.guest-shell) {
+  color-scheme: light !important;
+  background: linear-gradient(145deg,#edf5f9,#f8eef2 60%,#f7f5ea) !important;
+  color: #263c4c !important;
+}
+body .guest-shell, body .guest-shell .guest-card {
+  color: #263c4c !important;
+}
+body .guest-shell .guest-card {
+  background: #fff !important;
+  border-color: #e4ebee !important;
+}
+body .guest-shell .guest-card p,
+body .guest-shell .guest-card dd,
+body .guest-shell .guest-card span,
+body .guest-shell .guest-card strong,
+body .guest-shell .guest-card label,
+body .guest-shell .guest-card h2,
+body .guest-shell .guest-card h3,
+body .guest-shell .guest-card #guestMessage {
+  color: #263c4c !important;
+  -webkit-text-fill-color: #263c4c !important;
+}
+body .guest-shell .guest-card dt { color: #526b7b !important; }
+body .guest-shell .guest-card dl > div { background: #f2f7f8 !important; }
+body .guest-shell .guest-card .guest-note { background: #f4f6fb !important; color: #263c4c !important; }
+body .guest-shell .guest-card .guest-consent { background: #fdf1f4 !important; color: #263c4c !important; }
+body .guest-shell .guest-card .guest-consent input { background: #fff !important; border-color: #b57b93 !important; }
+body .guest-shell .guest-card .guest-consent input:checked { background: #96536e !important; border-color: #96536e !important; }
+body .guest-shell .guest-card .guest-actions button:first-child {
+  background: #e7eff2 !important; color: #385568 !important;
+  -webkit-text-fill-color: #385568 !important;
+}
+body .guest-shell .guest-card .guest-actions button:last-child {
+  background: #8d526d !important; color: #fff !important;
+  -webkit-text-fill-color: #fff !important;
+}
+body .guest-shell .guest-card #guestCanvas { background: #fff !important; }
+body .guest-shell .guest-head h1 { color: #254c63 !important; }
+body .guest-shell .guest-head p, body .guest-shell .guest-kicker,
+body .guest-shell .guest-footer { color: #526b7b !important; }
+</style>
 </head>
 <body>
 <div class="toast" id="toast" role="status"></div>
