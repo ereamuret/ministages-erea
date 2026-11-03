@@ -42,11 +42,10 @@
   function loadDemo(){try{const raw=localStorage.getItem(demoStoreKey);state.data=raw?JSON.parse(raw):seed();}catch{state.data=seed()}if(!Array.isArray(state.data.teachers))state.data.teachers=seed().teachers;saveDemo()}
   function saveDemo(){if(state.demo){try{localStorage.setItem(demoStoreKey,JSON.stringify(state.data))}catch{}}}
   const esc=window.MiniStagesUtils.esc;
-  function dateLabel(v,opts={day:'2-digit',month:'long',year:'numeric'}){if(!v)return '—';const d=new Date(`${v}T12:00:00`);return Number.isNaN(+d)?v:new Intl.DateTimeFormat('fr-FR',opts).format(d)}
-  function shortDate(v){return dateLabel(v,{day:'2-digit',month:'short'})}
-  function initials(s='Utilisateur'){return s.trim().split(/\s+/).slice(0,2).map(x=>x[0]||'').join('').toUpperCase()}
+  const dateLabel=window.MiniStagesUtils.dateLabel;
+  const shortDate=window.MiniStagesUtils.shortDate;
+  const initials=window.MiniStagesUtils.initials;
   function formation(id){return state.data.formations.find(x=>x.id===id)||{name:'Formation supprimée',code:'—'}}
-  function shortDate(v){if(!v)return '—';const d=new Date(String(v).slice(0,10)+'T12:00:00');return Number.isNaN(+d)?String(v):new Intl.DateTimeFormat('fr-FR',{day:'2-digit',month:'2-digit',year:'2-digit'}).format(d)}
   const ageAtStage=window.MiniStagesUtils.ageAtStage;
   const shortTime=window.MiniStagesUtils.shortTime;
   const originFormationColor=window.MiniStagesUtils.originFormationColor;

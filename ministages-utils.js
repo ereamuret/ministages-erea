@@ -21,8 +21,11 @@
   function roleLabel(r){return ({admin:'Administrateur',college:'Collège / Lycée',family:'Famille',lingerie:'Lingerie',teacher:'Équipe pédagogique'})[r]||r||'Utilisateur'}
   function statusLabel(s){return ({pending:'À traiter',confirmed:'Confirmée',refused:'Refusée',cancelled:'Annulée',completed:'Réalisée'})[s]||s}
   function statusClass(s){return ({pending:'pending',confirmed:'confirmed',refused:'refused',cancelled:'cancelled',completed:'completed'})[s]||'completed'}
+  function dateLabel(v,opts={day:'2-digit',month:'long',year:'numeric'}){if(!v)return '—';const d=new Date(`${v}T12:00:00`);return Number.isNaN(+d)?v:new Intl.DateTimeFormat('fr-FR',opts).format(d)}
+  function initials(s='Utilisateur'){return s.trim().split(/\s+/).slice(0,2).map(x=>x[0]||'').join('').toUpperCase()}
+  function shortDate(v){if(!v)return '—';const d=new Date(String(v).slice(0,10)+'T12:00:00');return Number.isNaN(+d)?String(v):new Intl.DateTimeFormat('fr-FR',{day:'2-digit',month:'2-digit',year:'2-digit'}).format(d)}
   Object.defineProperty(window,'MiniStagesUtils',{
-    value:Object.freeze({esc,ageAtStage,shortTime,originFormationColor,roleLabel,statusLabel,statusClass}),
+    value:Object.freeze({esc,ageAtStage,shortTime,originFormationColor,roleLabel,statusLabel,statusClass,dateLabel,shortDate,initials}),
     writable:false,configurable:false
   });
 })();
