@@ -723,3 +723,35 @@ td{font-size:12px}
  #appView .workspace .full-width-content .kanban-board{grid-template-columns:1fr!important}
 }
 @media(prefers-reduced-motion:reduce){#appView .sidebar.horizontal-nav .nav-item,#appView .sidebar.horizontal-nav .nav-item .ui-svg{transition:none!important}#appView .sidebar.horizontal-nav .nav-item:hover,#appView .sidebar.horizontal-nav .nav-item:hover .ui-svg{transform:none!important}}
+
+/* V12 : UN SEUL bandeau de navigation en haut, jamais un menu à deux niveaux */
+#appView.app-layout{display:flex!important;flex-direction:column!important;width:100%!important}
+#appView .workspace.full-workspace{display:flex!important;flex-direction:column!important;flex:1 1 auto!important;min-width:0!important}
+#appView .v12-unified-topbar{display:flex!important;flex-wrap:nowrap!important;align-items:center!important;gap:clamp(8px,1vw,18px)!important;height:78px!important;min-height:78px!important;padding:9px clamp(12px,1.5vw,25px)!important;background:#101d2d!important;border-bottom:1px solid #2c4158!important;position:sticky!important;top:0!important;z-index:200!important;box-sizing:border-box!important;width:100%!important;max-width:none!important}
+#appView .v12-unified-topbar #sidebar.horizontal-nav{position:static!important;display:flex!important;flex:1 1 auto!important;min-width:0!important;width:auto!important;height:100%!important;min-height:0!important;max-width:none!important;flex-direction:row!important;flex-wrap:nowrap!important;align-items:center!important;justify-content:flex-start!important;gap:clamp(10px,1.2vw,24px)!important;padding:0!important;margin:0!important;background:transparent!important;border:0!important;box-shadow:none!important;transform:none!important;overflow:visible!important;z-index:auto!important}
+#appView .v12-unified-topbar #sidebar .side-brand{flex:none!important;padding:0!important;margin:0!important;display:flex!important;gap:9px!important}
+#appView .v12-unified-topbar #sidebar .side-brand strong{font-size:17px!important}
+#appView .v12-unified-topbar #sidebar .side-brand small{font-size:10px!important}
+#appView .v12-unified-topbar #sidebar #mainNav{display:flex!important;flex:1 1 auto!important;min-width:0!important;flex-direction:row!important;flex-wrap:nowrap!important;align-items:center!important;justify-content:flex-start!important;gap:clamp(2px,.35vw,8px)!important;overflow-x:auto!important;overflow-y:hidden!important;scrollbar-width:thin!important;scrollbar-color:#38546f transparent!important;padding:3px 2px!important;margin:0!important;white-space:nowrap!important}
+#appView .v12-unified-topbar #sidebar #mainNav .nav-item{display:inline-flex!important;flex:none!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;gap:3px!important;min-width:76px!important;max-width:118px!important;min-height:61px!important;padding:6px 8px!important;border-radius:10px!important;font-size:10px!important;line-height:1.15!important;white-space:normal!important;text-align:center!important;transform:none!important}
+#appView .v12-unified-topbar #sidebar #mainNav .nav-item.hidden{display:none!important}
+#appView .v12-unified-topbar #sidebar #mainNav .nav-item>span{display:grid!important;place-items:center!important;width:28px!important;height:28px!important;border-radius:8px!important}
+#appView .v12-unified-topbar #sidebar #mainNav .nav-item .ui-svg{width:19px!important;height:19px!important}
+#appView .v12-unified-topbar #sidebar #mainNav .nav-item:hover{transform:translateY(-2px)!important}
+#appView .v12-unified-topbar #sidebar .sidebar-bottom{display:flex!important;flex:none!important;padding:0!important;margin:0!important;border:0!important}
+#appView .v12-unified-topbar #sidebar .sidebar-bottom #logoutButton{min-width:35px!important;width:36px!important;height:39px!important;padding:4px!important;font-size:0!important;gap:0!important}
+#appView .v12-unified-topbar #sidebar .sidebar-bottom #logoutButton>span{width:27px!important;height:27px!important}
+#appView .v12-unified-topbar .v12-search{flex:0 1 200px!important;width:200px!important;min-width:105px!important;height:36px!important;margin:0!important;padding:0 10px!important}
+#appView .v12-unified-topbar .v12-search input{font-size:11px!important}
+#appView .v12-unified-topbar .v12-top-actions{flex:none!important;gap:7px!important;margin:0!important}
+#appView .v12-unified-topbar .v12-top-actions .mode-pill{display:none!important}
+#appView .v12-unified-topbar .v12-top-actions .user-chip{padding:0!important}
+#appView .v12-unified-topbar .v12-top-actions .user-chip>div:last-child{display:none!important}
+#appView .v12-unified-topbar #menuButton{display:none!important}
+#appView .workspace .full-width-content{width:100%!important;max-width:none!important;min-width:0!important;padding:20px clamp(10px,1.6vw,25px)!important}
+/* Une barre horizontale ne doit jamais apparaître pour la page entière. */
+html,body,#appView,.workspace{max-width:100%!important;overflow-x:clip!important}
+@media(max-width:1450px){#appView .v12-unified-topbar .v12-search{flex-basis:140px!important;width:140px!important}#appView .v12-unified-topbar #sidebar #mainNav .nav-item{min-width:64px!important;max-width:96px!important;font-size:9px!important}#appView .v12-unified-topbar #sidebar .side-brand strong{font-size:15px!important}}
+@media(max-width:1050px){#appView .v12-unified-topbar{height:72px!important;min-height:72px!important;gap:8px!important}#appView .v12-unified-topbar #sidebar .side-brand small{display:none!important}#appView .v12-unified-topbar #sidebar #mainNav .nav-item{min-width:55px!important;max-width:72px!important;font-size:9px!important}#appView .v12-unified-topbar .v12-search{flex-basis:40px!important;width:40px!important;min-width:40px!important;padding:0 9px!important}#appView .v12-unified-topbar .v12-search input{width:0!important;opacity:0!important;padding:0!important}#appView .v12-unified-topbar .v12-search:focus-within{position:absolute!important;right:65px!important;left:15px!important;top:17px!important;width:auto!important;background:#1b2c40!important;z-index:300!important}#appView .v12-unified-topbar .v12-search:focus-within input{width:100%!important;opacity:1!important}}
+@media(max-width:700px){#appView .v12-unified-topbar #sidebar .side-brand{display:none!important}#appView .v12-unified-topbar #sidebar #mainNav{gap:1px!important}#appView .v12-unified-topbar #sidebar #mainNav .nav-item{min-width:57px!important;max-width:72px!important;padding:4px 3px!important}#appView .v12-unified-topbar #sidebar .sidebar-bottom #logoutButton{width:29px!important;min-width:29px!important}#appView .v12-unified-topbar .v12-top-actions .ref-top-icon{display:none!important}#appView .v12-unified-topbar .v12-top-actions .avatar{width:29px!important;height:29px!important}#appView .v12-unified-topbar .v12-search{min-width:34px!important;flex-basis:34px!important;width:34px!important}}
+@media(prefers-reduced-motion:reduce){#appView .v12-unified-topbar .nav-item,#appView .v12-unified-topbar .ui-svg{animation:none!important;transition:none!important}}
