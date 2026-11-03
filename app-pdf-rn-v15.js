@@ -1001,11 +1001,13 @@ const themeToggle=$('#topThemeToggle');if(themeToggle&&!themeToggle.dataset.boun
     if(conventionPreviewBlobUrl){URL.revokeObjectURL(conventionPreviewBlobUrl);conventionPreviewBlobUrl=null;}
   }
   function showConventionPreview(url,title='Convention de mini-stage',isBlob=false){
-    clearConventionPreview();
-    if(isBlob)conventionPreviewBlobUrl=url;
+    // openModal() ferme l'ancien aperçu et révoque son URL temporaire.
+    // Ne conserver la nouvelle URL qu'APRÈS openModal(), sinon elle est
+    // immédiatement révoquée et fetch(blob:...) échoue (« Failed to fetch »).
     const safeUrl=esc(url);
     openModal(title,`<div class="convention-preview-tools"><span>Document PDF · 2 pages A4</span><a class="btn outline small" href="${safeUrl}" target="_blank" rel="noopener noreferrer">Ouvrir dans un nouvel onglet</a><a class="btn primary small" href="${safeUrl}" download="convention-mini-stage.pdf">Télécharger le PDF</a></div><div class="convention-preview-pages" id="conventionPdfPages" role="region" aria-label="Aperçu de la convention"><p class="convention-preview-loading">Chargement des pages PDF…</p></div>`,`<button class="btn outline" data-action="close-modal">Fermer l'aperçu</button>`);
     $('#modalRoot .modal')?.classList.add('convention-preview-modal');
+    if(isBlob)conventionPreviewBlobUrl=url;
 
     // Rendu PDF.js : évite le lecteur iframe PDF cassé.
     (async()=>{
