@@ -622,3 +622,104 @@ td{font-size:12px}
 @media(max-width:820px){.v10-analytics-body{grid-template-columns:1fr}.v10-ring-frame{max-width:255px}.v10-category-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:550px){.v10-analytics{padding:15px!important}.v10-analytics-heading{flex-direction:column;align-items:stretch}.v10-analytics-heading select{max-width:none}.v10-category-grid{grid-template-columns:1fr}}
 @media(prefers-reduced-motion:reduce){.v10-ring-segment,.v10-category-tile{animation:none!important;transition:none!important}.v10-category-tile:hover{transform:none!important}}
+
+
+/* ================================================================
+ MiniStages V11 — navigation horizontale, largeur utile maximale
+ CSS additif : aucune modification des flux Supabase / signatures.
+ ================================================================= */
+.app-layout{display:flex!important;flex-direction:column!important;grid-template-columns:none!important;width:100%!important;min-width:0!important;min-height:100vh}
+#appView .sidebar.horizontal-nav{position:relative!important;inset:auto!important;width:100%!important;min-width:0!important;max-width:none!important;height:auto!important;min-height:75px!important;display:flex!important;flex-direction:row!important;align-items:center!important;justify-content:space-between!important;gap:20px!important;padding:12px clamp(14px,2vw,34px)!important;background:#101d2d!important;border-right:0!important;border-bottom:1px solid #2b4058!important;z-index:30!important;transform:none!important;overflow:visible!important}
+#appView .sidebar.horizontal-nav .side-brand{display:flex!important;align-items:center!important;flex:none!important;gap:10px!important;padding:0!important;margin:0!important;white-space:nowrap}
+#appView .sidebar.horizontal-nav .side-brand .brand-school{font-size:26px!important}
+#appView .sidebar.horizontal-nav .side-brand strong{font-size:18px!important}
+#appView .sidebar.horizontal-nav .side-brand small{font-size:10px!important}
+#appView .sidebar.horizontal-nav #mainNav{display:flex!important;flex-direction:row!important;align-items:center!important;justify-content:center!important;flex:1 1 auto!important;gap:6px!important;min-width:0!important;padding:0!important;margin:0!important;overflow:visible!important}
+#appView .sidebar.horizontal-nav .nav-item{display:inline-flex!important;align-items:center!important;justify-content:center!important;gap:7px!important;flex:none!important;min-height:46px!important;padding:8px 11px!important;margin:0!important;white-space:nowrap!important;border-radius:11px!important;font-size:12px!important;font-weight:650!important;line-height:1.2!important;transition:background .22s ease,transform .22s ease,box-shadow .22s ease!important}
+#appView .sidebar.horizontal-nav .nav-item.hidden{display:none!important}
+#appView .sidebar.horizontal-nav .nav-item>span{display:inline-flex!important;width:29px!important;height:29px!important;align-items:center!important;justify-content:center!important;flex:none!important;border-radius:9px!important;background:rgba(113,183,250,.12)!important}
+#appView .sidebar.horizontal-nav .nav-item .ui-svg{width:19px!important;height:19px!important;transition:transform .3s cubic-bezier(.2,.7,.2,1),filter .25s!important}
+#appView .sidebar.horizontal-nav .nav-item:hover{transform:translateY(-2px)!important;background:#263a54!important;box-shadow:0 5px 14px #0002!important}
+#appView .sidebar.horizontal-nav .nav-item:hover .ui-svg{transform:scale(1.15) rotate(-5deg);filter:drop-shadow(0 0 4px currentColor)}
+#appView .sidebar.horizontal-nav .nav-item.active{background:#254565!important;box-shadow:inset 0 -2px #71bfff!important}
+#appView .sidebar.horizontal-nav .nav-item[data-page="dashboard"]>span{color:#8abaff!important;background:#244775!important}
+#appView .sidebar.horizontal-nav .nav-item[data-page="applications"]>span{color:#ef9dc8!important;background:#5b304e!important}
+#appView .sidebar.horizontal-nav .nav-item[data-page="sessions"]>span{color:#81d4ff!important;background:#244c69!important}
+#appView .sidebar.horizontal-nav .nav-item[data-page="formations"]>span{color:#8ce0b0!important;background:#235044!important}
+#appView .sidebar.horizontal-nav .nav-item[data-page="users"]>span{color:#c2a4ff!important;background:#44345f!important}
+#appView .sidebar.horizontal-nav .nav-item[data-page="settings"]>span,
+#appView .sidebar.horizontal-nav .nav-item[data-page="appearance"]>span{color:#ffca7b!important;background:#5a4630!important}
+#appView .sidebar.horizontal-nav .sidebar-bottom{display:flex!important;align-items:center!important;flex:none!important;padding:0!important;border:0!important;margin:0!important}
+#appView .sidebar.horizontal-nav .sidebar-bottom .help-box{display:none!important}
+#appView .sidebar.horizontal-nav .sidebar-bottom .nav-item.logout{color:#a9c0d8!important;font-size:11px!important;padding:7px!important}
+#appView .sidebar.horizontal-nav .role-vertical-label{display:none!important}
+#appView .workspace.full-workspace{display:flex!important;flex-direction:column!important;flex:1 1 auto!important;width:100%!important;min-width:0!important;max-width:none!important;margin:0!important}
+#appView .workspace .ref-topbar{height:60px!important;min-height:60px!important;padding:9px clamp(14px,2vw,34px)!important}
+#appView .workspace .full-width-content{width:100%!important;max-width:none!important;min-width:0!important;box-sizing:border-box!important;padding:22px clamp(12px,1.6vw,28px)!important;flex:1 1 auto}
+#appView .workspace .full-width-content .panel.data-panel{width:100%!important;max-width:none!important;min-width:0!important;box-sizing:border-box!important;padding:12px!important}
+#appView .workspace .full-width-content .data-panel .table-wrap{width:100%!important;max-width:100%!important;min-width:0!important;overflow-x:visible!important;overflow-y:visible!important}
+#appView .workspace .full-width-content .data-panel table{width:100%!important;max-width:100%!important;min-width:0!important;table-layout:fixed!important;border-collapse:collapse!important}
+#appView .workspace .full-width-content .data-panel th,#appView .workspace .full-width-content .data-panel td{min-width:0!important;max-width:none!important;overflow-wrap:anywhere!important;word-break:normal!important;white-space:normal!important;padding:9px 5px!important;font-size:10.5px!important;vertical-align:middle!important}
+#appView .workspace .full-width-content .data-panel th{font-size:10px!important}
+#appView .workspace .full-width-content .data-panel th:nth-child(1){width:10%}
+#appView .workspace .full-width-content .data-panel th:nth-child(2){width:11%}
+#appView .workspace .full-width-content .data-panel th:nth-child(3){width:12%}
+#appView .workspace .full-width-content .data-panel th:nth-child(4){width:11%}
+#appView .workspace .full-width-content .data-panel th:nth-child(5){width:8%}
+#appView .workspace .full-width-content .data-panel th:nth-child(6){width:28%}
+#appView .workspace .full-width-content .data-panel th:nth-child(7){width:9%}
+#appView .workspace .full-width-content .data-panel th:nth-child(8){width:11%}
+#appView .workspace .full-width-content .data-panel .cell-title{font-size:11px!important;line-height:1.3!important}
+#appView .workspace .full-width-content .data-panel .cell-sub{font-size:9.5px!important;line-height:1.3!important;overflow-wrap:anywhere!important}
+#appView .workspace .full-width-content .data-panel .row-actions{display:flex!important;flex-wrap:wrap!important;gap:3px!important;justify-content:flex-start!important}
+#appView .workspace .full-width-content .data-panel .row-actions .icon-btn{width:25px!important;min-width:25px!important;height:25px!important;padding:3px!important}
+#appView .workspace .full-width-content .data-panel .btn.small{font-size:9px!important;white-space:normal!important;padding:5px!important;min-height:25px!important}
+#appView .workspace .full-width-content .data-panel .status{font-size:9px!important;white-space:normal!important;line-height:1.25!important;padding:4px 5px!important}
+#appView .workspace .full-width-content .data-panel .stage-status-select{width:100%!important;min-width:0!important;font-size:10px!important}
+#appView .workspace .full-width-content .data-panel .suivi-group{text-align:center!important}
+#appView .workspace .full-width-content .data-panel .suivi-subheaders th{font-size:9px!important}
+#appView .workspace .full-width-content .data-panel .suivi-subheaders th:nth-child(1),#appView .workspace .full-width-content .data-panel .suivi-subheaders th:nth-child(2){width:33%}
+#appView .workspace .full-width-content .data-panel .suivi-subheaders th:nth-child(3){width:34%}
+#appView .workspace .full-width-content .toolbar{display:flex!important;flex-wrap:wrap!important;gap:10px!important}
+#appView .workspace .full-width-content .welcome-row{flex-wrap:wrap!important;gap:12px!important}
+#appView .workspace .full-width-content .page-actions{display:flex!important;flex-wrap:wrap!important;gap:7px!important}
+#appView .workspace .full-width-content .kanban-board{grid-template-columns:repeat(5,minmax(0,1fr))!important;overflow-x:visible!important}
+@media(max-width:1300px){
+ #appView .sidebar.horizontal-nav{flex-wrap:wrap!important;justify-content:center!important;gap:10px!important}
+ #appView .sidebar.horizontal-nav #mainNav{order:3!important;width:100%!important;flex-basis:100%!important;flex-wrap:wrap!important}
+ #appView .sidebar.horizontal-nav .sidebar-bottom{margin-left:auto!important}
+ #appView .workspace .full-width-content .data-panel th,#appView .workspace .full-width-content .data-panel td{font-size:10px!important;padding:8px 4px!important}
+ #appView .workspace .full-width-content .kanban-board{grid-template-columns:repeat(3,minmax(0,1fr))!important}
+}
+@media(max-width:1100px){
+ /* Les lignes deviennent des fiches complètes : aucun scroll horizontal */
+ #appView .workspace .full-width-content .data-panel table,#appView .workspace .full-width-content .data-panel tbody{display:block!important;width:100%!important}
+ #appView .workspace .full-width-content .data-panel thead{display:none!important}
+ #appView .workspace .full-width-content .data-panel tbody{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:12px!important}
+ #appView .workspace .full-width-content .data-panel tbody tr{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:0 10px!important;min-width:0!important;border:1px solid var(--notion-stroke,#304259)!important;border-radius:12px!important;padding:12px!important;background:var(--notion-surface,#172538)!important}
+ #appView .workspace .full-width-content .data-panel tbody td{display:block!important;width:auto!important;min-width:0!important;border:0!important;padding:7px 4px!important;background:transparent!important;color:inherit!important}
+ #appView .workspace .full-width-content .data-panel tbody td::before{display:block!important;color:#89abc7!important;font-size:9px!important;font-weight:750!important;letter-spacing:.04em!important;text-transform:uppercase!important;margin-bottom:4px!important}
+ #appView .workspace .full-width-content .data-panel tbody td:nth-child(1)::before{content:'Élève'}
+ #appView .workspace .full-width-content .data-panel tbody td:nth-child(2)::before{content:'Établissement'}
+ #appView .workspace .full-width-content .data-panel tbody td:nth-child(3)::before{content:'Formation / date'}
+ #appView .workspace .full-width-content .data-panel tbody td:nth-child(4)::before{content:'Contact'}
+ #appView .workspace .full-width-content .data-panel tbody td:nth-child(5)::before{content:'Statut'}
+ #appView .workspace .full-width-content .data-panel tbody td:nth-child(6)::before{content:'Signature responsable'}
+ #appView .workspace .full-width-content .data-panel tbody td:nth-child(7)::before{content:'Signature établissement'}
+ #appView .workspace .full-width-content .data-panel tbody td:nth-child(8)::before{content:'Convention'}
+ #appView .workspace .full-width-content .data-panel tbody td:nth-child(9)::before{content:'Stage'}
+ #appView .workspace .full-width-content .data-panel tbody td:nth-child(10)::before{content:'Actions'}
+ #appView .workspace .full-width-content .data-panel tbody td:nth-child(3),#appView .workspace .full-width-content .data-panel tbody td:nth-child(10){grid-column:1/-1!important}
+ #appView .workspace .full-width-content .data-panel tbody tr td[colspan]{grid-column:1/-1!important}
+ #appView .workspace .full-width-content .kanban-board{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+}
+@media(max-width:700px){
+ #appView .sidebar.horizontal-nav{padding:11px!important}
+ #appView .sidebar.horizontal-nav #mainNav{justify-content:flex-start!important;gap:4px!important}
+ #appView .sidebar.horizontal-nav .nav-item{font-size:10px!important;padding:6px 8px!important;min-height:38px!important}
+ #appView .sidebar.horizontal-nav .nav-item>span{width:24px!important;height:24px!important}
+ #appView .workspace .ref-topbar .ref-global-search{max-width:none!important;width:100%!important}
+ #appView .workspace .full-width-content .data-panel tbody{grid-template-columns:1fr!important}
+ #appView .workspace .full-width-content .kanban-board{grid-template-columns:1fr!important}
+}
+@media(prefers-reduced-motion:reduce){#appView .sidebar.horizontal-nav .nav-item,#appView .sidebar.horizontal-nav .nav-item .ui-svg{transition:none!important}#appView .sidebar.horizontal-nav .nav-item:hover,#appView .sidebar.horizontal-nav .nav-item:hover .ui-svg{transform:none!important}}
