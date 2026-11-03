@@ -883,3 +883,39 @@ html,body,#appView,.workspace{max-width:100%!important;overflow-x:clip!important
 .origin-search-label{display:flex;align-items:center;gap:7px;font-size:11px}
 .origin-search-label input{width:180px;max-width:25vw;min-width:95px;padding:8px;border-radius:8px}
 @media(max-width:1050px){#appView.role-sidebar-layout .origin-reservations-table th,#appView.role-sidebar-layout .origin-reservations-table td{padding:5px 2px;font-size:9px}}
+
+/* V21 — établissement uniquement : réduire Convention, élargir Statut. */
+#appView.role-sidebar-layout .origin-reservations-table{min-width:0!important;width:100%!important;overflow:hidden!important}
+#appView.role-sidebar-layout .origin-reservations-table .table-wrap{overflow-x:hidden!important;max-width:100%!important}
+#appView.role-sidebar-layout .origin-reservations-table table{table-layout:fixed!important;width:100%!important;min-width:0!important}
+#appView.role-sidebar-layout .origin-reservations-table th:nth-child(1){width:14%!important}
+#appView.role-sidebar-layout .origin-reservations-table th:nth-child(2){width:13%!important}
+#appView.role-sidebar-layout .origin-reservations-table th:nth-child(3){width:12%!important}
+#appView.role-sidebar-layout .origin-reservations-table th:nth-child(4){width:12%!important}
+#appView.role-sidebar-layout .origin-reservations-table th:nth-child(5){width:12%!important}
+#appView.role-sidebar-layout .origin-reservations-table th:nth-child(6){width:7%!important}
+#appView.role-sidebar-layout .origin-reservations-table th:nth-child(7){width:13%!important}
+#appView.role-sidebar-layout .origin-reservations-table th:nth-child(8){width:11%!important}
+#appView.role-sidebar-layout .origin-reservations-table th:nth-child(9){width:6%!important}
+#appView.role-sidebar-layout .origin-reservations-table td,#appView.role-sidebar-layout .origin-reservations-table th{padding:5px 3px!important;font-size:9px!important;min-width:0!important;overflow-wrap:anywhere!important;white-space:normal!important}
+#appView.role-sidebar-layout .origin-reservations-table .btn.small{max-width:100%!important;font-size:9px!important;padding:3px!important}
+#appView.role-sidebar-layout .origin-reservations-table .status{max-width:100%!important;white-space:normal!important}
+
+/* V26 : cacher totalement la navigation tant que l'utilisateur n'est pas connecté.
+   La V12 utilisait display:flex!important, qui annulait .hidden. */
+#appView.hidden, #appView[aria-hidden="true"]{display:none!important;visibility:hidden!important;pointer-events:none!important}
+/* V26 : texte noir lisible dans la section 6 du formulaire pour les comptes établissement en mode sombre. */
+:root[data-theme="dark"] #appView.role-college .modal .mini-stage-section-title,
+:root[data-theme="dark"] #appView.role-college .modal .mini-stage-section-title ~ label,
+:root[data-theme="dark"] #appView.role-college .modal .mini-stage-section-title ~ label strong,
+:root[data-theme="dark"] #appView.role-college .modal .mini-stage-section-title ~ div,
+:root[data-theme="dark"] #appView.role-college .modal .mini-stage-section-title ~ div strong,
+:root[data-theme="dark"] #appView.role-college .modal .mini-stage-section-title ~ div p{color:#172b3a!important}
+:root[data-theme="dark"] #appView.role-college .modal .mini-stage-section-title ~ label select,
+:root[data-theme="dark"] #appView.role-college .modal .mini-stage-section-title ~ label textarea,
+:root[data-theme="dark"] #appView.role-college .modal .mini-stage-section-title ~ label input{color:#172b3a!important;background:#fff!important}
+:root[data-theme="dark"] #appView.role-college .modal .mini-stage-section-title ~ label small{color:#314a5d!important}
+
+/* V27 — Afficher le nom officiel du compte Établissement au lieu des initiales */
+#appView.role-college #userAvatar.establishment-name-avatar{width:auto!important;min-width:0!important;max-width:min(300px,28vw)!important;height:auto!important;min-height:34px!important;padding:7px 12px!important;border-radius:11px!important;display:block!important;overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important;font-size:11px!important;line-height:20px!important;text-align:center!important;letter-spacing:0!important}
+@media(max-width:760px){#appView.role-college #userAvatar.establishment-name-avatar{max-width:38vw!important;min-height:29px!important;padding:5px 8px!important;font-size:10px!important}}
