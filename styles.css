@@ -862,3 +862,24 @@ html,body,#appView,.workspace{max-width:100%!important;overflow-x:clip!important
 #appView.role-sidebar-layout .lingerie-table tr td[ colspan ]{white-space:normal!important}
 #appView.role-sidebar-layout .data-panel .table-wrap:has(> .lingerie-table){width:100%!important;overflow-x:hidden!important}
 @media(max-width:900px){#appView.role-sidebar-layout .lingerie-table th,#appView.role-sidebar-layout .lingerie-table td{padding:4px 2px!important;font-size:9px!important}}
+
+/* V19 : réservations établissement — 9 colonnes ajustées, sans défilement horizontal */
+#appView.role-sidebar-layout .origin-reservations-table{width:100%;min-width:0;padding:0;overflow:hidden}
+#appView.role-sidebar-layout .origin-reservations-table .table-wrap{width:100%;max-width:100%;overflow-x:hidden}
+#appView.role-sidebar-layout .origin-reservations-table table{width:100%;min-width:0;table-layout:fixed;border-collapse:collapse}
+#appView.role-sidebar-layout .origin-reservations-table th,#appView.role-sidebar-layout .origin-reservations-table td{box-sizing:border-box;padding:7px 4px;font-size:10px;line-height:1.25;min-width:0;overflow-wrap:anywhere;vertical-align:middle}
+#appView.role-sidebar-layout .origin-reservations-table th:nth-child(1){width:13%}
+#appView.role-sidebar-layout .origin-reservations-table th:nth-child(2){width:12%}
+#appView.role-sidebar-layout .origin-reservations-table th:nth-child(3){width:10%}
+#appView.role-sidebar-layout .origin-reservations-table th:nth-child(4){width:11%}
+#appView.role-sidebar-layout .origin-reservations-table th:nth-child(5){width:11%}
+#appView.role-sidebar-layout .origin-reservations-table th:nth-child(6){width:12%}
+#appView.role-sidebar-layout .origin-reservations-table th:nth-child(7){width:12%}
+#appView.role-sidebar-layout .origin-reservations-table th:nth-child(8){width:12%}
+#appView.role-sidebar-layout .origin-reservations-table th:nth-child(9){width:7%}
+#appView.role-sidebar-layout .origin-reservations-table .btn.small{font-size:9px;min-height:24px;padding:4px 5px;white-space:normal;line-height:1.15}
+#appView.role-sidebar-layout .origin-reservations-table .status{font-size:9px;padding:3px 4px;line-height:1.15;white-space:normal;max-width:100%;display:inline-block}
+#appView.role-sidebar-layout .origin-reservations-table .cell-sub{font-size:9px;margin-top:2px}
+.origin-search-label{display:flex;align-items:center;gap:7px;font-size:11px}
+.origin-search-label input{width:180px;max-width:25vw;min-width:95px;padding:8px;border-radius:8px}
+@media(max-width:1050px){#appView.role-sidebar-layout .origin-reservations-table th,#appView.role-sidebar-layout .origin-reservations-table td{padding:5px 2px;font-size:9px}}
