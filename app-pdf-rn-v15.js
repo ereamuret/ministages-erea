@@ -393,6 +393,42 @@
     officialSchoolSiretCache.set(key,result);
     return result;
   }
+  // V25 : l'API Recherche d'entreprises renvoie le SIRET dans siege et
+  // matching_etablissements, et l'UAI dans liste_uai. Vérification exacte,
+  // sans accepter un homonyme ni confondre SIREN (9 chiffres) et SIRET (14).
+  const enterpriseSchoolSiretCache=new Map();
+  async function enterpriseSiretByUai(school){
+    const uai=String(school?.uai||'').trim().toUpperCase();
+    if(!/^[0-9]{7}[A-Z]$/.test(uai))return null;
+    if(enterpriseSchoolSiretCache.has(uai))return enterpriseSchoolSiretCache.get(uai);
+    const queries=[school.name+' '+(school.city||''),school.name,uai].map(q=>String(q||'').trim()).filter(Boolean);
+    const unique=[...new Set(queries)];
+    const matches=new Map();
+    let completed=false;
+    let lastError=null;
+    for(const q of unique){
+      try{
+        const url='https://recherche-entreprises.api.gouv.fr/search?q='+encodeURIComponent(q)+'&per_page=25';
+        const response=await fetch(url,{headers:{Accept:'application/json'}});
+        if(!response.ok)throw new Error('API entreprises HTTP '+response.status);
+        const payload=await response.json();completed=true;
+        for(const company of payload.results||[]){
+          for(const establishment of [company.siege,...(company.matching_etablissements||[])].filter(Boolean)){
+            const number=String(establishment.siret||'').replace(/\D/g,'');
+            const codes=Array.isArray(establishment.liste_uai)?establishment.liste_uai:[];
+            const exact=codes.some(code=>String(code||'').trim().toUpperCase()===uai);
+            if(!exact||!/^\d{14}$/.test(number)||establishment.etat_administratif!=='A')continue;
+            matches.set(number,{uai,siret:number,name:company.nom_complet||school.name,city:establishment.libelle_commune||school.city||''});
+          }
+        }
+        if(matches.size===1){const result=[...matches.values()][0];enterpriseSchoolSiretCache.set(uai,result);return result;}
+      }catch(error){lastError=error;console.warn('Recherche SIRET entreprise:',error);}
+    }
+    if(matches.size>1)throw new Error('Plusieurs SIRET actifs correspondent à cet UAI : vérification manuelle nécessaire.');
+    if(!completed&&lastError)throw lastError;
+    enterpriseSchoolSiretCache.set(uai,null);
+    return null;
+  }
   // V16 : correspondance UAI / SIRET mémorisée et recherche automatique, sans attribution incertaine.
   let schoolSiretRequest=0;
   function siretNormal(v){return String(v||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]/g,' ').replace(/\s+/g,' ').trim()}
@@ -416,10 +452,15 @@
         if(!current())return;
         if(!error&&/^[0-9]{14}$/.test(data?.siret||'')){if(!/^[0-9]{14}$/.test(input.value))input.value=data.siret;status.textContent='SIRET renseigné automatiquement depuis l’annuaire UAI–SIRET.';return;}
       }
-      const official=await officialSiretByUai(school.uai);
+      let official=null;
+      try{official=await officialSiretByUai(school.uai)}catch(error){console.warn('Annuaire Education nationale SIRET:',error)}
       if(!current())return;
       if(official){input.value=official.siret;status.textContent='SIRET renseigné depuis l’annuaire officiel de l’Éducation nationale (UAI vérifié).';return;}
-      status.textContent='Aucun SIRET officiel disponible pour cet UAI. Vérifiez le numéro avant de le renseigner.';
+      status.textContent='Vérification de l’UAI dans l’annuaire des entreprises…';
+      const enterprise=await enterpriseSiretByUai(school);
+      if(!current())return;
+      if(enterprise){input.value=enterprise.siret;status.textContent='SIRET trouvé automatiquement (UAI vérifié dans l’annuaire des entreprises).';void rememberSchoolSiret(school,enterprise.siret);return;}
+      status.textContent='Aucun SIRET vérifié trouvé pour cet UAI. Saisie manuelle possible.';
     }catch(err){if(current())status.textContent='Recherche automatique impossible ('+(err?.message||'service inaccessible')+'). Si nécessaire, renseignez-le manuellement.';}
   }
   function exportGestionPdf(){
@@ -756,11 +797,16 @@ const themeToggle=$('#topThemeToggle');if(themeToggle&&!themeToggle.dataset.boun
       }
       // Le champ officiel du jeu de données est siren_siret, non siret.
       if(/^\d{14}$/.test(String(school.siret||''))){setFound(String(school.siret),'annuaire de l’Éducation nationale');return;}
-      const official=await officialSiretByUai(school.uai);
+      let official=null;
+      try{official=await officialSiretByUai(school.uai)}catch(error){console.warn('Annuaire Education nationale SIRET:',error)}
       if(!stillCurrent())return;
       if(official){setFound(official.siret,'annuaire officiel — code UAI exact');return;}
+      help.textContent='Recherche dans l’annuaire des entreprises avec vérification du code UAI…';
+      const enterprise=await enterpriseSiretByUai(school);
+      if(!stillCurrent())return;
+      if(enterprise){setFound(enterprise.siret,'annuaire des entreprises — code UAI exact');void rememberSchoolSiret(school,enterprise.siret);return;}
       input.readOnly=false;
-      help.textContent='Aucun SIRET publié pour cet UAI dans l’annuaire officiel. Renseignez le SIRET vérifié une seule fois.';
+      help.textContent='Aucun SIRET vérifié pour cet UAI. Renseignez-le une seule fois.';
     }catch(e){
       if(!stillCurrent())return;
       input.readOnly=false;
