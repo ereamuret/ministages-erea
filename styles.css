@@ -919,3 +919,13 @@ html,body,#appView,.workspace{max-width:100%!important;overflow-x:clip!important
 /* V27 — Afficher le nom officiel du compte Établissement au lieu des initiales */
 #appView.role-college #userAvatar.establishment-name-avatar{width:auto!important;min-width:0!important;max-width:min(300px,28vw)!important;height:auto!important;min-height:34px!important;padding:7px 12px!important;border-radius:11px!important;display:block!important;overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important;font-size:11px!important;line-height:20px!important;text-align:center!important;letter-spacing:0!important}
 @media(max-width:760px){#appView.role-college #userAvatar.establishment-name-avatar{max-width:38vw!important;min-height:29px!important;padding:5px 8px!important;font-size:10px!important}}
+
+/* V28 — Correction ciblée du récapitulatif Mini-stage en mode sombre.
+   Le modalRoot est hors de #appView : les sélecteurs V26 ne s'appliquaient pas. */
+:root[data-theme="dark"] #modalRoot .mini-stage-fixed-summary,
+:root[data-theme="dark"] #modalRoot .mini-stage-fixed-summary div,
+:root[data-theme="dark"] #modalRoot .mini-stage-fixed-summary strong,
+:root[data-theme="dark"] #modalRoot .mini-stage-fixed-summary p,
+:root[data-theme="dark"] #modalRoot .mini-stage-fixed-summary .muted,
+:root[data-theme="dark"] #modalRoot .mini-stage-fixed-summary .tiny {color:#172b3a!important;}
+:root[data-theme="dark"] #modalRoot .mini-stage-fixed-summary {background:#f5f9fc!important;}
