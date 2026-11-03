@@ -81,10 +81,10 @@
     return [408,429,500,502,503,504].includes(status)
       || /failed to fetch|networkerror|network request failed|fetch failed|timeout|timed out|connexion interrompue/.test(message);
   }
-  async function fetchTable(table,order='created_at'){
+  async function fetchTable(table,order='created_at',ownerFilter=null){
     for(let attempt=0;attempt<2;attempt++){
       try{
-        const {data,error}=await db.from(table).select('*').order(order,{ascending:false});
+        let request=db.from(table).select('*');if(ownerFilter)request=request.eq(ownerFilter.column,ownerFilter.value);const {data,error}=await request.order(order,{ascending:false});
         if(error)throw error;
         if(!Array.isArray(data))throw new Error('Réponse de lecture inattendue pour '+table);
         return data;
@@ -116,7 +116,20 @@
     })();
     try{return await occupancyRequest}finally{occupancyRequest=null}
   }
-  async function loadLiveData(){if(state.profile?.role==='lingerie'){const {data,error}=await db.rpc('get_lingerie_inscriptions');if(error)throw error;state.lingerieRows=data||[];state.data={formations:[],sessions:[],applications:[],users:[],teachers:[],convention_signatures:[]};return;}const [formations,sessions,applications,users]=await Promise.all([fetchTable('formations','name'),fetchTable('sessions','date'),fetchTable('applications'),fetchTable('profiles','full_name')]);let convention_signatures=[];const sigResult=await db.from('convention_signatures').select('*');if(!sigResult.error)convention_signatures=sigResult.data||[];else {console.error('Suivi des signatures indisponible',sigResult.error);throw new Error('Impossible de charger les signatures : '+sigResult.error.message);}let teachers=[];if(canAdmin()){const teacherResult=await db.from('teacher_directory').select('*').order('full_name',{ascending:true});if(teacherResult.error)throw new Error('Répertoire des professeurs indisponible : exécutez MIGRATION_REPERTOIRE_PROFESSEURS.sql. '+teacherResult.error.message);teachers=teacherResult.data||[]}await Promise.all([loadSessionOccupancy(),loadBranding()]);if(state.profile?.role==='admin')await loadMailDemo();state.data={formations,sessions,applications,users:users.map(u=>({...u,active:u.active!==false,organization:u.organization||''})),teachers,convention_signatures}}
+  async function loadLiveData(){if(state.profile?.role==='lingerie'){const {data,error}=await db.rpc('get_lingerie_inscriptions');if(error)throw error;state.lingerieRows=data||[];state.data={formations:[],sessions:[],applications:[],users:[],teachers:[],convention_signatures:[]};return;}const isCollege=String(state.profile?.role||'').trim().toLowerCase()==='college';
+  if(isCollege&&!state.user?.id)throw new Error('Session établissement invalide. Reconnectez-vous.');
+  const applicationOwner=isCollege?{column:'created_by',value:state.user.id}:null;
+  const profileOwner=isCollege?{column:'id',value:state.user.id}:null;
+  const [formations,sessions,applications,users]=await Promise.all([
+    fetchTable('formations','name'),fetchTable('sessions','date'),
+    fetchTable('applications','created_at',applicationOwner),
+    fetchTable('profiles','full_name',profileOwner)
+  ]);
+  let convention_signatures=[];
+  const ids=applications.map(a=>a.id).filter(Boolean);
+  const sigResult=isCollege
+    ?(ids.length?await db.from('convention_signatures').select('*').in('application_id',ids):{data:[],error:null})
+    :await db.from('convention_signatures').select('*');if(!sigResult.error)convention_signatures=sigResult.data||[];else {console.error('Suivi des signatures indisponible',sigResult.error);throw new Error('Impossible de charger les signatures : '+sigResult.error.message);}let teachers=[];if(canAdmin()){const teacherResult=await db.from('teacher_directory').select('*').order('full_name',{ascending:true});if(teacherResult.error)throw new Error('Répertoire des professeurs indisponible : exécutez MIGRATION_REPERTOIRE_PROFESSEURS.sql. '+teacherResult.error.message);teachers=teacherResult.data||[]}await Promise.all([loadSessionOccupancy(),loadBranding()]);if(state.profile?.role==='admin')await loadMailDemo();state.data={formations,sessions,applications,users:users.map(u=>({...u,active:u.active!==false,organization:u.organization||''})),teachers,convention_signatures}}
   async function login(email,password){if(!db){setNotice('Le service en ligne n’est pas configuré. Utilisez la démonstration ou configurez Supabase (voir README).');return}const {data,error}=await db.auth.signInWithPassword({email,password});if(error){setNotice('Connexion impossible : '+error.message);return}state.user=data.user;const {data:profile,error:pe}=await db.from('profiles').select('*').eq('id',data.user.id).single();if(pe||!profile){await db.auth.signOut();setNotice('Votre compte existe mais son profil n’est pas configuré. Demandez à l’administrateur de finaliser votre accès.');return}state.profile=profile;state.demo=false;try{await loadLiveData();showApp();openOriginFromEmail()}catch(e){setNotice('Impossible de charger les données : '+e.message)}}
   function enterDemo(){state.demo=true;state.user={email:'admin@erea-demo.fr'};loadDemo();state.profile=state.data.users[0];state.page='dashboard';showApp();toast('Démonstration activée : données fictives, sur cet appareil uniquement.')}
   async function logout(){if(db&&!state.demo)await db.auth.signOut();state.user=null;state.profile=null;state.demo=false;showLogin()}
