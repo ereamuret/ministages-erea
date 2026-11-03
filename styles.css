@@ -841,3 +841,24 @@ html,body,#appView,.workspace{max-width:100%!important;overflow-x:clip!important
 #appView:not(.role-sidebar-layout) .admin-applications-table .stage-status-select{max-width:100%!important;min-width:0!important;padding:3px 1px!important;font-size:8px!important}
 #appView:not(.role-sidebar-layout) .admin-applications-table .suivi-group .btn{font-size:8px!important;padding:3px!important}
 @media(max-width:1050px){#appView:not(.role-sidebar-layout) .admin-applications-table th,#appView:not(.role-sidebar-layout) .admin-applications-table td{font-size:8px!important;padding:4px 2px!important}}
+
+/* V18 — Lingerie : une inscription par ligne, colonnes calibrées, sans affichage en cartes. */
+#appView.role-sidebar-layout .lingerie-table{width:100%!important;min-width:0!important;table-layout:fixed!important;border-collapse:collapse!important}
+#appView.role-sidebar-layout .lingerie-table th,#appView.role-sidebar-layout .lingerie-table td{box-sizing:border-box!important;padding:5px 3px!important;font-size:clamp(9px,.75vw,11px)!important;line-height:1.2!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;overflow-wrap:normal!important;word-break:normal!important;vertical-align:middle!important}
+#appView.role-sidebar-layout .lingerie-table th:nth-child(1){width:4%!important}
+#appView.role-sidebar-layout .lingerie-table th:nth-child(2){width:10%!important}
+#appView.role-sidebar-layout .lingerie-table th:nth-child(3){width:10%!important}
+#appView.role-sidebar-layout .lingerie-table th:nth-child(4){width:12%!important}
+#appView.role-sidebar-layout .lingerie-table th:nth-child(5){width:22%!important}
+#appView.role-sidebar-layout .lingerie-table th:nth-child(6){width:8%!important}
+#appView.role-sidebar-layout .lingerie-table th:nth-child(7){width:8%!important}
+#appView.role-sidebar-layout .lingerie-table th:nth-child(8){width:7%!important}
+#appView.role-sidebar-layout .lingerie-table th:nth-child(9){width:19%!important}
+#appView.role-sidebar-layout .lingerie-table td:nth-child(5) strong{display:block!important;overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important}
+#appView.role-sidebar-layout .lingerie-table td:nth-child(9) .btn{display:inline-block!important;max-width:100%!important;padding:4px 5px!important;font-size:9px!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}
+#appView.role-sidebar-layout .lingerie-table .lingerie-returned{display:inline-block!important;max-width:100%!important;font-size:9px!important;line-height:1.1!important;white-space:normal!important}
+#appView.role-sidebar-layout .lingerie-table .lingerie-size{display:inline-block!important;max-width:100%!important;padding:2px 3px!important;white-space:nowrap!important}
+#appView.role-sidebar-layout .lingerie-table tr{height:32px!important}
+#appView.role-sidebar-layout .lingerie-table tr td[ colspan ]{white-space:normal!important}
+#appView.role-sidebar-layout .data-panel .table-wrap:has(> .lingerie-table){width:100%!important;overflow-x:hidden!important}
+@media(max-width:900px){#appView.role-sidebar-layout .lingerie-table th,#appView.role-sidebar-layout .lingerie-table td{padding:4px 2px!important;font-size:9px!important}}
