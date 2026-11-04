@@ -977,3 +977,44 @@ html,body,#appView,.workspace{max-width:100%!important;overflow-x:clip!important
 #appView.role-college [data-action="refresh-signatures"]{background:#e2e7ec!important;color:#243341!important;border:1px solid #8c9aa7!important;font-weight:700!important}
 #appView.role-college [data-action="refresh-signatures"] .refresh-arrow{font-size:20px;font-weight:900;color:#172f46;margin-right:5px}
 #appView.role-sidebar-layout>#sidebar .role-vertical-label{font-size:10px!important;letter-spacing:0!important;overflow-wrap:anywhere}
+
+/* V63 – Connexion */
+.password-field{display:flex;position:relative;align-items:center}.password-field input{padding-right:49px!important;width:100%}.password-eye{position:absolute;right:5px;top:50%;transform:translateY(-50%);border:0;background:transparent;color:#425968;cursor:pointer;border-radius:7px;width:40px;height:38px;font-size:19px}.password-eye:hover,.password-eye:focus-visible{background:#e9f5f4;outline:2px solid #13867e}.forgot-link{border:0;background:none;color:#096d68;font-weight:700;cursor:pointer;text-align:right;align-self:flex-end;font-size:12px;padding:2px 0 8px}.forgot-link:hover{text-decoration:underline}
+
+/* V65 — Commandes de connexion, sans modification des comportements Supabase */
+#loginView .password-field{display:block;position:relative;width:100%;margin-top:0}
+#loginView .password-field input{display:block;width:100%;box-sizing:border-box;padding-right:60px!important}
+#loginView .password-eye{position:absolute!important;inset:auto 8px auto auto!important;right:8px!important;top:50%!important;transform:translateY(-50%)!important;display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;padding:0;border:1px solid transparent;border-radius:11px;background:transparent;color:#526b80;cursor:pointer;transition:background .18s,color .18s,border-color .18s;z-index:2;line-height:1}
+#loginView .password-eye:hover{background:#e8f2f7;color:#0c6474;border-color:#c9dfe7}
+#loginView .password-eye:focus-visible{outline:3px solid #3d99b1;outline-offset:2px}
+#loginView .password-eye[aria-pressed="true"]{color:#0b7178;background:#e6f5f4}
+#loginView .password-eye .eye-icon{width:21px;height:21px;display:block;flex-shrink:0}
+#loginView .password-eye .eye-closed{display:none}
+#loginView .password-eye[aria-pressed="true"] .eye-open{display:none}
+#loginView .password-eye[aria-pressed="true"] .eye-closed{display:block}
+#loginView .forgot-link{display:inline-flex;align-items:center;justify-content:flex-end;align-self:flex-end;gap:7px;max-width:100%;margin:-3px 0 5px;padding:7px 9px;border:1px solid transparent;border-radius:9px;background:transparent;color:#126c78;font-size:13px;font-weight:650;line-height:1.3;text-align:right;cursor:pointer;transition:background .18s,color .18s,border-color .18s}
+#loginView .forgot-link svg{width:16px;height:16px;flex-shrink:0}
+#loginView .forgot-link .forgot-chevron{width:14px;height:14px;transition:transform .18s}
+#loginView .forgot-link:hover{background:#eaf4f6;color:#075563;border-color:#d5e7eb;text-decoration:none}
+#loginView .forgot-link:hover .forgot-chevron{transform:translateX(2px)}
+#loginView .forgot-link:focus-visible{outline:3px solid #3d99b1;outline-offset:2px}
+
+/* V67 — Couleurs fixes dans l’espace Établissement, thèmes clair et sombre */
+#appView .origin-reservations-table .status.confirmed,
+:root[data-theme="dark"] #appView .origin-reservations-table .status.confirmed {
+  background-color:#e3f7ed!important; color:#14794e!important;
+  -webkit-text-fill-color:#14794e!important; border:1px solid #a8dfc2!important;
+}
+#appView .origin-reservations-table .status.pending,
+:root[data-theme="dark"] #appView .origin-reservations-table .status.pending {
+  background-color:#fff0f0!important; color:#b84444!important;
+  -webkit-text-fill-color:#b84444!important; border:1px solid #f1baba!important;
+}
+#appView .origin-reservations-table .status.confirmed,
+#appView .origin-reservations-table .status.pending {
+  font-family:'DM Sans',Arial,sans-serif!important; font-size:10px!important;
+  font-weight:700!important; font-style:normal!important; letter-spacing:0!important;
+  opacity:1!important; text-shadow:none!important; line-height:1.2!important;
+}
+#appView .origin-reservations-table .origin-convention-final{display:flex;flex-direction:column;align-items:flex-start;gap:5px}
+#appView .origin-reservations-table .origin-convention-final .status{white-space:normal}
