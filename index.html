@@ -4,7 +4,7 @@
 <head>
 <meta charset="utf-8"/><meta content="width=device-width,initial-scale=1" name="viewport"/>
 <meta content="#123c56" name="theme-color"/><title>MiniStages EREA — Gestion des mini-stages</title>
-<link href="styles.css?v=45-optimisation" rel="stylesheet"/>
+<link href="styles.css?v=61-corrections" rel="stylesheet"/>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="config.js"></script>
 
@@ -73,11 +73,11 @@ body .guest-shell .guest-footer { color: #526b7b !important; }
 <h2 style="font-size:18px;margin-bottom:6px">Créer un compte établissement</h2>
 <p class="tiny muted" style="margin-bottom:14px">Sélectionnez votre établissement dans l’annuaire officiel de l’Éducation nationale. Le compte sera créé avec le rôle « Collège / Lycée ».</p>
 <form class="stack" id="signupForm">
-<label>Rechercher un établissement (nom, commune ou code UAI)<input aria-describedby="signupSchoolHelp" autocomplete="off" id="signupSchoolSearch" placeholder="Ex. : Muret, Jean-Jaurès, 0311240E" type="search"/></label>
-<label>Établissement — académie de Toulouse<select disabled="" id="signupSchoolLookup" required=""><option value="">Chargement de l’annuaire officiel…</option></select></label>
-<label>SIRET de l’établissement<input id="signupSiret" name="signup_siret" inputmode="numeric" pattern="[0-9]{14}" maxlength="14" placeholder="Rempli automatiquement si référencé" readonly=""/><small class="tiny muted" id="signupSiretHelp">Sélectionnez un établissement pour récupérer son SIRET.</small></label>
+<label>Rechercher un établissement (nom, commune ou code UAI)<input aria-describedby="signupSchoolHelp" autocomplete="off" id="signupSchoolSearch" role="combobox" aria-expanded="false" aria-controls="signupSchoolResults" placeholder="Ex. : Muret, Jean-Jaurès, 0311240E" type="search"/></label>
+<div id="signupSchoolResults" class="signup-school-results hidden" role="listbox" aria-label="Résultats de recherche des établissements"></div>
+<label class="signup-internal-field hidden">SIRET de l’établissement<input id="signupSiret" name="signup_siret" inputmode="numeric" pattern="[0-9]{14}" maxlength="14" placeholder="Rempli automatiquement si référencé" readonly=""/><small class="tiny muted" id="signupSiretHelp">Sélectionnez un établissement pour récupérer son SIRET.</small></label>
 <small class="tiny muted" id="signupSchoolHelp">L’annuaire officiel comprend les collèges, lycées généraux et technologiques, lycées professionnels et EREA ouverts de l’académie de Toulouse.</small>
-<label>Nom officiel de l’établissement<input autocomplete="organization" id="signupOrganization" name="organization" placeholder="Sélectionnez votre établissement" readonly="" required=""/></label>
+<label class="signup-internal-field hidden">Nom officiel de l’établissement<input autocomplete="organization" id="signupOrganization" name="organization" placeholder="Sélectionnez votre établissement" readonly="" required=""/></label>
 <label>E-mail de l’établissement<input autocomplete="username" id="signupEmail" name="email" placeholder="Adresse professionnelle de l’établissement" required="" type="email"/><small class="tiny muted">Prérempli uniquement si l’adresse figure dans l’annuaire. Vérifiez-la et corrigez-la si nécessaire. Aucune adresse n’est inventée.</small></label>
 <label>Créer un mot de passe<input autocomplete="new-password" id="signupPassword" minlength="10" name="password" placeholder="10 caractères minimum" required="" type="password"/></label>
 <p class="tiny muted">Au moins 10 caractères, une majuscule, une minuscule, un chiffre et un caractère spécial.</p>
@@ -121,6 +121,6 @@ body .guest-shell .guest-footer { color: #526b7b !important; }
 <script>if(window.pdfjsLib)window.pdfjsLib.GlobalWorkerOptions.workerSrc="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";</script>
 <script src="signature-invite.js"></script>
 <script src="ministages-utils.js?v=59"></script>
-<script src="app-pdf-rn-v15.js?v=59-maintenance"></script>
+<script src="app-pdf-rn-v15.js?v=61-corrections"></script>
 </body>
 </html>
