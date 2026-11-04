@@ -64,10 +64,10 @@ body .guest-shell .guest-footer { color: #526b7b !important; }
 <div class="notice hidden" id="loginNotice"></div>
 <form class="stack" id="loginForm">
 <label>Adresse e-mail<input autocomplete="username" id="loginEmail" placeholder="prenom.nom@ac-toulouse.fr" required="" type="email"/></label>
-<label>Mot de passe<input autocomplete="current-password" id="loginPassword" placeholder="Votre mot de passe" required="" type="password"/></label>
+<label>Mot de passe<span class="password-field"><input autocomplete="current-password" id="loginPassword" placeholder="Votre mot de passe" required="" type="password"/><button type="button" class="password-eye" data-toggle-password="loginPassword" aria-label="Afficher le mot de passe" aria-pressed="false" title="Afficher le mot de passe">👁</button></span></label><button class="forgot-link" id="forgotPasswordButton" type="button">Mot de passe oublié ?</button>
 <button class="btn primary full" type="submit">Se connecter <span>→</span></button>
 </form>
-<div class="login-divider"><span>ou</span></div>
+<section class="hidden" id="forgotPasswordPanel"><h2 style="font-size:18px;margin-bottom:8px">Réinitialiser mon mot de passe</h2><p class="tiny muted" style="margin-bottom:12px">Un lien de réinitialisation sera envoyé par Supabase à votre adresse e-mail.</p><form class="stack" id="forgotPasswordForm"><label>Adresse e-mail du compte<input id="forgotEmail" type="email" autocomplete="email" required placeholder="Adresse e-mail de votre établissement"/></label><button class="btn primary full" id="sendForgotButton" type="submit">Recevoir un lien de réinitialisation</button><button class="btn secondary full" id="backFromForgot" type="button">Retour à la connexion</button></form></section><div class="login-divider"><span>ou</span></div>
 <button class="btn outline full" id="showSignupButton" type="button">Créer un compte établissement</button>
 <section class="hidden" id="signupPanel" style="margin-top:18px;text-align:left">
 <h2 style="font-size:18px;margin-bottom:6px">Créer un compte établissement</h2>
@@ -78,6 +78,7 @@ body .guest-shell .guest-footer { color: #526b7b !important; }
 <label class="signup-internal-field hidden">SIRET de l’établissement<input id="signupSiret" name="signup_siret" inputmode="numeric" pattern="[0-9]{14}" maxlength="14" placeholder="Rempli automatiquement si référencé" readonly=""/><small class="tiny muted" id="signupSiretHelp">Sélectionnez un établissement pour récupérer son SIRET.</small></label>
 <small class="tiny muted" id="signupSchoolHelp">L’annuaire officiel comprend les collèges, lycées généraux et technologiques, lycées professionnels et EREA ouverts de l’académie de Toulouse.</small>
 <label class="signup-internal-field hidden">Nom officiel de l’établissement<input autocomplete="organization" id="signupOrganization" name="organization" placeholder="Sélectionnez votre établissement" readonly="" required=""/></label>
+<div id="signupExistingAccount" class="hidden" role="alert" aria-live="polite" style="padding:14px;border:1px solid #d97706;border-radius:10px;background:#fff7ed;color:#7c2d12;line-height:1.5"></div>
 <label>E-mail de l’établissement<input autocomplete="username" id="signupEmail" name="email" placeholder="Adresse professionnelle de l’établissement" required="" type="email"/><small class="tiny muted">Prérempli uniquement si l’adresse figure dans l’annuaire. Vérifiez-la et corrigez-la si nécessaire. Aucune adresse n’est inventée.</small></label>
 <label>Créer un mot de passe<input autocomplete="new-password" id="signupPassword" minlength="10" name="password" placeholder="10 caractères minimum" required="" type="password"/></label>
 <p class="tiny muted">Au moins 10 caractères, une majuscule, une minuscule, un chiffre et un caractère spécial.</p>
@@ -121,6 +122,6 @@ body .guest-shell .guest-footer { color: #526b7b !important; }
 <script>if(window.pdfjsLib)window.pdfjsLib.GlobalWorkerOptions.workerSrc="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";</script>
 <script src="signature-invite.js"></script>
 <script src="ministages-utils.js?v=59"></script>
-<script src="app-pdf-rn-v15.js?v=61-corrections"></script>
+<script src="app-pdf-rn-v15.js?v=64-unicite"></script>
 </body>
 </html>

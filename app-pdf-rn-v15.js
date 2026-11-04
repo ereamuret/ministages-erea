@@ -829,7 +829,7 @@ const themeToggle=$('#topThemeToggle');if(themeToggle&&!themeToggle.dataset.boun
     list.innerHTML=q?(signupVisibleSchools.length?signupVisibleSchools.map(s=>`<button type="button" class="signup-school-choice" role="option" data-school-uai="${esc(s.uai)}"><strong>${esc(s.name)}</strong><small>${esc(s.city)} · ${esc(s.uai)}</small></button>`).join(''):'<p class="tiny muted">Aucun établissement correspondant.</p>'):'';
     list.classList.toggle('hidden',!q);input.setAttribute('aria-expanded',String(!!q));
     if(window.selectedSignupSchool&&q!==normalizeSearch(window.selectedSignupSchool.name)){
-      window.selectedSignupSchool=null;$('#signupOrganization').value='';$('#signupSiret').value='';$('#signupEmail').value='';
+      window.selectedSignupSchool=null;$('#signupOrganization').value='';$('#signupSiret').value='';$('#signupEmail').value='';++signupAccountCheckId;showSignupAccountStatus('');
     }
   }
   async function initSignupSchoolDirectory(){
@@ -856,6 +856,7 @@ const themeToggle=$('#topThemeToggle');if(themeToggle&&!themeToggle.dataset.boun
       if(!stillCurrent())return;
       input.value=number;input.readOnly=true;
       help.textContent='SIRET prérempli automatiquement ('+source+'). Il sera enregistré avec votre compte.';
+      void checkSignupSchoolAccount(school);
     };
     try{
       if(db){
@@ -881,6 +882,35 @@ const themeToggle=$('#topThemeToggle');if(themeToggle&&!themeToggle.dataset.boun
       help.textContent='Recherche automatique indisponible : renseignez le SIRET officiel une seule fois. '+(e.message||'');
     }
   }
+  // V64 : le contrôle est effectué dès la sélection, puis après résolution du SIRET.
+  let signupAccountCheckId=0;
+  let signupAccountBlocked=true;
+  const existingAccountMessage='Un compte existe déjà pour cet établissement. Veuillez vous connecter ou utiliser « Mot de passe oublié ? ».';
+  function showSignupAccountStatus(message='',isDuplicate=false){
+    const el=$('#signupExistingAccount'),btn=$('#signupForm button[type="submit"]');
+    if(el){el.classList.toggle('hidden',!message);el.textContent=message;}
+    signupAccountBlocked=!!message;
+    if(btn)btn.disabled=signupAccountBlocked;
+  }
+  async function checkSignupSchoolAccount(school){
+    const checkId=++signupAccountCheckId;
+    if(!school?.uai||!db){showSignupAccountStatus('Vérification du compte indisponible. Réessayez plus tard.');return;}
+    showSignupAccountStatus('Vérification de l’existence d’un compte…');
+    try{
+      const {data,error}=await db.rpc('ministages_school_account_exists',{
+        school_uai:school.uai,
+        school_siret:String($('#signupSiret')?.value||'').trim(),
+        school_name:school.name
+      });
+      if(checkId!==signupAccountCheckId||window.selectedSignupSchool?.uai!==school.uai)return;
+      if(error)throw error;
+      showSignupAccountStatus(data?existingAccountMessage:'');
+    }catch(error){
+      if(checkId!==signupAccountCheckId)return;
+      console.warn('Vérification établissement :',error);
+      showSignupAccountStatus('Impossible de vérifier si un compte existe déjà. Contactez l’administrateur.');
+    }
+  }
   function selectSignupSchool(uai){
     const school=(academySchoolsCache||[]).find(s=>s.uai===uai);if(!school)return;
     $('#signupOrganization').value=school.name;
@@ -892,6 +922,7 @@ const themeToggle=$('#topThemeToggle');if(themeToggle&&!themeToggle.dataset.boun
     $('#signupEmail').value=school.email||'';
     $('#signupEmail').dataset.directoryEmail=school.email||'';
     void resolveSignupSiret(window.selectedSignupSchool);
+    void checkSignupSchoolAccount(window.selectedSignupSchool);
     const help=$('#signupSchoolHelp');if(help)help.textContent=`Établissement sélectionné : ${school.name} · ${school.city} · UAI ${school.uai}. ${school.email?'Adresse e-mail issue de l’annuaire ; vous pouvez la vérifier ou la corriger.':'Aucune adresse e-mail disponible dans l’annuaire : saisissez-la manuellement.'}`;
   }
   let schoolsCache=null;
@@ -1407,6 +1438,7 @@ Cette confirmation concerne l’enregistrement de la demande. L’accueil défin
 
 Cordialement,
 EREA de Muret`;const to=d.contact_email||d.college_email||'';closeModal();renderPage();toast('Dossier enregistré. Préparation du courriel de confirmation…');if(to){const mailto=`mailto:${encodeURIComponent(to)}?cc=${encodeURIComponent(d.college_email||'')}&subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;window.location.href=mailto;}else{toast('Dossier enregistré, mais aucune adresse e-mail n’est renseignée.',true)}}if(action==='save-user'){const form=$('#entityForm');if(!form.reportValidity())return;const d=Object.fromEntries(new FormData(form));d.active=d.active==='true';if(state.demo){await persist('users',d,id||null)}else{if(id){toast('Modification des profils existants : utilisez Supabase pour le moment.',true);return}const {data:created,error:createError}=await db.functions.invoke('admin-create-user',{body:d});if(createError)throw new Error(createError.message||'Impossible de créer le compte');if(!created?.ok)throw new Error(created?.error||'La création du compte a échoué');await loadLiveData()}closeModal();renderPage();toast(id?'Profil enregistré.':'Compte créé et invitation envoyée.')}}catch(err){if(['send-stage-email'].includes(action))renderPage();console.error('Échec de l’action MiniStages :',action,err);toast('Échec de l’opération : '+(err?.message||'connexion ou enregistrement impossible')+'. Vérifiez le résultat avant de réessayer.',true)}finally{if(el.dataset.saving==='true'){el.disabled=false;el.textContent=el.dataset.originalLabel||el.textContent;delete el.dataset.saving;delete el.dataset.originalLabel}}});
+  $$('[data-toggle-password]').forEach(button=>button.addEventListener('click',()=>{const field=document.getElementById(button.dataset.togglePassword);if(!field)return;const visible=field.type==='password';field.type=visible?'text':'password';button.setAttribute('aria-pressed',String(visible));button.setAttribute('aria-label',visible?'Masquer le mot de passe':'Afficher le mot de passe');button.title=visible?'Masquer le mot de passe':'Afficher le mot de passe';}));
   $('#forgotPasswordButton')?.addEventListener('click',()=>{$('#loginForm').classList.add('hidden');$('#showSignupButton').classList.add('hidden');$('#forgotPasswordPanel').classList.remove('hidden');$('#forgotEmail').value=$('#loginEmail').value||'';$('#loginNotice').classList.add('hidden')});
   $('#backFromForgot')?.addEventListener('click',()=>{$('#forgotPasswordPanel').classList.add('hidden');$('#loginForm').classList.remove('hidden');$('#showSignupButton').classList.remove('hidden')});
   $('#forgotPasswordForm')?.addEventListener('submit',async e=>{e.preventDefault();const email=$('#forgotEmail').value.trim();if(!db){setNotice('La réinitialisation nécessite une connexion Supabase.');return}const btn=$('#sendForgotButton');btn.disabled=true;try{const {error}=await db.auth.resetPasswordForEmail(email,{redirectTo:window.location.origin+window.location.pathname});if(error)throw error;setNotice('Si un compte existe pour cette adresse, un lien de réinitialisation vient de lui être envoyé. Vérifiez également les courriers indésirables.')}catch(err){setNotice('Impossible de demander la réinitialisation : '+err.message)}finally{btn.disabled=false}});
@@ -1415,6 +1447,7 @@ EREA de Muret`;const to=d.contact_email||d.college_email||'';closeModal();render
   $('#hideSignupButton').addEventListener('click',()=>{$('#signupPanel').classList.add('hidden');$('#loginForm').classList.remove('hidden');$('#showSignupButton').classList.remove('hidden')});
   $('#showSignupButton').addEventListener('click',()=>initSignupSchoolDirectory());
   $('#signupSchoolSearch').addEventListener('input',e=>renderSignupSchoolOptions(e.target.value));
+  $('#signupSiret')?.addEventListener('change',()=>{if(window.selectedSignupSchool)void checkSignupSchoolAccount(window.selectedSignupSchool)});
   $('#signupSchoolResults').addEventListener('click',e=>{const b=e.target.closest('[data-school-uai]');if(b)selectSignupSchool(b.dataset.schoolUai)});
   $('#signupSchoolSearch').addEventListener('keydown',e=>{if(e.key==='Escape'){$('#signupSchoolResults').classList.add('hidden');e.target.setAttribute('aria-expanded','false')}});
   $('#signupForm').addEventListener('submit',async e=>{e.preventDefault();const email=$('#signupEmail').value.trim().toLowerCase();const organization=$('#signupOrganization').value.trim();const password=$('#signupPassword').value;const confirm=$('#signupPasswordConfirm').value;const strong=/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{10,}$/;
@@ -1425,8 +1458,14 @@ EREA de Muret`;const to=d.contact_email||d.college_email||'';closeModal();render
     if(!selectedSchool){setNotice('Sélectionnez un établissement dans les résultats de l’annuaire.');$('#loginNotice').classList.remove('hidden');return;}
     const signupSiret=String($('#signupSiret')?.value||'').trim();
     if(signupSiret&&!/^\d{14}$/.test(signupSiret)){setNotice('SIRET : renseignez exactement 14 chiffres.');$('#loginNotice').classList.remove('hidden');return;}
-    const button=$('#signupForm button[type="submit"]');button.disabled=true;button.textContent='Création en cours…';
-    try{const {data,error}=await db.auth.signUp({email,password,options:{data:{organization,full_name:organization,signup_source:'college_portal',organization_city:window.selectedSignupSchool?.name===organization?window.selectedSignupSchool.city:'',organization_address:window.selectedSignupSchool?.name===organization?window.selectedSignupSchool.address:'',organization_phone:window.selectedSignupSchool?.name===organization?window.selectedSignupSchool.phone:'',organization_uai:selectedSchool?.uai||'',organization_siret:signupSiret},emailRedirectTo:window.location.origin+window.location.pathname}});if(error)throw error;
+    if(signupAccountBlocked){setNotice('Vérification de l’établissement non terminée ou compte déjà existant.');$('#loginNotice').classList.remove('hidden');return;}
+    const button=$('#signupForm button[type="submit"]');button.disabled=true;button.textContent='Vérification en cours…';
+    try{if(!selectedSchool.uai)throw new Error('Le code UAI de cet établissement est absent. Contactez l’administrateur.');
+      const {data:alreadyExists,error:checkError}=await db.rpc('ministages_school_account_exists',{school_uai:selectedSchool.uai,school_siret:signupSiret,school_name:organization});
+      if(checkError)throw new Error('Vérification du compte indisponible. Demandez à l’administrateur de déployer la migration SQL V63.');
+      if(alreadyExists)throw new Error('Un compte existe déjà pour cet établissement. Veuillez vous connecter ou utiliser « Mot de passe oublié ? ».');
+      button.textContent='Création en cours…';
+    const {data,error}=await db.auth.signUp({email,password,options:{data:{organization,full_name:organization,signup_source:'college_portal',organization_city:window.selectedSignupSchool?.name===organization?window.selectedSignupSchool.city:'',organization_address:window.selectedSignupSchool?.name===organization?window.selectedSignupSchool.address:'',organization_phone:window.selectedSignupSchool?.name===organization?window.selectedSignupSchool.phone:'',organization_uai:selectedSchool?.uai||'',organization_siret:signupSiret},emailRedirectTo:window.location.origin+window.location.pathname}});if(error)throw error;
       $('#signupForm').reset();$('#signupPanel').classList.add('hidden');$('#loginForm').classList.remove('hidden');$('#showSignupButton').classList.remove('hidden');setNotice(data.session?'Compte établissement créé. Vous pouvez vous connecter.':'Demande de compte établissement enregistrée. Consultez la boîte e-mail saisie pour confirmer l’adresse avant de vous connecter.');$('#loginNotice').classList.remove('hidden');
     }catch(err){setNotice('Création impossible : '+(err.message||'erreur inconnue'));$('#loginNotice').classList.remove('hidden')}finally{button.disabled=false;button.textContent='Créer mon compte'}
   });
