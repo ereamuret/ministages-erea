@@ -1060,3 +1060,36 @@ html,body,#appView,.workspace{max-width:100%!important;overflow-x:clip!important
 #pageContent.lingerie-admin-view .lingerie-table td:last-child{white-space:normal!important;overflow:visible!important;text-overflow:clip!important}
 #pageContent.lingerie-admin-view .lingerie-table td:last-child .btn{white-space:normal!important;overflow:visible!important;text-overflow:clip!important}
 @media(max-width:850px){#pageContent.lingerie-admin-view .lingerie-table{min-width:760px!important}#pageContent.lingerie-admin-view .welcome-row{flex-wrap:wrap}}
+
+/* V70 — Ajustements purement visuels : statuts admin et alignement professeurs. */
+/* Badges pastel uniquement dans le tableau des inscriptions administrateur en mode sombre. */
+:root[data-theme="dark"] #appView .admin-applications-table .status.confirmed,
+:root[data-theme="dark"] #appView .admin-applications-table .status.active {
+  background:#d7f3e3!important;color:#176344!important;-webkit-text-fill-color:#176344!important;
+  border:1px solid #a9dfc1!important;
+}
+:root[data-theme="dark"] #appView .admin-applications-table .status.pending,
+:root[data-theme="dark"] #appView .admin-applications-table .status.refused,
+:root[data-theme="dark"] #appView .admin-applications-table .status.cancelled,
+:root[data-theme="dark"] #appView .admin-applications-table .status.completed {
+  background:#f9dadd!important;color:#9b3542!important;-webkit-text-fill-color:#9b3542!important;
+  border:1px solid #eeb8bf!important;
+}
+/* Une grille constante : les trois actions restent dans des colonnes alignées. */
+.teacher-directory-list .teacher-directory-row {
+  display:grid!important;
+  grid-template-columns:minmax(115px,1fr) minmax(0,auto)!important;
+  align-items:center!important;gap:10px!important;
+}
+.teacher-directory-list .teacher-directory-row > span:last-child {
+  display:grid!important;grid-template-columns:92px 102px 94px!important;
+  gap:6px!important;align-items:center!important;
+}
+.teacher-directory-list .teacher-directory-row > span:last-child > .btn {
+  box-sizing:border-box!important;width:100%!important;min-width:0!important;
+  margin:0!important;white-space:nowrap!important;text-align:center!important;
+}
+@media(max-width:650px){
+  .teacher-directory-list .teacher-directory-row{grid-template-columns:1fr!important;gap:5px!important}
+  .teacher-directory-list .teacher-directory-row > span:last-child{grid-template-columns:repeat(3,minmax(0,1fr))!important}
+}
