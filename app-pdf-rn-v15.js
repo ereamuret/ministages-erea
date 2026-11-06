@@ -1451,14 +1451,13 @@ const themeToggle=$('#topThemeToggle');if(themeToggle&&!themeToggle.dataset.boun
     const a=state.data.applications.find(x=>x.id===id);
     if(!a)throw new Error('Réservation introuvable.');
     const name=[a.student_first_name,a.student_last_name].filter(Boolean).join(' ');
-    if(!window.confirm(`Supprimer définitivement la réservation de ${name} ?\n\nCette action est irréversible et libérera la place du créneau.\nLes signatures et liens associés seront également supprimés. Les conventions déjà finalisées restent protégées.`))return;
+    if(!window.confirm(`Supprimer définitivement la réservation de ${name} ?\n\nCette action est irréversible et libérera la place du créneau.\nLes signatures et liens associés seront également supprimés. Les conventions finalisées et leurs signatures seront également supprimées de la base. Pensez à archiver les documents nécessaires avant de continuer.`))return;
     if(!window.confirm(`CONFIRMATION FINALE : effacer définitivement le dossier de ${name} et toutes ses signatures ?`))return;
     if(state.demo){
-      if(a.finalized_at||a.final_pdf_path)throw new Error('Convention finalisée : suppression bloquée pour préserver le PDF archivé.');
       state.data.applications=state.data.applications.filter(x=>x.id!==id);
       saveDemo();
     }else{
-      const {error}=await db.rpc('admin_delete_unsigned_application',{p_application_id:id});
+      const {error}=await db.rpc('admin_delete_application_any_status',{p_application_id:id});
       if(error)throw error;
       await loadLiveData();
     }
