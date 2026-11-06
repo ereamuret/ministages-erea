@@ -822,20 +822,21 @@ const themeToggle=$('#topThemeToggle');if(themeToggle&&!themeToggle.dataset.boun
   let customSchools=[];
   async function loadCustomSchools(){
     if(!db)return [];
-    const {data,error}=await db.from('ministages_custom_schools').select('uai,name,type,city,address,phone,email').order('name');
+    const {data,error}=await db.from('ministages_custom_schools').select('uai,name,type,city,address,phone,email,siret').order('name');
     if(error)throw new Error('Annuaire complémentaire : '+error.message+' (exécuter le SQL V71 dans Supabase)');
     customSchools=data||[];return customSchools;
   }
   function customSchoolForm(uai=''){
     if(!canAdmin())return;
-    const s=customSchools.find(x=>x.uai===uai)||{uai:'',name:'',type:'Collège',city:'',address:'',phone:'',email:''};
+    const s=customSchools.find(x=>x.uai===uai)||{uai:'',name:'',type:'Collège',city:'',address:'',phone:'',email:'',siret:''};
     const f=(label,name,type='text',required=false)=>`<label>${label}<input name="${name}" type="${type}" value="${esc(s[name]||'')}" ${required?'required':''} ${name==='uai'&&uai?'readonly':''}></label>`;
-    openModal(uai?'Modifier un établissement ajouté':'Ajouter un établissement',`<form id="customSchoolForm" class="form-grid">${f('Code UAI *','uai','text',true)}${f('Nom officiel *','name','text',true)}<label>Type *<select name="type">${['Collège','Lycée général et technologique','Lycée professionnel','EREA','Autre'].map(t=>`<option ${s.type===t?'selected':''}>${t}</option>`).join('')}</select></label>${f('Commune *','city','text',true)}${f('Adresse','address')}${f('Téléphone','phone','tel')}${f('E-mail (facultatif)','email','email')}</form>`,`<button class="btn outline" data-action="close-modal">Annuler</button><button class="btn primary" data-action="save-custom-school" data-id="${esc(uai)}">Enregistrer</button>`);
+    openModal(uai?'Modifier un établissement ajouté':'Ajouter un établissement',`<form id="customSchoolForm" class="form-grid">${f('Code UAI *','uai','text',true)}${f('Nom officiel *','name','text',true)}<label>Type *<select name="type">${['Collège','Lycée général et technologique','Lycée professionnel','EREA','Autre'].map(t=>`<option ${s.type===t?'selected':''}>${t}</option>`).join('')}</select></label>${f('Commune *','city','text',true)}${f('Adresse','address')}${f('Téléphone','phone','tel')}<label>SIRET (14 chiffres)<input name="siret" type="text" inputmode="numeric" maxlength="14" pattern="[0-9]{14}" placeholder="14 chiffres" value="${esc(s.siret||'')}"><small class="tiny muted">Facultatif ; prérempli lors de la création du compte.</small></label>${f('E-mail (facultatif)','email','email')}</form>`,`<button class="btn outline" data-action="close-modal">Annuler</button><button class="btn primary" data-action="save-custom-school" data-id="${esc(uai)}">Enregistrer</button>`);
   }
   async function saveCustomSchool(originalUai){
     if(!canAdmin()||!db)throw new Error('Administrateur connecté requis.');
     const form=$('#customSchoolForm');if(!form?.reportValidity())return;
-    const d=Object.fromEntries(new FormData(form));d.uai=d.uai.trim().toUpperCase();d.name=d.name.trim();d.city=d.city.trim();d.email=d.email.trim();
+    const d=Object.fromEntries(new FormData(form));d.uai=d.uai.trim().toUpperCase();d.name=d.name.trim();d.city=d.city.trim();d.email=d.email.trim();d.siret=String(d.siret||'').trim();
+    if(d.siret&&!/^\d{14}$/.test(d.siret))throw new Error('Le SIRET doit comporter exactement 14 chiffres.');
     if(!/^[0-9]{7}[A-Z]$/.test(d.uai))throw new Error('Code UAI invalide : 7 chiffres et une lettre.');
     if(!originalUai){const official=await loadToulouseAcademySchools();if(official.some(x=>x.uai===d.uai))throw new Error('Cet UAI existe dans l’annuaire officiel, qui ne peut pas être modifié.');}
     const {error}=await db.from('ministages_custom_schools').upsert(d,{onConflict:'uai'});if(error)throw error;
