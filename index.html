@@ -166,15 +166,34 @@ body .guest-shell .guest-footer { color: #526b7b !important; }
   border:1px solid rgba(140,150,160,.28);
 }
 
-/* V83 — cercle décoratif identique aux cartes de formation de l'administration */
+/* V84 — anneau décoratif net, en haut à droite de chaque formation */
 #publicView .v77-card{position:relative;isolation:isolate;overflow:hidden}
-#publicView .v77-card::after{content:"";position:absolute;right:-38px;bottom:-62px;width:140px;height:140px;border:1px solid rgba(120,222,213,.16);border-radius:50%;pointer-events:none;z-index:0;left:auto;top:auto;opacity:1;transform:none;transition:border-color .28s ease,transform .28s ease}
+#publicView .v77-card::after{
+  content:"";position:absolute;top:-42px;right:-36px;bottom:auto;left:auto;
+  width:138px;height:138px;border-radius:50%;box-sizing:border-box;
+  border:2px solid rgba(96,191,215,.28);
+  background:radial-gradient(circle at center,rgba(64,160,190,.075) 0%,rgba(64,160,190,.025) 68%,transparent 70%);
+  opacity:1;transform:none;pointer-events:none;z-index:0;
+  transition:transform .3s ease,border-color .3s ease;
+}
 #publicView .v77-card > *{position:relative;z-index:1}
-@media(hover:hover) and (pointer:fine){#publicView .v77-card:hover::after{transform:scale(1.07);border-color:rgba(120,222,213,.32)}}
-/* CAP CS HCR à droite : nuance rouge très légère et transparente */
-#publicView .v77-card.v83-hcr{background:linear-gradient(rgba(205,52,68,.075),rgba(205,52,68,.075)),var(--card,#17283b);border-color:rgba(205,76,86,.22)}
-#publicView .v77-card.v83-hcr::after{border-color:rgba(205,76,86,.23)}
-@media(hover:hover) and (pointer:fine){#publicView .v77-card.v83-hcr:hover{border-color:rgba(205,76,86,.52)}#publicView .v77-card.v83-hcr:hover::after{border-color:rgba(205,76,86,.4)}}
+@media(hover:hover) and (pointer:fine){
+  #publicView .v77-card:hover::after{transform:scale(1.08);border-color:rgba(96,191,215,.5)}
+}
+/* Fond réellement rouge translucide pour CAP CS HCR, à droite du catalogue */
+#publicView .v77-card.v83-hcr{
+  background-color:rgba(174,36,50,.22) !important;
+  background-image:linear-gradient(rgba(195,43,60,.12),rgba(195,43,60,.12)) !important;
+  border-color:rgba(228,98,110,.42) !important;
+}
+#publicView .v77-card.v83-hcr::after{
+  border-color:rgba(241,126,138,.35);
+  background:radial-gradient(circle,rgba(216,64,79,.09),transparent 70%);
+}
+@media(hover:hover) and (pointer:fine){
+  #publicView .v77-card.v83-hcr:hover{border-color:rgba(238,110,122,.7) !important}
+  #publicView .v77-card.v83-hcr:hover::after{border-color:rgba(241,126,138,.65)}
+}
 </style>
 </head>
 <body>
