@@ -17,11 +17,11 @@
       if(!db)throw Error('Configuration Supabase indisponible.');
       const {data,error}=await db.rpc('ministages_public_catalogue');if(error)throw error;
       if(!Array.isArray(data))throw Error('Réponse inattendue du catalogue.');
-      const groups=new Map();for(const s of data){const k=String(s.formation_id);if(!groups.has(k))groups.set(k,{name:s.formation_name,code:s.formation_code,description:s.formation_description,sessions:[]});groups.get(k).sessions.push(s);}
-      $('publicStatus').textContent=data.length?'Créneaux actualisés. Les disponibilités peuvent évoluer.':'Aucun créneau publié pour le moment.';
+      const groups=new Map();for(const s of data){const k=String(s.formation_id);if(!groups.has(k))groups.set(k,{name:s.formation_name,code:s.formation_code,description:s.formation_description,sessions:[]});if(s.session_id)groups.get(k).sessions.push(s);}
+      $('publicStatus').textContent=groups.size?'Formations actualisées. Les disponibilités peuvent évoluer.':'Aucune formation active publiée pour le moment.';
       for(const [fid,f] of groups){const card=document.createElement('article');card.className='v77-card';card.innerHTML=`<span class="v77-code">${escapeHtml(f.code||'FORMATION')}</span><h3>${escapeHtml(f.name)}</h3><p>${escapeHtml(f.description||'Découvrez cette formation lors d’un mini-stage.')}</p>`;
         const sessions=f.sessions.filter(s=>Number(s.places_restantes)>0);
-        if(!sessions.length){card.insertAdjacentHTML('beforeend','<div class="v77-empty">Aucune place disponible actuellement.</div>');}
+        if(!sessions.length){card.insertAdjacentHTML('beforeend','<div class="v77-empty">Aucun créneau disponible actuellement.</div>');}
         for(const s of sessions){const row=document.createElement('div');row.className='v77-slot';const time=`${String(s.start_time||'').slice(0,5)} – ${String(s.end_time||'').slice(0,5)}`;row.innerHTML=`<div><strong>${escapeHtml(dateLabel(s.date))}</strong><small>${escapeHtml(time)} · ${Number(s.places_restantes)} place(s) restante(s)</small></div>`;const btn=document.createElement('button');btn.className='btn primary small';btn.type='button';btn.textContent="S'inscrire";btn.addEventListener('click',()=>{try{sessionStorage.setItem(key,String(s.session_id));}catch{}auth();});row.append(btn);card.append(row);}
         $('publicCards').append(card);
       }
