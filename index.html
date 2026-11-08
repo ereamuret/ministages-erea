@@ -141,6 +141,17 @@ body .guest-shell .guest-footer { color: #526b7b !important; }
   line-height:1.1;
 }
 
+
+/* V78 — Filtres et sélection multiple des créneaux administrateur */
+.v78-filterbar{display:flex;flex-wrap:wrap;gap:10px;align-items:end!important;padding:12px 0!important}
+.v78-filterbar label{display:flex;flex-direction:column;gap:4px;font-size:11px;font-weight:650;min-width:105px;flex:1 1 125px}
+.v78-filterbar input,.v78-filterbar select{width:100%;min-width:0;max-width:100%;height:35px;padding:5px 8px;border:1px solid #c8d5df;border-radius:8px;background:var(--card,#fff);color:var(--text,#172b3a);font-size:12px}
+.v78-filterbar #sessionSearch{min-width:120px}
+.v78-bulkbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:0 0 12px;padding:10px 12px;border:1px solid #cbdce9;border-radius:10px}
+.v78-bulkbar strong{font-size:12px;margin-right:8px}
+#sessionList th:first-child,#sessionList td.v78-select-cell{width:40px;min-width:40px;text-align:center;padding:8px!important}
+#sessionList .v78-row-check,#v78SelectAll{width:16px;height:16px;cursor:pointer;accent-color:#2379ab}
+#sessionList tr[hidden]{display:none!important}
 </style>
 </head>
 <body>
@@ -216,7 +227,7 @@ body .guest-shell .guest-footer { color: #526b7b !important; }
 <script>if(window.pdfjsLib)window.pdfjsLib.GlobalWorkerOptions.workerSrc="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";</script>
 <script src="signature-invite.js"></script>
 <script src="ministages-utils.js?v=59"></script>
-<script src="public-v77.js?v=77-4-compact"></script>
-<script src="app-pdf-rn-v15.js?v=77-public"></script>
+<script src="public-v77.js?v=77-5-delai-7j"></script>
+<script src="app-pdf-rn-v15.js?v=78-admin-filtres"></script>
 </body>
 </html>
