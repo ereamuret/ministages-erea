@@ -91,6 +91,56 @@ body .guest-shell .guest-footer { color: #526b7b !important; }
 }
 .v77-card:focus-within{border-color:rgba(87,184,237,.75);box-shadow:0 0 0 2px rgba(87,184,237,.2)}
 @media(prefers-reduced-motion:reduce){.v77-card,.v77-card::before,.v77-card::after,.v77-card .btn{transition:none!important;animation:none!important;transform:none!important}}
+
+/* V77.4 : ligne de créneau compacte, indépendante des styles généraux */
+#publicView .v77-card .v77-slot {
+  display:flex !important;
+  flex-direction:row !important;
+  flex-wrap:nowrap !important;
+  justify-content:space-between !important;
+  align-items:center !important;
+  column-gap:6px !important;
+  padding:8px 0 !important;
+  min-width:0;
+}
+#publicView .v77-card .v77-slot .v77-slot-info {
+  flex:1 1 auto !important;
+  min-width:0 !important;
+  width:auto !important;
+  overflow:hidden;
+}
+#publicView .v77-card .v77-slot .v77-slot-date {
+  display:block;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  font-size:12px;
+  line-height:1.25;
+}
+#publicView .v77-card .v77-slot .v77-slot-details {
+  display:block;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  font-size:10px;
+  line-height:1.25;
+  margin-top:3px;
+}
+#publicView .v77-card .v77-slot button.v77-slot-register {
+  display:inline-flex !important;
+  align-items:center;
+  justify-content:center;
+  width:auto !important;
+  max-width:max-content !important;
+  min-width:0 !important;
+  flex:0 0 auto !important;
+  margin:0 !important;
+  padding:7px 8px !important;
+  white-space:nowrap;
+  font-size:11px !important;
+  line-height:1.1;
+}
+
 </style>
 </head>
 <body>
@@ -166,7 +216,7 @@ body .guest-shell .guest-footer { color: #526b7b !important; }
 <script>if(window.pdfjsLib)window.pdfjsLib.GlobalWorkerOptions.workerSrc="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";</script>
 <script src="signature-invite.js"></script>
 <script src="ministages-utils.js?v=59"></script>
-<script src="public-v77.js?v=77-2-hover"></script>
+<script src="public-v77.js?v=77-4-compact"></script>
 <script src="app-pdf-rn-v15.js?v=77-public"></script>
 </body>
 </html>
