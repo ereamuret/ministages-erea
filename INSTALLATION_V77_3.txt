@@ -1,0 +1,11 @@
+MiniStages V77.3 — Affichage compact des créneaux
+
+Modification de présentation uniquement : le bouton « S'inscrire » est à droite de la date, sur la même ligne, sans retour à la ligne. Les lignes de créneaux sont plus compactes.
+
+INSTALLATION
+1. Ouvrez votre dépôt GitHub Pages.
+2. Remplacez uniquement le fichier index.html par celui de cette archive.
+3. Conservez tous les autres fichiers (notamment public-v77.js, app-pdf-rn-v15.js et la configuration Supabase).
+4. Attendez la publication GitHub Pages puis rechargez avec Ctrl+F5.
+
+Aucun changement SQL ou Supabase n'est nécessaire.

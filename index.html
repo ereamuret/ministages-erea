@@ -66,6 +66,13 @@ body .guest-shell .guest-footer { color: #526b7b !important; }
 .v77-card h3{font-size:16px;line-height:1.3;margin:6px 0}.v77-card p{opacity:.8;font-size:12px;line-height:1.4}.v77-card .btn{font-size:12px;padding:7px 10px}
 .v77-code{font-size:12px;font-weight:750;color:#53b6e8}.v77-slot{display:flex;justify-content:space-between;align-items:center;gap:12px;border-top:1px solid rgba(125,160,190,.2);padding:14px 0;flex-wrap:wrap}
 .v77-slot small{display:block;opacity:.7;margin-top:3px}.v77-slot .btn{white-space:nowrap}
+/* V77.3 — date et bouton sur une ligne, même avec quatre cartes côte à côte */
+.v77-slot{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:7px;padding:9px 0;flex-wrap:nowrap}
+.v77-slot>div{min-width:0;overflow:hidden}
+.v77-slot strong{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:12px;line-height:1.3}
+.v77-slot small{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:10px;line-height:1.3;margin-top:2px}
+.v77-slot .btn{width:auto;min-width:0;padding:7px 9px;font-size:11px;line-height:1.1;flex-shrink:0}
+@media(max-width:400px){.v77-slot strong{font-size:11px}.v77-slot .btn{padding:7px 8px}}
 .v77-empty{font-size:13px;opacity:.7;padding-top:12px}.v77-footer{text-align:center;opacity:.6;padding:25px;font-size:12px}
 @media(max-width:1050px){.v77-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:580px){.v77-grid{grid-template-columns:minmax(0,1fr)}.v77-header{padding:15px}.v77-header .btn{font-size:12px}.v77-hero{padding-top:36px}}
