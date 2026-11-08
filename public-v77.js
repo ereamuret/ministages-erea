@@ -8,9 +8,27 @@
   let busy = false;
   function show(){if(!$('publicView'))return;$('publicView').classList.remove('hidden');$('loginView').classList.add('hidden');$('appView').classList.add('hidden');}
   function hide(){$('publicView')?.classList.add('hidden');}
+  // Uniquement un identifiant de créneau public, jamais de données personnelles.
+  // Stockage persistant pour retrouver la sélection après confirmation par e-mail.
+  const persistentKey='ministages-v85-pending-session';
+  const ttl=48*60*60*1000;
+  function validId(id){return /^[a-zA-Z0-9_-]{1,100}$/.test(String(id||''));}
+  function remember(id){if(!validId(id))return;const payload=JSON.stringify({id:String(id),expires:Date.now()+ttl});try{localStorage.setItem(persistentKey,payload);sessionStorage.setItem(key,String(id));}catch{}}
+  function clearPending(){try{localStorage.removeItem(persistentKey);sessionStorage.removeItem(key);}catch{}}
+  function peekPending(){
+    try{
+      const fromUrl=new URLSearchParams(location.search).get('mini_stage_session');
+      if(validId(fromUrl)){remember(fromUrl);history.replaceState(null,'',location.pathname+location.search.replace(/([?&])mini_stage_session=[^&]*&?/,'$1').replace(/[?&]$/,'')+location.hash);return fromUrl;}
+      const raw=localStorage.getItem(persistentKey);if(raw){const item=JSON.parse(raw);if(validId(item.id)&&item.expires>Date.now())return item.id;clearPending();}
+      const older=sessionStorage.getItem(key);if(validId(older)){remember(older);return older;}
+    }catch{}
+    return null;
+  }
   function auth(){hide();$('loginView')?.classList.remove('hidden');$('signupPanel')?.classList.add('hidden');$('loginForm')?.classList.remove('hidden');$('showSignupButton')?.classList.remove('hidden');}
-  function takePending(){try{const v=sessionStorage.getItem(key);if(v)sessionStorage.removeItem(key);return v||null;}catch{return null;}}
-  window.MiniStagesPublic={show,hide,takePending};
+  function authForTracking(){clearPending();auth();}
+  function takePending(){const v=peekPending();if(v)clearPending();return v;}
+  function signupRedirectUrl(){const u=new URL(location.origin+location.pathname);const id=peekPending();if(id)u.searchParams.set('mini_stage_session',id);return u.toString();}
+  window.MiniStagesPublic={show,hide,takePending,peekPending,clearPending,signupRedirectUrl};
   function dateLabel(d){const [y,m,day]=String(d).split('-').map(Number);return new Date(y,m-1,day).toLocaleDateString('fr-FR',{weekday:'short',day:'numeric',month:'long',year:'numeric'});}
   // Date locale, sans conversion UTC : le jour J et les 6 jours suivants sont masqués.
   // Un créneau daté de J+7 reste affiché jusqu'à la fin de J.
@@ -56,7 +74,7 @@
             const badge=document.createElement('span');badge.className='v77-closed-badge';badge.textContent='Fermé';row.append(badge);
           }else{
             const btn=document.createElement('button');btn.className='btn primary small v77-slot-register';btn.type='button';btn.textContent="S'inscrire";
-            btn.addEventListener('click',()=>{try{sessionStorage.setItem(key,String(s.session_id));}catch{}auth();});row.append(btn);
+            btn.addEventListener('click',()=>{try{remember(s.session_id);}catch{}auth();});row.append(btn);
           }
           card.append(row);
         }
@@ -65,5 +83,5 @@
     }catch(e){$('publicStatus').textContent='Impossible de charger les créneaux publics : '+(e.message||String(e))+'. Vérifiez que le script SQL V77 a été exécuté dans Supabase.';}
     finally{busy=false;}
   }
-  document.addEventListener('DOMContentLoaded',()=>{$('publicLogin')?.addEventListener('click',auth);$('publicBack')?.addEventListener('click',()=>{show();refresh();});$('publicRefresh')?.addEventListener('click',refresh);refresh();});
+  document.addEventListener('DOMContentLoaded',()=>{$('publicLogin')?.addEventListener('click',authForTracking);$('publicBack')?.addEventListener('click',()=>{clearPending();show();refresh();});$('publicRefresh')?.addEventListener('click',refresh);refresh();});
 })();
