@@ -27,15 +27,15 @@
   async function refresh(){if(busy)return;busy=true;$('publicStatus').textContent='Actualisation des disponibilités…';$('publicCards').replaceChildren();
     try{
       if(!db)throw Error('Configuration Supabase indisponible.');
-      const {data,error}=await db.rpc('ministages_public_catalogue');if(error)throw error;
+      const {data,error}=await db.rpc('ministages_public_catalogue_v82');if(error)throw error;
       if(!Array.isArray(data))throw Error('Réponse inattendue du catalogue.');
-      const groups=new Map();for(const s of data){const k=String(s.formation_id);if(!groups.has(k))groups.set(k,{name:s.formation_name,code:s.formation_code,description:s.formation_description,sessions:[]});groups.get(k).sessions.push(s);}
+      const groups=new Map();for(const s of data){const k=String(s.formation_id);if(!groups.has(k))groups.set(k,{name:s.formation_name,code:s.formation_code,description:s.formation_description,sessions:[]});if(s.session_id)groups.get(k).sessions.push(s);}
       $('publicStatus').textContent=data.length?'Créneaux actualisés. Les disponibilités peuvent évoluer.':'Aucun créneau publié pour le moment.';
       for(const [fid,f] of groups){const card=document.createElement('article');card.className='v77-card';card.innerHTML=`<span class="v77-code">${escapeHtml(f.code||'FORMATION')}</span><h3>${escapeHtml(f.name)}</h3><p>${escapeHtml(f.description||'Découvrez cette formation lors d’un mini-stage.')}</p>`;
         // Afficher au plus 10 créneaux, y compris ceux fermés par délai.
         // Les créneaux complets sont écartés pour laisser apparaître les suivants.
         const sessions=f.sessions.filter(s=>Number(s.places_restantes)>0)
-          .sort((a,b)=>String(a.date||'').localeCompare(String(b.date||'')) || String(a.start_time||'').localeCompare(String(b.start_time||'')) || String(a.session_id||'').localeCompare(String(b.session_id||'')))
+          .sort((a,b)=>{const af=String(a.date||'')>=new Date().toLocaleDateString('en-CA');const bf=String(b.date||'')>=new Date().toLocaleDateString('en-CA');return Number(bf)-Number(af) || (af?String(a.date||'').localeCompare(String(b.date||'')):String(b.date||'').localeCompare(String(a.date||''))) || String(a.start_time||'').localeCompare(String(b.start_time||''));})
           .slice(0,10);
         if(!sessions.length){card.insertAdjacentHTML('beforeend','<div class="v77-empty">Aucun créneau disponible actuellement.</div>');}
         for(const s of sessions){
