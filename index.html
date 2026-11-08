@@ -152,13 +152,26 @@ body .guest-shell .guest-footer { color: #526b7b !important; }
 #sessionList th:first-child,#sessionList td.v78-select-cell{width:40px;min-width:40px;text-align:center;padding:8px!important}
 #sessionList .v78-row-check,#v78SelectAll{width:16px;height:16px;cursor:pointer;accent-color:#2379ab}
 #sessionList tr[hidden]{display:none!important}
+
+/* V81 : dates et horaires des créneaux fermés barrés */
+#publicView .v77-slot.v77-slot-closed .v77-slot-info,
+#publicView .v77-slot.v77-slot-closed .v77-slot-info * {
+  text-decoration:line-through !important;
+  text-decoration-thickness:1px !important;
+  opacity:.65;
+}
+#publicView .v77-slot .v77-closed-badge {
+  display:inline-flex;align-items:center;flex:0 0 auto;padding:6px 9px;border-radius:7px;
+  font-size:11px;font-weight:700;color:#a9adb5;background:rgba(120,130,145,.16);
+  border:1px solid rgba(140,150,160,.28);
+}
 </style>
 </head>
 <body>
 <div class="toast" id="toast" role="status"></div>
 <main id="publicView" class="v77-public" aria-label="Formations et créneaux disponibles">
 <header class="v77-header"><div><span class="v77-mark">MS</span><span><strong>MiniStages</strong><small>EREA de Muret</small></span></div><button class="btn outline" id="publicLogin">Connexion établissement</button></header>
-<section class="v77-hero"><span class="v77-kicker">DÉCOUVRIR NOS FORMATIONS</span><h1>Choisissez votre mini-stage</h1><p>Consultez les formations et les places disponibles sans créer de compte. La connexion est demandée uniquement au moment de l'inscription.</p></section>
+<section class="v77-hero"><span class="v77-kicker">DÉCOUVRIR NOS FORMATIONS</span><h1>Choisissez votre mini-stage</h1><p>Consultez les formations et les places disponibles. La création d'un compte vous sera demandée au moment de l'inscription</p></section>
 <section class="v77-catalogue"><div class="v77-section-heading"><h2>Formations et créneaux</h2><button class="btn outline small" id="publicRefresh">↻ Actualiser</button></div><p id="publicStatus" role="status">Chargement des disponibilités…</p><div id="publicCards" class="v77-grid"></div></section>
 <footer class="v77-footer">EREA de Muret · Les places sont confirmées uniquement après validation de l'inscription.</footer>
 </main><main class="login-shell hidden" id="loginView">
@@ -227,7 +240,7 @@ body .guest-shell .guest-footer { color: #526b7b !important; }
 <script>if(window.pdfjsLib)window.pdfjsLib.GlobalWorkerOptions.workerSrc="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";</script>
 <script src="signature-invite.js"></script>
 <script src="ministages-utils.js?v=59"></script>
-<script src="public-v77.js?v=77-5-delai-7j"></script>
+<script src="public-v77.js?v=81-fermes"></script>
 <script src="app-pdf-rn-v15.js?v=78-admin-filtres"></script>
 </body>
 </html>
