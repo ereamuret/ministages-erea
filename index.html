@@ -69,6 +69,21 @@ body .guest-shell .guest-footer { color: #526b7b !important; }
 .v77-empty{font-size:13px;opacity:.7;padding-top:12px}.v77-footer{text-align:center;opacity:.6;padding:25px;font-size:12px}
 @media(max-width:1050px){.v77-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:580px){.v77-grid{grid-template-columns:minmax(0,1fr)}.v77-header{padding:15px}.v77-header .btn{font-size:12px}.v77-hero{padding-top:36px}}
+
+/* V77.2 : interactions discrètes, fluides et accessibles des cartes de formation */
+.v77-card{position:relative;isolation:isolate;transition:transform .28s cubic-bezier(.2,.75,.3,1),box-shadow .28s ease,border-color .28s ease,background-color .28s ease;will-change:transform}
+.v77-card::before{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;background:linear-gradient(125deg,rgba(75,180,237,.10),transparent 45%,rgba(104,126,255,.08));opacity:0;transition:opacity .3s ease;z-index:-1}
+.v77-card::after{content:"";position:absolute;left:15%;right:15%;bottom:-1px;height:2px;border-radius:2px;background:linear-gradient(90deg,transparent,#56b8ee,transparent);opacity:0;transform:scaleX(.35);transition:opacity .28s ease,transform .28s ease;pointer-events:none}
+@media(hover:hover) and (pointer:fine){
+ .v77-card:hover{transform:translateY(-6px);border-color:rgba(87,184,237,.65);box-shadow:0 18px 40px rgba(0,0,0,.22),0 0 0 1px rgba(87,184,237,.08)}
+ .v77-card:hover::before,.v77-card:hover::after{opacity:1}
+ .v77-card:hover::after{transform:scaleX(1)}
+ .v77-card:hover .v77-code{color:#85d4ff}
+ .v77-card .btn{transition:transform .2s ease,filter .2s ease,box-shadow .2s ease}
+ .v77-card .btn:hover{transform:translateY(-2px);filter:brightness(1.1);box-shadow:0 5px 16px rgba(44,145,204,.25)}
+}
+.v77-card:focus-within{border-color:rgba(87,184,237,.75);box-shadow:0 0 0 2px rgba(87,184,237,.2)}
+@media(prefers-reduced-motion:reduce){.v77-card,.v77-card::before,.v77-card::after,.v77-card .btn{transition:none!important;animation:none!important;transform:none!important}}
 </style>
 </head>
 <body>
@@ -144,7 +159,7 @@ body .guest-shell .guest-footer { color: #526b7b !important; }
 <script>if(window.pdfjsLib)window.pdfjsLib.GlobalWorkerOptions.workerSrc="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";</script>
 <script src="signature-invite.js"></script>
 <script src="ministages-utils.js?v=59"></script>
-<script src="public-v77.js?v=77-1-cards"></script>
+<script src="public-v77.js?v=77-2-hover"></script>
 <script src="app-pdf-rn-v15.js?v=77-public"></script>
 </body>
 </html>
