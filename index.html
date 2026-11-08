@@ -165,6 +165,16 @@ body .guest-shell .guest-footer { color: #526b7b !important; }
   font-size:11px;font-weight:700;color:#a9adb5;background:rgba(120,130,145,.16);
   border:1px solid rgba(140,150,160,.28);
 }
+
+/* V83 — cercle décoratif identique aux cartes de formation de l'administration */
+#publicView .v77-card{position:relative;isolation:isolate;overflow:hidden}
+#publicView .v77-card::after{content:"";position:absolute;right:-38px;bottom:-62px;width:140px;height:140px;border:1px solid rgba(120,222,213,.16);border-radius:50%;pointer-events:none;z-index:0;left:auto;top:auto;opacity:1;transform:none;transition:border-color .28s ease,transform .28s ease}
+#publicView .v77-card > *{position:relative;z-index:1}
+@media(hover:hover) and (pointer:fine){#publicView .v77-card:hover::after{transform:scale(1.07);border-color:rgba(120,222,213,.32)}}
+/* CAP CS HCR à droite : nuance rouge très légère et transparente */
+#publicView .v77-card.v83-hcr{background:linear-gradient(rgba(205,52,68,.075),rgba(205,52,68,.075)),var(--card,#17283b);border-color:rgba(205,76,86,.22)}
+#publicView .v77-card.v83-hcr::after{border-color:rgba(205,76,86,.23)}
+@media(hover:hover) and (pointer:fine){#publicView .v77-card.v83-hcr:hover{border-color:rgba(205,76,86,.52)}#publicView .v77-card.v83-hcr:hover::after{border-color:rgba(205,76,86,.4)}}
 </style>
 </head>
 <body>
@@ -240,7 +250,7 @@ body .guest-shell .guest-footer { color: #526b7b !important; }
 <script>if(window.pdfjsLib)window.pdfjsLib.GlobalWorkerOptions.workerSrc="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";</script>
 <script src="signature-invite.js"></script>
 <script src="ministages-utils.js?v=59"></script>
-<script src="public-v77.js?v=82-complete"></script>
+<script src="public-v77.js?v=83-design-formations"></script>
 <script src="app-pdf-rn-v15.js?v=78-admin-filtres"></script>
 </body>
 </html>

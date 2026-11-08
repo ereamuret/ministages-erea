@@ -24,6 +24,10 @@
     cutoff.setDate(cutoff.getDate()+7);
     return date >= cutoff;
   }
+  function isHcr(f){
+    const label=String((f.code||'')+' '+(f.name||'')).toUpperCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+    return /\bHCR\b/.test(label) || (/\bCAP\b/.test(label) && /COMMERCIALISATION.*SERVICES/.test(label) && /HOTEL|CAFE|RESTAURANT/.test(label));
+  }
   async function refresh(){if(busy)return;busy=true;$('publicStatus').textContent='Actualisation des disponibilités…';$('publicCards').replaceChildren();
     try{
       if(!db)throw Error('Configuration Supabase indisponible.');
@@ -31,7 +35,9 @@
       if(!Array.isArray(data))throw Error('Réponse inattendue du catalogue.');
       const groups=new Map();for(const s of data){const k=String(s.formation_id);if(!groups.has(k))groups.set(k,{name:s.formation_name,code:s.formation_code,description:s.formation_description,sessions:[]});if(s.session_id)groups.get(k).sessions.push(s);}
       $('publicStatus').textContent=data.length?'Créneaux actualisés. Les disponibilités peuvent évoluer.':'Aucun créneau publié pour le moment.';
-      for(const [fid,f] of groups){const card=document.createElement('article');card.className='v77-card';card.innerHTML=`<span class="v77-code">${escapeHtml(f.code||'FORMATION')}</span><h3>${escapeHtml(f.name)}</h3><p>${escapeHtml(f.description||'Découvrez cette formation lors d’un mini-stage.')}</p>`;
+      // Conserver l'ordre existant des autres formations et placer CAP CS HCR en dernier.
+      const orderedGroups=[...groups.entries()].sort((a,b)=>Number(isHcr(a[1]))-Number(isHcr(b[1])));
+      for(const [fid,f] of orderedGroups){const card=document.createElement('article');card.className='v77-card'+(isHcr(f)?' v83-hcr':'');card.innerHTML=`<span class="v77-code">${escapeHtml(f.code||'FORMATION')}</span><h3>${escapeHtml(f.name)}</h3><p>${escapeHtml(f.description||'Découvrez cette formation lors d’un mini-stage.')}</p>`;
         // Afficher au plus 10 créneaux, y compris ceux fermés par délai.
         // Les créneaux complets sont écartés pour laisser apparaître les suivants.
         const sessions=f.sessions.filter(s=>Number(s.places_restantes)>0)
