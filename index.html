@@ -194,6 +194,47 @@ body .guest-shell .guest-footer { color: #526b7b !important; }
   #publicView .v77-card.v83-hcr:hover{border-color:rgba(238,110,122,.7) !important}
   #publicView .v77-card.v83-hcr:hover::after{border-color:rgba(241,126,138,.65)}
 }
+
+/* V86 — accueil public toujours sombre, indépendamment du thème mémorisé.
+   Ne change PAS le thème choisi pour les espaces connectés. */
+#publicView:not(.hidden) {
+  color-scheme: dark !important;
+  --bg: #0e192a;
+  --text: #f4f7fc;
+  --card: #17283b;
+  background: #0e192a !important;
+  color: #f4f7fc !important;
+}
+html:has(#publicView:not(.hidden)),
+body:has(#publicView:not(.hidden)) {
+  background: #0e192a !important;
+  color-scheme: dark !important;
+}
+#publicView:not(.hidden) .v77-card:not(.v83-hcr) {
+  background-color: #17283b !important;
+  color: #f4f7fc !important;
+}
+#publicView:not(.hidden) .v77-card.v83-hcr {
+  background-color: rgba(174,36,50,.22) !important;
+  color: #f4f7fc !important;
+}
+#publicView:not(.hidden) h1,
+#publicView:not(.hidden) h2,
+#publicView:not(.hidden) h3,
+#publicView:not(.hidden) strong,
+#publicView:not(.hidden) .v77-header,
+#publicView:not(.hidden) .v77-slot-info {
+  color: #f4f7fc !important;
+}
+#publicView:not(.hidden) .btn.outline {
+  background: rgba(255,255,255,.055) !important;
+  border-color: rgba(155,188,213,.35) !important;
+  color: #edf6ff !important;
+}
+#publicView:not(.hidden) .btn.outline:hover {
+  background: rgba(91,165,219,.15) !important;
+}
+
 </style>
 </head>
 <body>
