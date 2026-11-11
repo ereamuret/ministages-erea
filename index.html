@@ -235,12 +235,52 @@ body:has(#publicView:not(.hidden)) {
   background: rgba(91,165,219,.15) !important;
 }
 
+
+/* V87 : choix clair/sombre réservé au catalogue public, sans modifier les espaces connectés. */
+.v87-header-actions{display:flex;align-items:center;justify-content:flex-end;gap:9px;flex-wrap:wrap}
+#publicView .v87-theme-toggle{min-width:110px}
+html:has(#publicView.v87-light:not(.hidden)),body:has(#publicView.v87-light:not(.hidden)){
+ background:#f3f7fb !important;color-scheme:light !important;
+}
+#publicView.v87-light:not(.hidden){
+ color-scheme:light !important;--bg:#f3f7fb;--text:#23394e;--card:#fff;
+ background:#f3f7fb !important;color:#23394e !important;
+}
+#publicView.v87-light:not(.hidden) .v77-card:not(.v83-hcr){
+ background:#fff !important;color:#23394e !important;border-color:#d4e0eb;
+ box-shadow:0 8px 25px rgba(29,54,82,.08);
+}
+#publicView.v87-light:not(.hidden) .v77-card.v83-hcr{
+ background:rgba(211,59,71,.105) !important;color:#23394e !important;
+ border-color:rgba(190,65,80,.25);
+}
+#publicView.v87-light:not(.hidden) h1,
+#publicView.v87-light:not(.hidden) h2,
+#publicView.v87-light:not(.hidden) h3,
+#publicView.v87-light:not(.hidden) strong,
+#publicView.v87-light:not(.hidden) .v77-header,
+#publicView.v87-light:not(.hidden) .v77-slot-info{
+ color:#23394e !important;
+}
+#publicView.v87-light:not(.hidden) .btn.outline{
+ background:#fff !important;border-color:#bdcfdf !important;color:#244c67 !important;
+}
+#publicView.v87-light:not(.hidden) .btn.outline:hover{background:#e7f1f9 !important}
+#publicView.v87-light:not(.hidden) .v77-slot{border-top-color:rgba(67,92,118,.15)}
+#publicView.v87-light:not(.hidden) .v77-closed-badge{
+ background:#e8edf2;color:#526171;border-color:#d1dbe5;
+}
+@media(max-width:580px){
+ .v87-header-actions{gap:6px}
+ #publicView .v87-theme-toggle{min-width:0}
+}
+
 </style>
 </head>
 <body>
 <div class="toast" id="toast" role="status"></div>
 <main id="publicView" class="v77-public" aria-label="Formations et créneaux disponibles">
-<header class="v77-header"><div><span class="v77-mark">MS</span><span><strong>MiniStages</strong><small>EREA de Muret</small></span></div><button class="btn outline" id="publicLogin">Connexion établissement</button></header>
+<header class="v77-header"><div><span class="v77-mark">MS</span><span><strong>MiniStages</strong><small>EREA de Muret</small></span></div><div class="v87-header-actions"><button class="btn outline v87-theme-toggle" id="publicThemeToggle" type="button" aria-label="Activer le mode clair" aria-pressed="false">☀ Mode clair</button><button class="btn outline" id="publicLogin">Connexion établissement</button></div></header>
 <section class="v77-hero"><span class="v77-kicker">DÉCOUVRIR NOS FORMATIONS</span><h1>Choisissez votre mini-stage</h1><p>Consultez les formations et les places disponibles. La création d'un compte vous sera demandée au moment de l'inscription</p></section>
 <section class="v77-catalogue"><div class="v77-section-heading"><h2>Formations et créneaux</h2><button class="btn outline small" id="publicRefresh">↻ Actualiser</button></div><p id="publicStatus" role="status">Chargement des disponibilités…</p><div id="publicCards" class="v77-grid"></div></section>
 <footer class="v77-footer">EREA de Muret · Les places sont confirmées uniquement après validation de l'inscription.</footer>
@@ -310,6 +350,27 @@ body:has(#publicView:not(.hidden)) {
 <script>if(window.pdfjsLib)window.pdfjsLib.GlobalWorkerOptions.workerSrc="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";</script>
 <script src="signature-invite.js"></script>
 <script src="ministages-utils.js?v=59"></script>
+<script>
+/* V87 : préférence indépendante de celle de l'application authentifiée. */
+(function(){
+ const key='ministages-public-theme';
+ const root=document.getElementById('publicView');
+ const button=document.getElementById('publicThemeToggle');
+ if(!root||!button)return;
+ function setPublicTheme(value){
+   const light=value==='light';
+   root.classList.toggle('v87-light',light);
+   button.textContent=light?'☾ Mode sombre':'☀ Mode clair';
+   button.setAttribute('aria-label',light?'Activer le mode sombre':'Activer le mode clair');
+   button.setAttribute('aria-pressed',String(light));
+   try{localStorage.setItem(key,light?'light':'dark')}catch(e){}
+ }
+ let previous='dark';
+ try{previous=localStorage.getItem(key)||'dark'}catch(e){}
+ setPublicTheme(previous);
+ button.addEventListener('click',()=>setPublicTheme(root.classList.contains('v87-light')?'dark':'light'));
+})();
+</script>
 <script src="public-v77.js?v=85-direct"></script>
 <script src="app-pdf-rn-v15.js?v=85-direct-78-admin-filtres"></script>
 </body>
