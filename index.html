@@ -275,6 +275,25 @@ html:has(#publicView.v87-light:not(.hidden)),body:has(#publicView.v87-light:not(
  #publicView .v87-theme-toggle{min-width:0}
 }
 
+
+/* V88 : image fournie, exclusivement sur la page d’accueil publique. */
+#publicView:not(.hidden){
+ background-image:linear-gradient(rgba(9,20,36,.86),rgba(9,20,36,.86)),url("fond-accueil.jpg") !important;
+ background-position:center center !important;
+ background-size:cover !important;
+ background-repeat:no-repeat !important;
+ background-attachment:fixed !important;
+}
+#publicView.v87-light:not(.hidden){
+ background-image:url("fond-accueil.jpg") !important;
+ background-position:center center !important;
+ background-size:cover !important;
+ background-repeat:no-repeat !important;
+ background-attachment:fixed !important;
+}
+@media(max-width:767px){
+ #publicView:not(.hidden){background-attachment:scroll !important}
+}
 </style>
 </head>
 <body>
