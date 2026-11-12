@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 
-<html data-theme="dark" lang="fr">
+<html data-theme="light" lang="fr">
    <!-- Actualisation GitHub Pages MiniStages -->
 <head>
 <meta charset="utf-8"/><meta content="width=device-width,initial-scale=1" name="viewport"/>
@@ -384,13 +384,20 @@ html:has(#publicView.v87-light:not(.hidden)),body:has(#publicView.v87-light:not(
    button.setAttribute('aria-pressed',String(light));
    try{localStorage.setItem(key,light?'light':'dark')}catch(e){}
  }
- let previous='dark';
- try{previous=localStorage.getItem(key)||'dark'}catch(e){}
+ let previous='light';
+ try{
+   const marker='ministages-public-theme-default-v91';
+   if(!localStorage.getItem(marker)){
+     localStorage.setItem(key,'light');
+     localStorage.setItem(marker,'1');
+   }
+   previous=localStorage.getItem(key)||'light';
+ }catch(e){}
  setPublicTheme(previous);
  button.addEventListener('click',()=>setPublicTheme(root.classList.contains('v87-light')?'dark':'light'));
 })();
 </script>
 <script src="public-v77.js?v=85-direct"></script>
-<script src="app-pdf-rn-v15.js?v=89-confirmation-admin"></script>
+<script src="app-pdf-rn-v15.js?v=91-convention-clair"></script>
 </body>
 </html>
