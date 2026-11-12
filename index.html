@@ -294,6 +294,23 @@ html:has(#publicView.v87-light:not(.hidden)),body:has(#publicView.v87-light:not(
 @media(max-width:767px){
  #publicView:not(.hidden){background-attachment:scroll !important}
 }
+
+/* V92 — Les créneaux fermés restent visibles dans le calendrier admin. */
+#sessionList tr.v92-session-closed td.compact-date,
+#sessionList tr.v92-session-closed td.compact-formation,
+#sessionList tr.v92-session-closed td:nth-child(4),
+#sessionList tr.v92-session-closed td:nth-child(5){
+  text-decoration:line-through !important;
+  text-decoration-thickness:1.5px !important;
+  text-decoration-color:currentColor !important;
+  opacity:.55;
+}
+#sessionList tr.v92-session-closed td.compact-formation strong,
+#sessionList tr.v92-session-closed td.compact-formation small,
+#sessionList tr.v92-session-closed td.compact-date strong{
+  text-decoration:line-through !important;
+}
+
 </style>
 </head>
 <body>
@@ -398,6 +415,6 @@ html:has(#publicView.v87-light:not(.hidden)),body:has(#publicView.v87-light:not(
 })();
 </script>
 <script src="public-v77.js?v=85-direct"></script>
-<script src="app-pdf-rn-v15.js?v=91-convention-clair"></script>
+<script src="app-pdf-rn-v15.js?v=92-creneaux-fermes"></script>
 </body>
 </html>
