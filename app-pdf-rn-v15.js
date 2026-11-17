@@ -1186,45 +1186,25 @@ const themeToggle=$('#topThemeToggle');if(themeToggle&&!themeToggle.dataset.boun
     $('#modalRoot .modal')?.classList.add('convention-preview-modal');
     if(isBlob)conventionPreviewBlobUrl=url;
 
-    // Rendu PDF.js : évite le lecteur iframe PDF cassé.
-    (async()=>{
-      const target=document.getElementById('conventionPdfPages');
-      if(!target)return;
-      let pdf=null;
-      try{
-        if(!window.pdfjsLib)throw new Error('Lecteur PDF indisponible.');
-        const bytes=pdfBytes ? new Uint8Array(pdfBytes) : await (async()=>{
-          const response=await fetch(url);
-          if(!response.ok)throw new Error('Impossible de récupérer le PDF (HTTP '+response.status+').');
-          return new Uint8Array(await response.arrayBuffer());
-        })();
-        pdf=await window.pdfjsLib.getDocument({data:bytes}).promise;
-        if(!target.isConnected)return;
-        target.replaceChildren();
-        for(let n=1;n<=pdf.numPages;n++){
-          if(!target.isConnected)break;
-          const page=await pdf.getPage(n);
-          const base=page.getViewport({scale:1});
-          const width=Math.min(900,Math.max(320,target.clientWidth-24));
-          const viewport=page.getViewport({scale:Math.min(2,width/base.width)});
-          const canvas=document.createElement('canvas');
-          canvas.width=Math.ceil(viewport.width);
-          canvas.height=Math.ceil(viewport.height);
-          canvas.className='convention-preview-page-canvas';
-          canvas.setAttribute('aria-label','Page '+n+' sur '+pdf.numPages);
-          target.appendChild(canvas);
-          await page.render({canvasContext:canvas.getContext('2d'),viewport}).promise;
-        }
-      }catch(err){
-        if(target.isConnected){
-          target.replaceChildren();
-          const p=document.createElement('p');
-          p.className='convention-preview-error';
-          p.textContent='Aperçu indisponible : '+(err?.message||'Erreur inconnue')+'. Utilisez « Ouvrir dans un nouvel onglet » ou « Télécharger le PDF ».';
-          target.appendChild(p);
-        }
-      }finally{if(pdf)try{await pdf.destroy()}catch(_){}}
-    })();
+    // Aperçu fidèle : déléguer l'affichage au moteur PDF natif du navigateur.
+    // PDF.js dessinait certaines polices incorporées avec des caractères erronés,
+    // alors que le PDF téléchargé et ouvert normalement était correct.
+    // Le même document PDF (même URL) est utilisé pour l'aperçu et le téléchargement.
+    const target=document.getElementById('conventionPdfPages');
+    if(target){
+      target.replaceChildren();
+      const viewer=document.createElement('iframe');
+      viewer.className='convention-native-pdf-viewer';
+      viewer.title='Aperçu de la convention PDF — police du document original';
+      viewer.setAttribute('aria-label','Aperçu PDF de la convention');
+      viewer.style.cssText='display:block;width:100%;height:min(75vh,1100px);min-height:650px;border:1px solid #cbd5e1;border-radius:8px;background:white';
+      viewer.src=url;
+      target.appendChild(viewer);
+      const note=document.createElement('p');
+      note.className='tiny muted';
+      note.textContent='Si le navigateur ne peut pas afficher le PDF ici, utilisez « Ouvrir dans un nouvel onglet » : le fichier est identique à celui téléchargé.';
+      target.appendChild(note);
+    }
 
   }
   // Arial véritable : fichiers fournis par l'établissement et hébergés à côté de l'application.
