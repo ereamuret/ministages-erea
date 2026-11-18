@@ -128,7 +128,7 @@
   const ids=applications.map(a=>a.id).filter(Boolean);
   const sigResult=isCollege
     ?(ids.length?await db.from('convention_signatures').select('*').in('application_id',ids):{data:[],error:null})
-    :await db.from('convention_signatures').select('*');if(!sigResult.error)convention_signatures=sigResult.data||[];else {console.error('Suivi des signatures indisponible',sigResult.error);throw new Error('Impossible de charger les signatures : '+sigResult.error.message);}let teachers=[];if(canAdmin()){const teacherResult=await db.from('teacher_directory').select('*').order('full_name',{ascending:true});if(teacherResult.error)throw new Error('Répertoire des professeurs indisponible : exécutez MIGRATION_REPERTOIRE_PROFESSEURS.sql. '+teacherResult.error.message);teachers=teacherResult.data||[]}await Promise.all([loadSessionOccupancy(),loadBranding()]);if(state.profile?.role==='admin')await loadMailDemo();state.data={formations,sessions,applications,users:users.map(u=>({...u,active:u.active!==false,organization:u.organization||''})),teachers,convention_signatures}}
+    :await db.from('convention_signatures').select('*');if(!sigResult.error)convention_signatures=sigResult.data||[];else {console.error('Suivi des signatures indisponible',sigResult.error);throw new Error('Impossible de charger les signatures : '+sigResult.error.message);}let teachers=[];if(canAdmin()){const teacherResult=await db.from('teacher_directory').select('*').order('full_name',{ascending:true});if(teacherResult.error)throw new Error('Répertoire des professeurs indisponible : exécutez MIGRATION_REPERTOIRE_PROFESSEURS.sql. '+teacherResult.error.message);teachers=teacherResult.data||[]}await Promise.all([loadSessionOccupancy(),loadBranding()]);if(state.profile?.role==='admin'){await loadMailDemo();await refreshReminderCounts();}state.data={formations,sessions,applications,users:users.map(u=>({...u,active:u.active!==false,organization:u.organization||''})),teachers,convention_signatures}}
   async function login(email,password){if(!db){setNotice('Le service en ligne n’est pas configuré. Utilisez la démonstration ou configurez Supabase (voir README).');return}const {data,error}=await db.auth.signInWithPassword({email,password});if(error){setNotice('Connexion impossible : '+error.message);return}state.user=data.user;const {data:profile,error:pe}=await db.from('profiles').select('*').eq('id',data.user.id).single();if(pe||!profile){await db.auth.signOut();setNotice('Votre compte existe mais son profil n’est pas configuré. Demandez à l’administrateur de finaliser votre accès.');return}state.profile=profile;state.demo=false;try{await loadLiveData();showApp();openOriginFromEmail()}catch(e){setNotice('Impossible de charger les données : '+e.message)}}
   function enterDemo(){state.demo=true;state.user={email:'admin@erea-demo.fr'};loadDemo();state.profile=state.data.users[0];state.page='dashboard';showApp();toast('Démonstration activée : données fictives, sur cet appareil uniquement.')}
   async function logout(){if(db&&!state.demo)await db.auth.signOut();state.user=null;state.profile=null;state.demo=false;showLogin()}
@@ -345,6 +345,21 @@
   function originEligible(a){return !state.demo&&!!state.user?.id&&a.created_by===state.user.id&&['college','admin'].includes(state.profile?.role)}
   function workflowStatus(a){if(a.final_pdf_path&&a.finalized_version===(a.convention_version||1))return 'Convention finalisée et envoyée';if(signatureFor(a,'origin')&&signatureFor(a,'guardian'))return 'En attente de validation administrateur';if(signatureFor(a,'guardian'))return 'En attente de signature établissement d’origine';if(['confirmed','completed'].includes(a.status))return 'En attente de signature responsable légal';return 'Non envoyée'}
   function workflowIndicator(a,kind){const signed=!!signatureFor(a,kind);const sent=['confirmed','completed'].includes(a.status)&&(kind==='guardian'||!!signatureFor(a,'guardian'));const label=signed?'Signature effectuée':sent?'En attente':'Non envoyée';return `<span class="status ${signed?'confirmed':sent?'pending':'completed'}" title="${esc(kind==='guardian'?'Responsable légal':'Établissement d’origine')}">${label}</span>`}
+  if(!document.getElementById('v105-reminder-style')){const st=document.createElement('style');st.id='v105-reminder-style';st.textContent='.v105-reminder-wrap{display:inline-flex;align-items:center;position:relative;margin-right:7px}.v105-reminder-count{position:absolute;top:-7px;right:-9px;display:flex;align-items:center;justify-content:center;min-width:17px;height:17px;padding:0 3px;border-radius:999px;background:#fff;color:#152b43;border:1px solid #8ba0b5;font:700 10px Arial,sans-serif;box-shadow:0 1px 3px #0002;pointer-events:none}';document.head.appendChild(st)}
+  const reminderCounts=new Map();
+  async function refreshReminderCounts(){
+    reminderCounts.clear();
+    if(state.demo||!db||!canAdmin())return;
+    const {data,error}=await db.from('signature_reminders').select('application_id,signer_role');
+    if(error){console.warn('Historique relances indisponible : migration V105 requise',error.message);return;}
+    for(const r of data||[]){const key=r.application_id+':'+r.signer_role;reminderCounts.set(key,(reminderCounts.get(key)||0)+1);}
+  }
+  async function recordReminder(id,kind){
+    const {error}=await db.from('signature_reminders').insert({application_id:id,signer_role:kind});
+    if(error)throw new Error('E-mail envoyé mais compteur non enregistré : '+error.message);
+    const key=id+':'+kind;reminderCounts.set(key,(reminderCounts.get(key)||0)+1);
+    renderPage();
+  }
   // V69 : relances manuelles réservées à l'administrateur, pour les signatures encore attendues.
   function workflowWithReminder(a,kind){
     const indicator=workflowIndicator(a,kind);
@@ -352,7 +367,9 @@
     if(kind==='origin'&&!signatureFor(a,'guardian'))return indicator;
     const label=kind==='guardian'?'Relancer le responsable légal':'Relancer l’établissement d’origine';
     const action=kind==='guardian'?'remind-guardian':'remind-origin';
-    return `<span style="display:inline-flex;align-items:center;gap:5px;white-space:nowrap;vertical-align:middle">${indicator}<button type="button" class="icon-btn" style="display:inline-flex;align-items:center;justify-content:center;width:27px;height:27px;min-width:27px;padding:0;line-height:1" data-action="${action}" data-id="${esc(a.id)}" title="${label}" aria-label="${label}">✉</button></span>`;
+    const count=reminderCounts.get(a.id+':'+kind)||0;
+    const badge=count?`<span class="v105-reminder-count" title="${count} relance(s) envoyée(s)">${count}</span>`:'';
+    return `<span style="display:inline-flex;align-items:center;gap:5px;white-space:nowrap;vertical-align:middle">${indicator}<span class="v105-reminder-wrap"><button type="button" class="icon-btn" style="display:inline-flex;align-items:center;justify-content:center;width:27px;height:27px;min-width:27px;padding:0;line-height:1" data-action="${action}" data-id="${esc(a.id)}" title="${label}" aria-label="${label}">✉</button>${badge}</span></span>`;
   }
   async function remindOriginSignature(id){
     if(!canAdmin()||state.demo||!db)throw new Error('Action réservée à l’administrateur connecté.');
@@ -1638,7 +1655,8 @@ const themeToggle=$('#topThemeToggle');if(themeToggle&&!themeToggle.dataset.boun
         if(!a||signatureFor(a,'guardian')||conventionIsFinal(a)||!['confirmed','completed'].includes(a.status))throw new Error('Cette signature n’est plus en attente.');
         await sendGuardianSignatureRequest(id);
         toast('Nouveau lien de signature envoyé au responsable légal.');
-      }else await remindOriginSignature(id);
+        await recordReminder(id,'guardian');
+      }else {await remindOriginSignature(id);await recordReminder(id,'origin');}
     });}catch(err){toast('Relance impossible : '+(err.message||err),true)}finally{el.disabled=false}
     return;
   }if(action==='send-guardian-request'){try{await onceConventionAction('send-guardian-request',id,()=>sendGuardianSignatureRequest(id))}catch(err){toast(err.message,true)}return}if(action==='review-convention'){try{reviewConvention(id)}catch(err){toast(err.message,true)}return}if(action==='validate-final-convention'){try{await onceConventionAction('finalize-convention',id,async()=>{await finalizeConvention(id);closeModal()})}catch(err){toast(err.message,true)}return}if(action==='finalize-convention'){try{await onceConventionAction('finalize-convention',id,()=>finalizeConvention(id))}catch(err){toast(err.message||String(err),true)}return}if(action==='open-archived-convention'){try{await openArchivedConvention(id)}catch(err){toast('Convention : '+err.message,true)}return}if(action==='open-final-convention'){try{await openFinalConvention(id)}catch(err){toast(err.message||String(err),true)}return}if(action==='resend-final-convention'){try{await onceConventionAction('resend-final-convention',id,()=>sendFinalConventionEmail(id))}catch(err){toast('Échec de l’envoi : '+err.message,true)}return}if(action==='download-final-convention'){try{await downloadFinalConvention(id)}catch(err){toast(err.message||String(err),true)}return}const saveActions=['update-recovered-password','save-stage-report','validate-stage-report','print-stage-report','save-formation','save-session','save-application','save-user','save-guardian-signature','save-teacher','save-bulk-sessions'];if(saveActions.includes(action)){if(el.dataset.saving==='true')return;el.dataset.saving='true';el.dataset.originalLabel=el.textContent;el.disabled=true;el.textContent='Enregistrement…'}try{if(action==='lingerie-return'){
