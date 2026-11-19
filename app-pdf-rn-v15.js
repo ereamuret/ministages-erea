@@ -1651,7 +1651,48 @@ const themeToggle=$('#topThemeToggle');if(themeToggle&&!themeToggle.dataset.boun
     }
     renderPage();toast('Réservation supprimée définitivement. La place est libérée.');
   }
-  async function changeStatus(id,status){if(!canAdmin()){toast('Seul un administrateur peut modifier le statut.',true);return}const a=state.data.applications.find(x=>x.id===id);if(!a)return;try{if(!state.demo&&db&&status==='confirmed'){const {error}=await db.rpc('confirm_stage_with_host_signature',{p_application_id:id});if(error)throw error;const {error:stampError}=await db.from('applications').update({confirmed_at:new Date().toISOString()}).eq('id',id).is('confirmed_at',null);if(stampError)throw new Error('Stage confirmé, mais horodatage non enregistré : '+stampError.message);await loadLiveData()}else{await persist('applications',status==='confirmed'?{status,confirmed_at:a.confirmed_at||new Date().toISOString()}:{status},id)}renderPage();toast(`Inscription ${statusLabel(status).toLowerCase()}.`);if(status==='confirmed'&&!state.demo){try{await sendGuardianSignatureRequest(id)}catch(mailError){toast('Inscription confirmée, mais e-mail de signature non envoyé : '+mailError.message,true)}}}catch(e){toast('Modification impossible : '+e.message,true)}}
+  async function changeStatus(id,status){
+    if(!canAdmin()){toast('Seul un administrateur peut modifier le statut.',true);return}
+    const a=state.data.applications.find(x=>x.id===id);
+    if(!a)return;
+    try{
+      if(!state.demo&&db&&status==='confirmed'){
+        // La confirmation et l'horodatage sont deux opérations distinctes.
+        // Ne jamais relancer la RPC si le dossier a déjà été confirmé.
+        if(!['confirmed','completed'].includes(a.status)){
+          const {error}=await db.rpc('confirm_stage_with_host_signature',{p_application_id:id});
+          if(error){
+            // Une précédente tentative peut avoir confirmé le dossier avant
+            // d'échouer lors de l'enregistrement de l'horodatage.
+            await loadLiveData();
+            const current=state.data.applications.find(x=>x.id===id);
+            if(!current||!['confirmed','completed'].includes(current.status))throw error;
+          }
+        }
+        // Ne jamais écraser une date de confirmation déjà enregistrée.
+        // Si la colonne Supabase n'existe pas, la confirmation reste valable.
+        const current=state.data.applications.find(x=>x.id===id)||a;
+        if(!current.confirmed_at){
+          const {error:stampError}=await db.from('applications')
+            .update({confirmed_at:new Date().toISOString()})
+            .eq('id',id).is('confirmed_at',null);
+          if(stampError)toast('Stage confirmé. Date non enregistrée : exécuter la migration SQL dans Supabase. '+stampError.message,true);
+        }
+        await loadLiveData();
+      }else{
+        await persist('applications',status==='confirmed'?{status,confirmed_at:a.confirmed_at||new Date().toISOString()}:{status},id);
+      }
+      renderPage();
+      toast(`Inscription ${statusLabel(status).toLowerCase()}.`);
+      if(status==='confirmed'&&!state.demo){
+        try{await sendGuardianSignatureRequest(id)}
+        catch(mailError){toast('Inscription confirmée, mais e-mail de signature non envoyé : '+mailError.message,true)}
+      }
+    }catch(e){
+      try{if(!state.demo&&db){await loadLiveData();renderPage()}}catch(_ignored){}
+      toast('Modification impossible : '+e.message,true);
+    }
+  }
   function csvCell(v){return '"'+String(v??'').replace(/"/g,'""')+'"'}
   function exportApplications(){const headers=['Prénom élève','Nom élève','Date de naissance','Classe','Adresse élève','Collège','Ville collège','SIRET','Adresse collège','Téléphone collège','E-mail collège','Pointure chaussures','Taille pantalon','Taille haut','Formation','Date mini-stage','Début','Fin','Contact','Adresse responsable','E-mail','Téléphone','Téléphone secondaire','Responsable légal 2','Problème médical','PAI','AESH','Repas','Prise en charge repas','Assurance','Statut','État du mini-stage','Compte rendu tâches','Compte rendu observations','Avis orientation','Date demande','Notes'];const lines=state.data.applications.map(a=>{const s=session(a.session_id);return [a.student_first_name,a.student_last_name,a.student_birth_date,a.student_class,a.student_address,a.college_name,a.college_city,a.college_siret,a.college_address,a.college_phone,a.college_email,a.shoe_size,a.pants_size,a.top_size,formation(a.formation_id).name,s.date,s.start_time,s.end_time,a.contact_name,a.parent_address,a.contact_email,a.contact_phone,a.contact_phone2,a.parent2_name,a.medical_issue,a.pai,a.aesh,a.meal,a.meal_payer,a.insurance,statusLabel(a.status),a.stage_status==='done'?'Stage effectué':a.stage_status==='absent'?'Élève absent':'',a.stage_report?.tasks||'',a.stage_report?.observations||'',a.stage_report?.orientation||'',a.created_at?new Date(a.created_at).toLocaleDateString('fr-FR'):'',a.notes].map(csvCell).join(';')});const blob=new Blob(['\ufeff'+[headers.map(csvCell).join(';'),...lines].join('\r\n')],{type:'text/csv;charset=utf-8;'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=`ministages-inscriptions-${iso(new Date())}.csv`;a.click();URL.revokeObjectURL(url);toast('Export CSV téléchargé.')}
   function setupInfo(){openModal('Configuration du portail',`<div class="notice-blue">Pour un accès Internet multi-utilisateurs, l’application doit être publiée sur un hébergement web et reliée à une base en ligne. Vous pouvez utiliser les offres gratuites de GitHub Pages (site statique) et Supabase (authentification + base de données). Ce n’est pas un hébergement « sans serveur » : ce sont des services hébergés avec une offre gratuite.</div><h3 style="margin:18px 0 8px">Étapes</h3><ol style="font-size:12px;line-height:1.9;color:#536874;padding-left:20px"><li>Créer un projet Supabase.</li><li>Exécuter le fichier <code>supabase/schema.sql</code> dans SQL Editor.</li><li>Créer un compte administrateur dans Authentication.</li><li>Créer le profil administrateur avec la requête SQL décrite dans le README.</li><li>Renseigner l’URL du projet et la clé publique anon dans <code>config.js</code>.</li><li>Publier le dossier sur GitHub Pages.</li></ol><p class="tiny muted">Ne placez jamais la clé secrète/service_role dans le code du navigateur.</p>`,`<button type="button" class="btn primary" data-action="close-modal">Compris</button>`)}
