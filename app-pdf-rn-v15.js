@@ -623,7 +623,7 @@
     if(!['confirmed','completed'].includes(a.status)||!a.confirmed_at)return '';
     const date=new Date(a.confirmed_at);
     if(Number.isNaN(date.getTime()))return '';
-    return new Intl.DateTimeFormat('fr-FR',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit',hour12:false}).format(date);
+    return new Intl.DateTimeFormat('fr-FR',{day:'2-digit',month:'2-digit',year:'numeric',timeZone:'Europe/Paris'}).format(date).replace(/,?\s+(?=\d{2}:\d{2}$)/,' à ');
   }
   function confirmationStatusHtml(a){
     const date=confirmationDateLabel(a);
