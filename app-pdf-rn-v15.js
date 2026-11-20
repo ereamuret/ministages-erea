@@ -623,7 +623,7 @@
     if(!['confirmed','completed'].includes(a.status)||!a.confirmed_at)return '';
     const date=new Date(a.confirmed_at);
     if(Number.isNaN(date.getTime()))return '';
-    return new Intl.DateTimeFormat('fr-FR',{day:'2-digit',month:'2-digit',year:'numeric',timeZone:'Europe/Paris'}).format(date).replace(/,?\s+(?=\d{2}:\d{2}$)/,' à ');
+    return new Intl.DateTimeFormat('fr-FR',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit',hour12:false,timeZone:'Europe/Paris'}).format(date).replace(/,?\s+(?=\d{2}:\d{2}$)/,' à ');
   }
   function confirmationStatusHtml(a){
     const date=confirmationDateLabel(a);
@@ -786,35 +786,36 @@
     if(!selected.length)throw new Error('Cochez au moins un mini-stage.');
     if(!window.jspdf?.jsPDF)throw new Error('Le module PDF est indisponible. Actualisez la page.');
     const doc=new window.jspdf.jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
-    const positions=[[12,13],[108,13],[12,155],[108,155]];
+    const w=60,h=89, gap=4, marginX=11, marginY=11;
     const clean=v=>String(v??'').replace(/[\r\n\t]+/g,' ').trim()||'—';
-    const fit=(value,maxWidth,fontSize=14,min=9)=>{let size=fontSize;doc.setFontSize(size);while(size>min&&doc.getTextWidth(clean(value))>maxWidth){size-=0.5;doc.setFontSize(size)}return size};
+    const fit=(value,maxWidth,fontSize=12,min=7)=>{let size=fontSize;doc.setFontSize(size);while(size>min&&doc.getTextWidth(clean(value))>maxWidth){size-=0.5;doc.setFontSize(size)}return size};
     selected.forEach((a,i)=>{
-      if(i&&i%4===0)doc.addPage();
-      const [x,y]=positions[i%4],w=90,h=129;
-      doc.setDrawColor(214,219,227);doc.setLineWidth(.4);doc.roundedRect(x,y,w,h,3,3,'S');
-      doc.setFillColor(40,40,40);doc.roundedRect(x,y,w,19,3,3,'F');doc.rect(x,y+14,w,5,'F');
-      doc.setTextColor(255,255,255);doc.setFont('helvetica','bold');doc.setFontSize(13);doc.text('EREA DE MURET',x+5,y+8);
-      doc.setFont('helvetica','normal');doc.setFontSize(8);doc.text('MINI-STAGE  |  LINGERIE',x+5,y+14);
-      doc.setTextColor(70,76,89);doc.setFont('helvetica','bold');doc.setFontSize(9);doc.text('DATE DU MINI-STAGE',x+6,y+28);
-      doc.setTextColor(29,36,47);doc.setFontSize(14);doc.text(dateLabel(a.stage_date),x+6,y+36);
-      doc.setDrawColor(229,231,235);doc.line(x+6,y+42,x+w-6,y+42);
-      doc.setTextColor(70,76,89);doc.setFontSize(9);doc.text('FORMATION',x+6,y+50);
-      doc.setTextColor(29,36,47);fit(a.formation_code,w-12,17,11);doc.text(clean(a.formation_code),x+6,y+59);
-      doc.setTextColor(70,76,89);doc.setFontSize(9);doc.text('ÉLÈVE',x+6,y+69);
-      doc.setTextColor(29,36,47);doc.setFont('helvetica','bold');
+      if(i&&i%9===0)doc.addPage();
+      const n=i%9,x=marginX+(n%3)*(w+gap),y=marginY+Math.floor(n/3)*(h+gap);
+      doc.setDrawColor(214,219,227);doc.setLineWidth(.35);doc.roundedRect(x,y,w,h,2,2,'S');
+      doc.setFillColor(40,40,40);doc.roundedRect(x,y,w,13,2,2,'F');doc.rect(x,y+9,w,4,'F');
+      doc.setTextColor(255,255,255);doc.setFont('helvetica','bold');doc.setFontSize(10);doc.text('EREA DE MURET',x+4,y+5.5);
+      doc.setFont('helvetica','normal');doc.setFontSize(7);doc.text('MINI-STAGE  |  LINGERIE',x+4,y+10);
+      doc.setTextColor(70,76,89);doc.setFont('helvetica','bold');doc.setFontSize(7);doc.text('DATE DU MINI-STAGE',x+4,y+19);
+      doc.setTextColor(29,36,47);fit(dateLabel(a.stage_date),w-8,11,7);doc.text(dateLabel(a.stage_date),x+4,y+25);
+      doc.setDrawColor(229,231,235);doc.line(x+4,y+29,x+w-4,y+29);
+      doc.setTextColor(70,76,89);doc.setFontSize(7);doc.text('FORMATION',x+4,y+34);
+      doc.setTextColor(29,36,47);fit(a.formation_code,w-8,12,7);doc.text(clean(a.formation_code),x+4,y+40);
+      doc.setTextColor(70,76,89);doc.setFontSize(7);doc.text('ÉLÈVE',x+4,y+46);
+      doc.setTextColor(29,36,47);doc.setFont('helvetica','bold');doc.setFontSize(10);
       const fullName=clean([a.student_last_name,a.student_first_name].filter(Boolean).join(' '));
-      const nameLines=doc.splitTextToSize(fullName,w-12).slice(0,2);
-      doc.setFontSize(12);doc.text(nameLines,x+6,y+77);
-      doc.setDrawColor(229,231,235);doc.line(x+6,y+94,x+w-6,y+94);
+      let nameLines=doc.splitTextToSize(fullName,w-8);
+      while(nameLines.length>2&&doc.getFontSize()>6){doc.setFontSize(doc.getFontSize()-.5);nameLines=doc.splitTextToSize(fullName,w-8);}
+      doc.text(nameLines,x+4,y+52);
+      doc.setDrawColor(229,231,235);doc.line(x+4,y+62,x+w-4,y+62);
       const labels=[['CHAUSSURES',a.shoe_size],['PANTALON',a.pants_size],['HAUT',a.top_size]];
-      const cw=(w-12)/3;
+      const cw=(w-8)/3;
       labels.forEach(([label,value],j)=>{
-        const cx=x+6+j*cw;
-        doc.setTextColor(88,94,105);doc.setFont('helvetica','bold');doc.setFontSize(7.5);doc.text(label,cx,y+103);
-        doc.setTextColor(27,37,51);doc.setFontSize(17);doc.text(clean(value),cx,y+116);
+        const cx=x+4+j*cw;
+        doc.setTextColor(88,94,105);doc.setFont('helvetica','bold');fit(label,cw-1,6.5,5);doc.text(label,cx,y+68);
+        doc.setTextColor(27,37,51);fit(value,cw-1,14,7);doc.text(clean(value),cx,y+77);
       });
-      doc.setTextColor(135,140,149);doc.setFont('helvetica','normal');doc.setFontSize(7);doc.text('Préparation des équipements de mini-stage',x+6,y+124);
+      doc.setTextColor(135,140,149);doc.setFont('helvetica','normal');doc.setFontSize(6);doc.text('Préparation des équipements de mini-stage',x+4,y+85);
     });
     doc.save('etiquettes-lingerie-'+iso(today)+'.pdf');
   }
@@ -829,7 +830,7 @@
       const color=code==='CAP PSR'?'org-psr':code==='CAP JP'?'org-jp':code==='CAP MAH'?'org-mah':'org-other';
       return `<tr class="lingerie-line ${color}"><td><input type="checkbox" class="lingerie-select" data-id="${esc(a.application_id)}" aria-label="Sélectionner ${esc([a.student_first_name,a.student_last_name].filter(Boolean).join(' '))}" ${lingerieSelected.has(String(a.application_id))?'checked':''}></td><td><span class="lingerie-status ${upcoming?'upcoming':'done'}">${upcoming?'À venir':'Effectué'}</span></td><td>${shortDate(a.stage_date)}</td><td><strong>${esc(a.formation_code||'—')}</strong></td><td><strong>${esc([a.student_first_name,a.student_last_name].filter(Boolean).join(' '))}</strong></td><td>${round(a.shoe_size?'T'+String(a.shoe_size).replace(/^T/i,''):'','shoes')}</td><td>${round(a.pants_size,'pants')}</td><td>${round(a.top_size,'top')}</td><td>${a.returned_at?`<span class="lingerie-returned">Retour validé<br><small>${esc(dateLabel(String(a.returned_at).slice(0,10)))}</small></span>`:`<button class="btn outline small" data-action="lingerie-return" data-id="${esc(a.application_id)}">En attente retour</button>`}</td></tr>`;
     }).join('');
-    return `<div class="welcome-row"><div><h2>Inscription — Lingerie</h2><p>Conventions définitives envoyées · ${rows.length} inscription(s)</p></div><label>Statut <select id="lingerieFilter"><option value="all" ${filter==='all'?'selected':''}>Tous</option><option value="upcoming" ${filter==='upcoming'?'selected':''}>À venir</option><option value="done" ${filter==='done'?'selected':''}>Effectué</option></select></label></div><div class="lingerie-label-toolbar"><label><input type="checkbox" id="lingerieSelectAll" aria-label="Sélectionner tous les mini-stages affichés"> Tout sélectionner (filtre actuel)</label><span id="lingerieSelectedCount">${selectedLingerieRows().length} sélectionné(s)</span><button type="button" class="btn primary" data-action="download-lingerie-labels" ${selectedLingerieRows().length?'':'disabled'}>▣ Générer les étiquettes A4 (PDF)</button><small>4 étiquettes par page, plusieurs pages si nécessaire.</small></div><section class="panel data-panel"><div class="table-wrap"><table class="lingerie-table"><thead><tr><th>✓</th><th>Statut</th><th>Date</th><th>Formation</th><th>Élève (nom et prénom)</th><th>Chaussures</th><th>Pantalon</th><th>Haut</th><th>Retour</th></tr></thead><tbody>${body||'<tr><td colspan="9">Aucune convention définitive envoyée pour ce filtre.</td></tr>'}</tbody></table></div></section>`;
+    return `<div class="welcome-row"><div><h2>Inscription — Lingerie</h2><p>Conventions définitives envoyées · ${rows.length} inscription(s)</p></div><label>Statut <select id="lingerieFilter"><option value="all" ${filter==='all'?'selected':''}>Tous</option><option value="upcoming" ${filter==='upcoming'?'selected':''}>À venir</option><option value="done" ${filter==='done'?'selected':''}>Effectué</option></select></label></div><div class="lingerie-label-toolbar"><label><input type="checkbox" id="lingerieSelectAll" aria-label="Sélectionner tous les mini-stages affichés"> Tout sélectionner (filtre actuel)</label><span id="lingerieSelectedCount">${selectedLingerieRows().length} sélectionné(s)</span><button type="button" class="btn primary" data-action="download-lingerie-labels" ${selectedLingerieRows().length?'':'disabled'}>▣ Générer les étiquettes A4 (PDF)</button><small>9 étiquettes par page A4 portrait, plusieurs pages si nécessaire.</small></div><section class="panel data-panel"><div class="table-wrap"><table class="lingerie-table"><thead><tr><th>✓</th><th>Statut</th><th>Date</th><th>Formation</th><th>Élève (nom et prénom)</th><th>Chaussures</th><th>Pantalon</th><th>Haut</th><th>Retour</th></tr></thead><tbody>${body||'<tr><td colspan="9">Aucune convention définitive envoyée pour ce filtre.</td></tr>'}</tbody></table></div></section>`;
   }
   function usersPage(){if(!canAdmin())return '<div class="notice-blue">Cette rubrique est réservée aux administrateurs.</div>';return `<div class="welcome-row"><div><h2>Utilisateurs</h2><p>Consultez les identifiants e-mail et gérez les accès au portail.</p></div><button class="btn primary" data-action="new-user">＋ Ajouter un profil</button></div><div class="notice-blue" style="margin-bottom:16px"><strong>Gestion sécurisée des mots de passe :</strong> les mots de passe existants ne sont jamais consultables, même par l’administrateur. Utilisez « Régénérer / réinitialiser » pour envoyer à l’utilisateur un lien sécurisé lui permettant de choisir un nouveau mot de passe. Les comptes réels sont gérés par Supabase Authentication.</div><section class="panel data-panel"><div class="table-wrap"><table><thead><tr><th>Identifiant (e-mail)</th><th>Organisation</th><th>Rôle</th><th>Statut</th><th>Action</th></tr></thead><tbody>${state.data.users.map(u=>`<tr><td><div class="cell-title">${esc(u.email||'E-mail non renseigné')}</div><div class="cell-sub">${esc(u.full_name||'Sans nom')}</div></td><td>${esc(u.organization||'—')}</td><td>${esc(roleLabel(u.role))}</td><td><span class="status ${u.active===false?'refused':'active'}">${u.active===false?'Désactivé':'Actif'}</span></td><td><div class="row-actions"><button class="btn outline small" data-action="edit-user" data-id="${u.id}">Profil</button>${u.email?`<button class="btn secondary small" data-action="reset-user-password" data-email="${esc(u.email)}">Réinitialiser le mot de passe</button>`:''}</div></td></tr>`).join('')}</tbody></table></div></section>`}
   async function mailDemoRequest(action,settings){
