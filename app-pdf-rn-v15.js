@@ -363,6 +363,14 @@
   // V69 : relances manuelles réservées à l'administrateur, pour les signatures encore attendues.
   function workflowWithReminder(a,kind){
     const indicator=workflowIndicator(a,kind);
+    // Horodatage réel de la signature du responsable légal, version courante.
+    if(canAdmin()&&kind==='guardian'){
+      const signature=signatureFor(a,kind);
+      if(signature?.signed_at){
+        const date=confirmationDateLabel({status:'confirmed',confirmed_at:signature.signed_at});
+        if(date)return `${indicator}<div class="cell-sub confirmation-timestamp">${esc(date)}</div>`;
+      }
+    }
     if(!canAdmin()||!['confirmed','completed'].includes(a.status)||conventionIsFinal(a)||signatureFor(a,kind))return indicator;
     if(kind==='origin'&&!signatureFor(a,'guardian'))return indicator;
     const label=kind==='guardian'?'Relancer le responsable légal':'Relancer l’établissement d’origine';
