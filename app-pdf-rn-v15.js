@@ -195,7 +195,22 @@
   let internatConfig=null, internatLoading=false;
   const internatDefaults={price:'',arrivalTime:'',offset:'-1',message:'',pdf:'',filename:''};
   async function loadInternat(){if(!canAdmin()||internatLoading)return;internatLoading=true;try{let raw;if(state.demo)raw=localStorage.getItem(internatKey);else{const {data,error}=await db.from('ministages_settings').select('value').eq('key',internatKey).maybeSingle();if(error)throw error;raw=data?.value;}internatConfig={...internatDefaults,...(raw?(typeof raw==='string'?JSON.parse(raw):raw):{})};}catch(e){toast('Chargement internat : '+e.message,true);}finally{internatLoading=false;if(state.page==='settings'&&internatConfig)renderPage();}}
-  function updateInternatBadge(){const b=document.querySelector('#mainNav [data-page="internat"]');if(!b||!canAdmin())return;let badge=b.querySelector('#internatPendingBadge');if(!badge){badge=document.createElement('span');badge.id='internatPendingBadge';const source=$('#pendingBadge');badge.className=source?.className||'';badge.style.cssText='display:inline-flex;align-items:center;justify-content:center;min-width:20px;height:20px;border-radius:999px;background:#dcf8f2;color:#147b83;font-size:11px;font-weight:700;margin-left:5px;';b.appendChild(badge);}const n=state.data.applications.filter(a=>a.medical_issue==='oui'&&conventionIsFinal(a)&&a.emergency_uploaded_at&&a.emergency_unread).length;badge.textContent=String(n);badge.title=n+' nouvelle(s) fiche(s) d’urgence à consulter';badge.setAttribute('aria-label',badge.title);}
+  function updateInternatBadge(){
+    const b=document.querySelector('#mainNav [data-page="internat"]'),source=$('#pendingBadge');if(!b||!canAdmin()||!source)return;
+    const reference=source.closest('.nav-item');if(!reference)return;
+    let badge=b.querySelector('#internatPendingBadge');if(!badge){badge=source.cloneNode(false);badge.id='internatPendingBadge';b.appendChild(badge);}
+    const n=state.data.applications.filter(a=>a.medical_issue==='oui'&&conventionIsFinal(a)&&a.emergency_uploaded_at&&a.emergency_unread).length;
+    badge.textContent=String(n);badge.title=n+' nouvelle(s) fiche(s) d’urgence à consulter';badge.setAttribute('aria-label',badge.title);
+    const css=getComputedStyle(source), sr=source.getBoundingClientRect(), rr=reference.getBoundingClientRect();
+    if(!sr.width||!rr.width)return;
+    if(getComputedStyle(b).position==='static')b.style.position='relative';
+    b.style.setProperty('box-sizing','border-box','important');
+    b.style.setProperty('height',rr.height+'px','important');
+    badge.style.cssText='';
+    for(const prop of ['display','align-items','justify-content','text-align','line-height','font-family','font-size','font-weight','letter-spacing','color','background-color','border-radius','box-shadow','border','padding','box-sizing','min-width','white-space'])badge.style.setProperty(prop,css.getPropertyValue(prop),'important');
+    const set=(k,v)=>badge.style.setProperty(k,v,'important');
+    set('position','absolute');set('right',Math.max(0,rr.right-sr.right-parseFloat(getComputedStyle(b).borderRightWidth||0))+'px');set('bottom',Math.max(0,rr.bottom-sr.bottom-parseFloat(getComputedStyle(b).borderBottomWidth||0))+'px');set('top','auto');set('left','auto');set('margin','0');set('transform','none');set('height',sr.height+'px');set('min-width',sr.width+'px');set('width','auto');set('pointer-events','none');
+  }
   let internatNotificationBusy=false;
   async function refreshInternatNotifications(){if(!canAdmin()||state.demo||internatNotificationBusy)return;internatNotificationBusy=true;const uid=state.user?.id;try{const r=await internatRequest(null,'list-status');if(!canAdmin()||state.user?.id!==uid||!Array.isArray(r?.items))return;const map=new Map(r.items.map(m=>[String(m.application_id),m]));let changed=false;for(const a of state.data.applications){const m=map.get(String(a.id));const uploaded=m?.emergency_uploaded_at||null, unread=m?.emergency_unread===true,sent=m?.sent_at||null;if(a.emergency_uploaded_at!==uploaded||a.emergency_unread!==unread||a.internat_sent_at!==sent)changed=true;a.emergency_uploaded_at=uploaded;a.emergency_unread=unread;a.internat_sent_at=sent;}if(changed&&state.page==='internat')renderPage();else updateInternatBadge();}catch(e){console.warn('Notifications internat',e.message);}finally{internatNotificationBusy=false;}}
   setInterval(refreshInternatNotifications,30000);
