@@ -1133,6 +1133,8 @@ const themeToggle=$('#topThemeToggle');if(themeToggle&&!themeToggle.dataset.boun
   let academySchoolsCache=null;
   let signupVisibleSchools=[];
   const normalizeSearch=value=>String(value||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLocaleLowerCase('fr').trim();
+  const hostSignupBlocked=(school,email='')=>String(school?.uai||'').trim().toUpperCase()==='0311240E'||[email,school?.email].some(v=>String(v||'').trim().toLowerCase()==='0311240e@ac-toulouse.fr');
+  const hostSignupMessage='L’EREA de Muret est l’établissement d’accueil. La création d’un compte établissement n’est pas autorisée.';
   async function loadToulouseAcademySchools(){
     if(academySchoolsCache)return academySchoolsCache;
     const base='https://data.education.gouv.fr/api/explore/v2.1/catalog/datasets/fr-en-annuaire-education/records';
@@ -1158,7 +1160,7 @@ const themeToggle=$('#topThemeToggle');if(themeToggle&&!themeToggle.dataset.boun
   function renderSignupSchoolOptions(query=''){
     const list=$('#signupSchoolResults'),input=$('#signupSchoolSearch');if(!list||!input)return;
     const q=normalizeSearch(query).trim();
-    signupVisibleSchools=q?(academySchoolsCache||[]).filter(s=>normalizeSearch(`${s.name} ${s.city} ${s.uai} ${s.type}`).includes(q)).slice(0,40):[];
+    signupVisibleSchools=q?(academySchoolsCache||[]).filter(s=>!hostSignupBlocked(s)&&normalizeSearch(`${s.name} ${s.city} ${s.uai} ${s.type}`).includes(q)).slice(0,40):[];
     list.innerHTML=q?(signupVisibleSchools.length?signupVisibleSchools.map(s=>`<button type="button" class="signup-school-choice" role="option" data-school-uai="${esc(s.uai)}"><strong>${esc(s.name)}</strong><small>${esc(s.city)} · ${esc(s.uai)}</small></button>`).join(''):'<p class="tiny muted">Aucun établissement correspondant.</p>'):'';
     list.classList.toggle('hidden',!q);input.setAttribute('aria-expanded',String(!!q));
     if(window.selectedSignupSchool&&q!==normalizeSearch(window.selectedSignupSchool.name)){
@@ -1168,7 +1170,7 @@ const themeToggle=$('#topThemeToggle');if(themeToggle&&!themeToggle.dataset.boun
   async function initSignupSchoolDirectory(){
     const input=$('#signupSchoolSearch'),help=$('#signupSchoolHelp');if(!input)return;
     try{const schools=await loadToulouseAcademySchools();input.disabled=false;
-      if(help)help.textContent=`${schools.length} établissements disponibles. Saisissez quelques lettres puis cliquez sur le bon établissement.`;
+      if(help)help.textContent=`${schools.filter(s=>!hostSignupBlocked(s)).length} établissements disponibles. Saisissez quelques lettres puis cliquez sur le bon établissement.`;
       renderSignupSchoolOptions(input.value);
     }catch(error){if(help)help.textContent='Annuaire indisponible : réessayez plus tard. Aucun établissement ne peut être sélectionné pour le moment.';}
   }
@@ -1245,7 +1247,7 @@ const themeToggle=$('#topThemeToggle');if(themeToggle&&!themeToggle.dataset.boun
     }
   }
   function selectSignupSchool(uai){
-    const school=(academySchoolsCache||[]).find(s=>s.uai===uai);if(!school)return;
+    const school=(academySchoolsCache||[]).find(s=>s.uai===uai);if(!school||hostSignupBlocked(school))return;
     $('#signupOrganization').value=school.name;
     $('#signupSchoolSearch').value=school.name;
     $('#signupSchoolResults').classList.add('hidden');
@@ -1883,6 +1885,7 @@ EREA de Muret`;const to=d.contact_email||d.college_email||'';closeModal();render
     if(!db){setNotice('La création de compte nécessite la configuration de Supabase. La démonstration ne crée pas de compte réel.');$('#loginNotice').classList.remove('hidden');return}
     const selectedSchool=window.selectedSignupSchool?.name===organization?window.selectedSignupSchool:null;
     if(!selectedSchool){setNotice('Sélectionnez un établissement dans les résultats de l’annuaire.');$('#loginNotice').classList.remove('hidden');return;}
+    if(hostSignupBlocked(selectedSchool,email)){setNotice(hostSignupMessage);$('#loginNotice').classList.remove('hidden');return;}
     const signupSiret=String($('#signupSiret')?.value||'').trim();
     if(signupSiret&&!/^\d{14}$/.test(signupSiret)){setNotice('SIRET : renseignez exactement 14 chiffres.');$('#loginNotice').classList.remove('hidden');return;}
     if(signupAccountBlocked){setNotice('Vérification de l’établissement non terminée ou compte déjà existant.');$('#loginNotice').classList.remove('hidden');return;}
