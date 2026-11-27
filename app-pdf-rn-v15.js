@@ -449,7 +449,7 @@ html[data-theme=dark] .origin-reservations-table td[colspan]{background:#172536!
   function reviewConvention(id){const a=state.data.applications.find(x=>x.id===id);if(!a||!canAdmin())throw new Error('Action réservée à l’administrateur.');if(!signatureFor(a,'guardian')||!signatureFor(a,'origin'))throw new Error('Deux signatures nécessaires avant validation.');openModal('Validation de la convention',`<p><strong>${esc(a.student_first_name)} ${esc(a.student_last_name)}</strong></p><p>${workflowIndicator(a,'guardian')} Responsable légal · ${workflowIndicator(a,'origin')} Établissement d’origine</p><p>Consultez le PDF provisoire avant validation. La signature d’accueil sera ajoutée uniquement lors de la validation.</p>`,`<button class="btn outline" data-action="print-convention" data-id="${id}">Consulter le PDF</button><button class="btn outline" data-action="close-modal">Annuler</button>${!a.final_pdf_path?`<button class="btn primary" data-action="validate-final-convention" data-id="${id}">Valider, générer et envoyer</button>`:`<button class="btn primary" data-action="download-final-convention" data-id="${id}">Télécharger le PDF final</button>`}`)}
   function confirmedRegisterRows(){
     if(!canManage())throw new Error('Accès réservé aux personnels autorisés.');
-    return (state.data.applications||[]).filter(a=>a.status==='confirmed')
+    return (state.data.applications||[]).filter(a=>['confirmed','completed'].includes(a.status)&&conventionIsFinal(a))
       .map(a=>({a,s:session(a.session_id),f:formation(a.formation_id)}))
       .sort((x,y)=>String(x.s.date||'9999').localeCompare(String(y.s.date||'9999'))||
         String(x.s.start_time||'').localeCompare(String(y.s.start_time||''))||
@@ -482,7 +482,7 @@ html[data-theme=dark] .origin-reservations-table td[colspan]{background:#172536!
     const JsPDF=window.jspdf?.jsPDF;
     if(!JsPDF)throw new Error('La bibliothèque jsPDF n’est pas disponible.');
     const rows=confirmedRegisterRows();
-    if(!rows.length){toast('Aucune inscription confirmée à exporter.');return}
+    if(!rows.length){toast('Aucune inscription avec convention finalisée à exporter.');return}
     const doc=new JsPDF({orientation:'landscape',unit:'mm',format:'a4'});
     const width=297, margin=13, columns=[37,58,61,81,34], x=[13,50,108,169,250], headY=31, lineH=9;
     const safe=(v)=>String(v??'—').split(String.fromCharCode(13)).join(' ').split(String.fromCharCode(10)).join(' ').trim()||'—';
@@ -492,7 +492,7 @@ html[data-theme=dark] .origin-reservations-table td[colspan]{background:#172536!
       page++;y=14;
       doc.setFillColor(14,30,49);doc.roundedRect(margin,y,width-2*margin,15,2,2,'F');
       doc.setFont('helvetica','bold');doc.setTextColor(255,255,255);doc.setFontSize(15);
-      doc.text('EREA de Muret — Inscriptions confirmées',margin+5,y+9.5);
+      doc.text('EREA de Muret — Conventions finalisées',margin+5,y+9.5);
       doc.setTextColor(60,75,95);doc.setFont('helvetica','normal');doc.setFontSize(8);
       doc.text(`${rows.length} inscriptions · édité le ${new Date().toLocaleDateString('fr-FR')}`,margin,34);
       y=39;doc.setFillColor(34,66,101);doc.rect(margin,y,width-2*margin,9,'F');
@@ -645,13 +645,13 @@ html[data-theme=dark] .origin-reservations-table td[colspan]{background:#172536!
   function exportGestionPdf(){
     if(!canAdmin())throw new Error('Accès administrateur requis.');
     const JsPDF=window.jspdf?.jsPDF;if(!JsPDF)throw new Error('Bibliothèque PDF indisponible.');
-    const rows=confirmedRegisterRows();if(!rows.length){toast('Aucun stage confirmé à exporter.');return}
+    const rows=confirmedRegisterRows();if(!rows.length){toast('Aucun stage avec convention finalisée à exporter.');return}
     const doc=new JsPDF({orientation:'landscape',unit:'mm',format:'a4'});
     const widths=[23,39,45,65,30,17,40,18],headers=['Date','Formation','Nom et prénom','Établissement d’origine','SIRET','Repas','Prise en charge repas','Internat'];
     const x=[10];for(let i=0;i<widths.length;i++)x.push(x[i]+widths[i]);
     const clean=v=>String(v??'—').replace(/[\r\n]+/g,' ').trim()||'—';
     let y=0,page=0;
-    const header=()=>{page++;y=12;doc.setFillColor(18,48,73);doc.rect(10,y,277,15,'F');doc.setFont('helvetica','bold');doc.setFontSize(14);doc.setTextColor(255,255,255);doc.text('EREA de Muret — Export gestion des mini-stages confirmés',14,21);y=31;doc.setTextColor(70,80,95);doc.setFontSize(8);doc.text(rows.length+' stage(s) confirmé(s) · '+new Date().toLocaleDateString('fr-FR')+' · page '+page,10,y);y=35;doc.setFillColor(40,73,103);doc.rect(10,y,277,11,'F');doc.setFontSize(7);doc.setTextColor(255,255,255);headers.forEach((h,i)=>doc.text(doc.splitTextToSize(h,widths[i]-3).slice(0,2),x[i]+1.5,y+4));y+=11};
+    const header=()=>{page++;y=12;doc.setFillColor(18,48,73);doc.rect(10,y,277,15,'F');doc.setFont('helvetica','bold');doc.setFontSize(14);doc.setTextColor(255,255,255);doc.text('EREA de Muret — Export gestion des conventions finalisées',14,21);y=31;doc.setTextColor(70,80,95);doc.setFontSize(8);doc.text(rows.length+' convention(s) finalisée(s) · '+new Date().toLocaleDateString('fr-FR')+' · page '+page,10,y);y=35;doc.setFillColor(40,73,103);doc.rect(10,y,277,11,'F');doc.setFontSize(7);doc.setTextColor(255,255,255);headers.forEach((h,i)=>doc.text(doc.splitTextToSize(h,widths[i]-3).slice(0,2),x[i]+1.5,y+4));y+=11};
     header();doc.setFont('helvetica','normal');doc.setFontSize(7.3);
     for(let j=0;j<rows.length;j++){
       const a=rows[j].a,ss=rows[j].s;
